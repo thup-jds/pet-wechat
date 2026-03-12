@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "test": "bun test src/__tests__/"
+  },
+  "dependencies": {
+    "hono": "^4",
+    "drizzle-orm": "^0.39",
+    "postgres": "^3",
+    "shared": "workspace:*"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.30",
+    "typescript": "^5",
+    "@types/bun": "latest"
+  }
+}

@@ -1,0 +1,146 @@
+.settings-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+
+  .nav-bar {
+    background: #fff;
+    padding: 80px 32px 24px;
+    text-align: center;
+
+    .nav-title {
+      font-size: 34px;
+      font-weight: bold;
+    }
+  }
+}
+
+.settings-content {
+  padding: 24px 32px;
+
+  // My pets section
+  .pets-section {
+    margin-bottom: 32px;
+
+    .section-label {
+      display: block;
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .pets-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+
+      .pet-thumb {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .pet-thumb-avatar {
+          width: 96px;
+          height: 96px;
+          border-radius: 50%;
+          background: #e8d4f0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 8px;
+
+          &.add {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+          }
+
+          .pet-thumb-initial {
+            font-size: 36px;
+            font-weight: bold;
+            color: #7b4f9e;
+          }
+
+          .pet-thumb-plus {
+            font-size: 36px;
+            color: #bbb;
+          }
+        }
+
+        .pet-thumb-name {
+          font-size: 22px;
+          color: #666;
+        }
+      }
+    }
+  }
+
+  // Settings groups
+  .settings-group {
+    margin-bottom: 24px;
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 32px;
+    background: #fff;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      bottom: 0;
+      height: 1px;
+      background: #f0f0f0;
+    }
+
+    &.last::after {
+      display: none;
+    }
+
+    .item-label {
+      font-size: 28px;
+      color: #333;
+    }
+
+    .item-value {
+      font-size: 26px;
+      color: #999;
+    }
+
+    .item-arrow {
+      font-size: 32px;
+      color: #ccc;
+    }
+  }
+
+  // Logout
+  .logout-btn {
+    text-align: center;
+    color: #e53935;
+    font-size: 28px;
+    padding: 28px;
+    margin-top: 48px;
+    background: #fff;
+    border-radius: 24px;
+  }
+
+  // Decorative cat
+  .deco-cat-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 48px;
+    padding-right: 16px;
+
+    .deco-cat-emoji {
+      font-size: 80px;
+      opacity: 0.3;
+    }
+  }
+}

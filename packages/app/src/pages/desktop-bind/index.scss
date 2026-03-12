@@ -1,0 +1,48 @@
+.desktop-bind-page {
+  background: #fff;
+
+  .bind-desc {
+    display: block;
+    text-align: center;
+    font-size: 26px;
+    color: #999;
+    margin-bottom: 48px;
+  }
+
+  .form-item {
+    margin-bottom: 32px;
+
+    .label {
+      display: block;
+      font-size: 26px;
+      color: #999;
+      margin-bottom: 12px;
+    }
+
+    .input-field {
+      background: #f5f5f5;
+      border-radius: 16px;
+      height: 88px;
+      padding: 0 32px;
+      font-size: 28px;
+    }
+  }
+
+  .alt-option {
+    margin-top: 48px;
+    text-align: center;
+
+    .alt-title {
+      display: block;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .alt-desc {
+      display: block;
+      font-size: 24px;
+      color: #999;
+    }
+  }
+}

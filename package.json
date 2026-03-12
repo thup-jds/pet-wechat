@@ -1,0 +1,11 @@
+{
+  "name": "pet-wechat",
+  "private": true,
+  "scripts": {
+    "dev:server": "pnpm --filter server dev",
+    "dev:app": "pnpm --filter app dev:weapp",
+    "db:generate": "pnpm --filter server db:generate",
+    "db:migrate": "pnpm --filter server db:migrate",
+    "db:studio": "pnpm --filter server db:studio"
+  }
+}

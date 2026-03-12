@@ -1,0 +1,136 @@
+// Design width: 1284px, Taro design width: 750px
+// Scale factor: 750/1284 ≈ 0.584
+
+.login-page {
+  min-height: 100vh;
+  background: #ededed;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.login-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100px;
+  padding-bottom: 40px;
+  flex-shrink: 0;
+
+  .brand-name {
+    font-family: "Inter", sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: #333;
+  }
+}
+
+.illustration-placeholder {
+  width: 400px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+.illustration-text {
+  font-size: 120px;
+}
+
+.welcome-title {
+  font-family: "Inter", sans-serif;
+  font-size: 37px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.login-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 350px 350px 0 0;
+  padding: 100px 60px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.btn-phone {
+  width: 100% !important;
+  height: 70px !important;
+  line-height: 70px !important;
+  background: #d3d3d3cc !important;
+  color: #333 !important;
+  border: none !important;
+  border-radius: 18px !important;
+  font-size: 28px !important;
+  font-weight: 500;
+}
+
+.btn-wechat {
+  width: 100% !important;
+  height: 70px !important;
+  line-height: 70px !important;
+  background: #f8f8f8cc !important;
+  color: #333 !important;
+  border: none !important;
+  border-radius: 18px !important;
+  font-size: 28px !important;
+  font-weight: 500;
+}
+
+.agreement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+
+  .checkbox {
+    width: 35px;
+    height: 35px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    background: #ededed;
+
+    &.checked {
+      background: #333;
+      border-color: #333;
+    }
+  }
+
+  .agreement-text {
+    font-size: 22px;
+    color: #999;
+  }
+}
+
+.register-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+
+  .register-text {
+    font-size: 24px;
+    color: #999;
+  }
+
+  .register-action {
+    font-size: 24px;
+    color: #333;
+    font-weight: 500;
+    margin-left: 8px;
+  }
+}

@@ -1,0 +1,170 @@
+.collar-bind-page {
+  min-height: 100vh;
+  background: #ededed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+
+  .brand-title {
+    font-family: "Inter", sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 24px;
+    z-index: 2;
+  }
+
+  .bg-illustration {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.08;
+    z-index: 0;
+
+    .bg-illustration-emoji {
+      font-size: 300px;
+    }
+  }
+
+  .main-card {
+    width: calc(100% - 32px);
+    background: #fff;
+    border-radius: 50px;
+    padding: 48px 40px 40px;
+    box-sizing: border-box;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .card-title {
+      display: block;
+      font-size: 37px;
+      font-weight: bold;
+      color: #000;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .collar-illustration {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 32px;
+
+      .collar-illustration-emoji {
+        font-size: 80px;
+      }
+    }
+
+    .step-section {
+      width: 100%;
+      margin-bottom: 24px;
+
+      .step-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 16px;
+
+        .step-number {
+          width: 40px;
+          height: 40px;
+          min-width: 40px;
+          border-radius: 50%;
+          background: #333;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .step-number-text {
+            font-size: 22px;
+            color: #fff;
+            font-weight: 600;
+          }
+        }
+
+        .step-desc {
+          font-size: 28px;
+          color: #333;
+          line-height: 1.5;
+          flex: 1;
+        }
+      }
+
+      .step-illustration-area {
+        width: 100%;
+        min-height: 140px;
+        background: #f2f2f2;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        box-sizing: border-box;
+
+        &.active {
+          background: #e8f5e9;
+        }
+
+        .step-illustration-placeholder {
+          font-size: 48px;
+        }
+
+        .step-action-hint {
+          font-size: 22px;
+          color: #999;
+          margin-top: 12px;
+        }
+
+        .device-found-info {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+
+          .device-icon-emoji {
+            font-size: 48px;
+          }
+
+          .device-id {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+          }
+
+          .device-connect-hint {
+            font-size: 22px;
+            color: #4caf50;
+          }
+        }
+      }
+    }
+  }
+
+  .progress-indicator {
+    display: flex;
+    gap: 12px;
+    padding: 32px 0 60px;
+    z-index: 2;
+
+    .progress-segment {
+      width: 60px;
+      height: 8px;
+      border-radius: 4px;
+      background: #ccc;
+
+      &.active {
+        background: #333;
+      }
+    }
+  }
+}

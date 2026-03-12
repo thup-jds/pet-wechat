@@ -1,0 +1,191 @@
+.pet-info-page {
+  min-height: 100vh;
+  background: #ededed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+
+  .brand-title {
+    font-family: "Inter", sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 24px;
+    z-index: 2;
+  }
+
+  .bg-illustration {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.08;
+    z-index: 0;
+
+    .bg-illustration-emoji {
+      font-size: 300px;
+    }
+  }
+
+  .main-card {
+    width: calc(100% - 32px);
+    background: #fff;
+    border-radius: 50px;
+    padding: 48px 40px 40px;
+    box-sizing: border-box;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .card-title {
+      display: block;
+      font-size: 37px;
+      font-weight: bold;
+      color: #000;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+  }
+
+  .species-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 40px;
+
+    .species-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 32px;
+      border-radius: 24px;
+      background: #f5f5f5;
+      transition: all 0.2s;
+
+      &.active {
+        background: #fff3e0;
+        box-shadow: 0 0 0 3px #ff9800;
+      }
+
+      .species-icon {
+        font-size: 56px;
+      }
+
+      .species-label {
+        font-size: 24px;
+        color: #333;
+      }
+    }
+
+    .species-or {
+      font-size: 28px;
+      color: #999;
+      font-style: italic;
+    }
+  }
+
+  .form-section {
+    width: 100%;
+  }
+
+  .form-item {
+    margin-bottom: 28px;
+
+    &.underline {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 12px;
+    }
+
+    .label {
+      display: block;
+      font-size: 24px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    .input-field {
+      width: 100%;
+      height: 56px;
+      font-size: 30px;
+      color: #333;
+      background: transparent;
+      border: none;
+      padding: 0;
+      line-height: 56px;
+    }
+
+    .picker-field {
+      height: 56px;
+      line-height: 56px;
+      font-size: 30px;
+
+      .placeholder {
+        color: #ccc;
+      }
+    }
+
+    .gender-selector {
+      display: flex;
+      gap: 16px;
+      padding-top: 8px;
+
+      .gender-btn {
+        width: 80px;
+        height: 56px;
+        border-radius: 28px;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.active {
+          background: #333;
+
+          .gender-btn-text {
+            color: #fff;
+          }
+        }
+
+        .gender-btn-text {
+          font-size: 26px;
+          color: #666;
+        }
+      }
+    }
+  }
+
+  .collar-info {
+    width: 100%;
+    background: #f9f9f9;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+
+    .collar-info-label {
+      display: block;
+      font-size: 22px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+
+    .collar-info-id {
+      font-size: 26px;
+      color: #333;
+      font-weight: 500;
+    }
+  }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 32px;
+  }
+}

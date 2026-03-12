@@ -1,0 +1,52 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "build:swan": "taro build --type swan",
+    "build:alipay": "taro build --type alipay",
+    "build:tt": "taro build --type tt",
+    "build:h5": "taro build --type h5",
+    "build:rn": "taro build --type rn",
+    "build:qq": "taro build --type qq",
+    "build:vk-weapp": "taro build --type vk-weapp",
+    "build:jd": "taro build --type jd",
+    "dev:weapp": "npm run build:weapp -- --watch",
+    "dev:swan": "npm run build:swan -- --watch",
+    "dev:alipay": "npm run build:alipay -- --watch",
+    "dev:tt": "npm run build:tt -- --watch",
+    "dev:h5": "npm run build:h5 -- --watch",
+    "dev:rn": "npm run build:rn -- --watch",
+    "dev:qq": "npm run build:qq -- --watch",
+    "dev:vk-weapp": "npm run build:vk-weapp -- --watch",
+    "dev:jd": "npm run build:jd -- --watch"
+  },
+  "browserslist": [
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
+  ],
+  "dependencies": {
+    "@tarojs/components": "4.1.11",
+    "@tarojs/runtime": "4.1.11",
+    "@tarojs/taro": "4.1.11",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.0",
+    "babel-preset-taro": "4.1.11",
+    "@tarojs/cli": "4.1.11",
+    "@tarojs/helper": "4.1.11",
+    "@tarojs/plugin-framework-react": "4.1.11",
+    "@tarojs/plugin-sass": "2.2.10",
+    "@tarojs/webpack5-runner": "4.1.11",
+    "@types/react": "^18.0.0",
+    "@types/node": "^18.0.0",
+    "sass": "^1.62.0",
+    "typescript": "^5.0.0",
+    "webpack": "^5.0.0"
+  }
+}

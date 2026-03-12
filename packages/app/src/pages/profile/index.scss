@@ -1,0 +1,259 @@
+.profile-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 120px;
+
+  .nav-bar {
+    background: #fff;
+    padding: 80px 32px 24px;
+    text-align: center;
+
+    .nav-title {
+      font-size: 34px;
+      font-weight: bold;
+      color: #333;
+    }
+  }
+}
+
+.not-logged {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120px 64px;
+
+  .not-logged-text {
+    font-size: 28px;
+    color: #999;
+    margin-bottom: 32px;
+  }
+}
+
+/* 用户头像区域 */
+.user-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 32px 32px;
+  background: #fff;
+
+  .avatar-wrapper {
+    margin-bottom: 16px;
+
+    .avatar-img {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+    }
+
+    .avatar-placeholder {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .avatar-letter {
+        font-size: 56px;
+        font-weight: bold;
+        color: #999;
+      }
+    }
+  }
+
+  .user-nickname {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .user-id {
+    font-size: 22px;
+    color: #bbb;
+    margin-bottom: 16px;
+  }
+
+  .member-badge {
+    background: linear-gradient(135deg, #f5c842, #e8a520);
+    border-radius: 24px;
+    padding: 8px 28px;
+
+    .member-badge-text {
+      font-size: 22px;
+      color: #fff;
+      font-weight: bold;
+    }
+  }
+}
+
+/* 通用 section */
+.section {
+  padding: 32px 32px 0;
+
+  .section-title {
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 16px;
+  }
+}
+
+/* 账户信息卡片 */
+.info-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 0 28px;
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid #f5f5f5;
+
+    &.last {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-size: 26px;
+      color: #666;
+    }
+
+    .info-value {
+      font-size: 26px;
+      color: #333;
+    }
+  }
+
+  .empty-pets {
+    display: block;
+    text-align: center;
+    padding: 32px 0;
+    font-size: 26px;
+    color: #ccc;
+  }
+}
+
+/* 宠物卡片列表 */
+.pet-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .pet-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px 28px;
+    gap: 20px;
+
+    .pet-avatar-box {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      .pet-avatar-emoji {
+        font-size: 36px;
+      }
+    }
+
+    .pet-info {
+      flex: 1;
+
+      .pet-name {
+        display: block;
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 4px;
+      }
+
+      .pet-detail {
+        display: block;
+        font-size: 22px;
+        color: #999;
+      }
+    }
+  }
+}
+
+/* 会员权益网格 */
+.benefits-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 20px;
+
+  .benefit-item {
+    width: calc((100% - 32px) / 3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+
+    .benefit-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+
+    .benefit-label {
+      font-size: 22px;
+      color: #666;
+      text-align: center;
+    }
+  }
+}
+
+/* 查看详情按钮 */
+.detail-btn {
+  margin-top: 24px;
+  background: #333;
+  border-radius: 44px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .detail-btn-text {
+    font-size: 28px;
+    color: #fff;
+    font-weight: bold;
+  }
+}
+
+/* 退出登录 */
+.logout-area {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0 24px;
+
+  .logout-text {
+    font-size: 28px;
+    color: #e53935;
+  }
+}
+
+/* 底部猫咪装饰 */
+.bottom-cat {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 48px 40px;
+
+  .cat-deco {
+    font-size: 80px;
+    opacity: 0.3;
+  }
+}
