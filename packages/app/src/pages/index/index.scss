@@ -68,7 +68,6 @@
   gap: 16px;
 }
 
-// 200px@1284 -> 117px -> Taro: 68px (117 * 750/1284 ≈ 68)
 .pet-avatar-circle {
   width: 68px;
   height: 68px;
@@ -90,7 +89,6 @@
   flex-direction: column;
 
   .pet-name {
-    // 64px@1284 -> ~37px -> Taro: 22px (37 * 750/1284 ≈ 22), 用稍大一点
     font-size: 30px;
     font-weight: bold;
     color: #333;
@@ -98,7 +96,6 @@
   }
 
   .pet-subtitle {
-    // 32px@1284 -> ~19px -> Taro: 11px, 用稍大一点
     font-size: 20px;
     color: #999;
     line-height: 1.4;
@@ -125,6 +122,33 @@
     height: 14px;
     border-radius: 50%;
     background: #ff3b30;
+  }
+}
+
+// ===== Swiper 指示点 =====
+.pet-swiper-section {
+  padding: 0 32px;
+}
+
+.swiper-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.swiper-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ccc;
+  transition: all 0.2s ease;
+
+  &.active {
+    width: 28px;
+    border-radius: 6px;
+    background: #333;
   }
 }
 
@@ -164,10 +188,31 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    background: #86f066;
     border-radius: 8px;
     transition: height 0.3s ease;
   }
+}
+
+.activity-score-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+
+  .activity-score-text {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+  }
+}
+
+.activity-level {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 6px;
 }
 
 // 宠物大图
@@ -207,12 +252,10 @@
 }
 
 .pet-swiper {
-  // 927px@1284 -> ~541px -> Taro: 541px
   width: 100%;
   height: 541px;
 }
 
-// 927x927@1284 -> ~541x541 in Taro
 .pet-photo {
   width: 541px;
   height: 541px;
@@ -245,6 +288,58 @@
   .swipe-arrow {
     font-size: 22px;
     color: #999;
+  }
+}
+
+// ===== 宠物动态行为区域 =====
+.behavior-section {
+  padding: 24px 32px 0;
+}
+
+.behavior-section-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.behavior-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.behavior-action-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 3px solid transparent;
+  transition: all 0.2s ease;
+
+  &.active {
+    border-color: #333;
+    background: #f5f5f5;
+  }
+}
+
+.behavior-action-emoji {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.behavior-action-label {
+  font-size: 22px;
+  color: #999;
+
+  &.active {
+    color: #333;
+    font-weight: bold;
   }
 }
 
@@ -283,6 +378,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 
     .status-dot {
       width: 14px;
@@ -305,9 +401,14 @@
     }
 
     .battery-text {
-      font-size: 22px;
+      font-size: 20px;
       color: #999;
       margin-left: auto;
+    }
+
+    .signal-text {
+      font-size: 20px;
+      color: #999;
     }
   }
 }

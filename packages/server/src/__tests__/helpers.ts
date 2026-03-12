@@ -15,6 +15,9 @@ import devicesRoute from "../routes/devices";
 import behaviorsRoute from "../routes/behaviors";
 import messagesRoute from "../routes/messages";
 import meRoute from "../routes/me";
+import debugRoute from "../routes/debug";
+import uploadRoute from "../routes/upload";
+import invitePublicRoute from "../routes/invite-public";
 
 /**
  * Build a fresh Hono app identical to the production one,
@@ -29,6 +32,7 @@ export function createApp(): InstanceType<typeof Hono> {
 
   // Public routes
   app.route("/api/auth", authRoute);
+  app.route("/api/invite", invitePublicRoute);
 
   // Protected routes
   app.use("/api/*", authMiddleware);
@@ -38,6 +42,8 @@ export function createApp(): InstanceType<typeof Hono> {
   app.route("/api/devices", devicesRoute);
   app.route("/api/behaviors", behaviorsRoute);
   app.route("/api/messages", messagesRoute);
+  app.route("/api/upload", uploadRoute);
+  app.route("/api/debug", debugRoute);
 
   return app;
 }

@@ -98,6 +98,12 @@ export interface ShareRecord {
   createdAt: string;
 }
 
+/** 授权列表接口返回时附带的用户昵称 */
+export interface DeviceAuthorizationWithUser extends DeviceAuthorization {
+  fromNickname?: string;
+  toNickname?: string;
+}
+
 // ===== 宠物形象 =====
 
 export interface PetAvatar {
@@ -124,6 +130,15 @@ export interface PetBehavior {
   collarDeviceId: string;
   actionType: string;
   timestamp: string;
+}
+
+// ===== 邀请 =====
+
+export interface InvitePayload {
+  fromUserId: string;
+  petId: string;
+  petName: string;
+  fromNickname: string;
 }
 
 // ===== 消息 =====

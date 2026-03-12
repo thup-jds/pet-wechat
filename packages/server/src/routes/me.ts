@@ -13,4 +13,23 @@ meRoute.get("/", async (c) => {
   return c.json({ user });
 });
 
+// 更新当前用户信息
+meRoute.put("/", async (c) => {
+  const userId = c.get("userId" as never) as string;
+  const body = await c.req.json();
+
+  const [existing] = await db.select().from(users).where(eq(users.id, userId));
+  if (!existing) return c.json({ error: "User not found" }, 404);
+
+  const [user] = await db
+    .update(users)
+    .set({
+      nickname: body.nickname ?? existing.nickname,
+      avatarUrl: body.avatarUrl ?? existing.avatarUrl,
+    })
+    .where(eq(users.id, userId))
+    .returning();
+  return c.json({ user });
+});
+
 export default meRoute;

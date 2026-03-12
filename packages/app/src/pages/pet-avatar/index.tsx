@@ -1,8 +1,11 @@
 import { View, Text, Image } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
-import { useState } from "react";
-import { request } from "../../utils/request";
+import { useState, useEffect } from "react";
+import { request, getToken } from "../../utils/request";
+import type { Pet, User } from "@pet-wechat/shared";
 import "./index.scss";
+
+const BASE_URL = "http://localhost:9527"; // TODO: 从环境变量获取
 
 export default function PetAvatar() {
   const router = useRouter();
@@ -10,9 +13,20 @@ export default function PetAvatar() {
 
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  // TODO: 从后端获取真实配额信息
-  const remainingQuota = 2;
-  const totalQuota = 2;
+  const [pet, setPet] = useState<Pet | null>(null);
+  const [quota, setQuota] = useState({ remaining: 2, total: 2 });
+
+  useEffect(() => {
+    if (!petId) return;
+    // 加载宠物信息
+    request<{ pet: Pet }>({ url: `/api/pets/${petId}` })
+      .then((res) => setPet(res.pet))
+      .catch(() => {});
+    // 加载用户配额
+    request<{ user: User }>({ url: "/api/me" })
+      .then((res) => setQuota({ remaining: res.user.avatarQuota, total: 2 }))
+      .catch(() => {});
+  }, [petId]);
 
   const handleChooseImage = async () => {
     try {
@@ -31,14 +45,22 @@ export default function PetAvatar() {
     if (images.length === 0 || !petId) return;
     setLoading(true);
     try {
-      // TODO: 实际应上传到 OSS，这里 MVP 阶段直接用本地路径模拟
+      // 上传图片到服务端
+      const token = getToken();
+      const uploadRes = await Taro.uploadFile({
+        url: `${BASE_URL}/api/upload`,
+        filePath: images[0],
+        name: "file",
+        header: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      const uploadData = JSON.parse(uploadRes.data);
+      const sourceImageUrl = uploadData.url ?? images[0];
+
+      // 创建定制任务
       const { avatar } = await request<{ avatar: { id: string } }>({
         url: "/api/avatars",
         method: "POST",
-        data: {
-          petId,
-          sourceImageUrl: images[0],
-        },
+        data: { petId, sourceImageUrl },
       });
       Taro.redirectTo({
         url: `/pages/avatar-progress/index?avatarId=${avatar.id}`,
@@ -66,14 +88,17 @@ export default function PetAvatar() {
       <View className="main-card">
         <Text className="card-title">定制宠物动态</Text>
 
-        {/* TODO: 替换为真实宠物头像和信息 */}
         <View className="pet-info-brief">
           <View className="pet-avatar-icon">
-            <Text className="pet-avatar-emoji">🐱</Text>
+            <Text className="pet-avatar-emoji">
+              {pet?.species === "dog" ? "🐶" : "🐱"}
+            </Text>
           </View>
           <View className="pet-meta">
-            <Text className="pet-name">我的宠物</Text>
-            <Text className="pet-detail">品种 · 年龄</Text>
+            <Text className="pet-name">{pet?.name ?? "我的宠物"}</Text>
+            <Text className="pet-detail">
+              {pet?.breed ?? "未知品种"} · {pet?.gender === "male" ? "公" : pet?.gender === "female" ? "母" : ""}
+            </Text>
           </View>
         </View>
 
@@ -119,7 +144,7 @@ export default function PetAvatar() {
         </View>
 
         <Text className="quota-info">
-          新用户免费定制{totalQuota}次 ({remainingQuota}/{totalQuota})
+          新用户免费定制{quota.total}次 ({quota.remaining}/{quota.total})
         </Text>
 
         <View

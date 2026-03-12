@@ -89,6 +89,22 @@ export default function Messages() {
     }
   };
 
+  const handleDetail = (msg: Message) => {
+    // 标记已读
+    if (!msg.isRead) handleRead(msg.id);
+    // 根据消息类型跳转
+    if (msg.type === "authorization") {
+      Taro.switchTab({ url: "/pages/devices/index" });
+    } else {
+      // 系统消息显示详情弹窗
+      Taro.showModal({
+        title: msg.title,
+        content: msg.content,
+        showCancel: false,
+      });
+    }
+  };
+
   const tabs: { key: TabType; label: string }[] = [
     { key: "all", label: "全部" },
     { key: "authorization", label: "授权通知" },
@@ -139,7 +155,9 @@ export default function Messages() {
               <View
                 key={msg.id}
                 className={`message-card ${msg.isRead ? "" : "unread"}`}
-                onClick={() => !msg.isRead && handleRead(msg.id)}
+                onClick={() => {
+                  if (!msg.isRead) handleRead(msg.id);
+                }}
               >
                 <View className="card-body">
                   <View className={`msg-icon ${icon.className}`}>
@@ -155,7 +173,13 @@ export default function Messages() {
                     <Text className="msg-preview">{msg.content}</Text>
                   </View>
                 </View>
-                <View className="card-action">
+                <View
+                  className="card-action"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDetail(msg);
+                  }}
+                >
                   <Text className="action-btn">查看详情</Text>
                 </View>
               </View>

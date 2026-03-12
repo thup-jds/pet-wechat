@@ -14,11 +14,33 @@ import { eq, and, isNull, inArray } from "drizzle-orm";
 
 const petsRoute = new Hono();
 
-// 获取当前用户的所有宠物
+// 获取当前用户的所有宠物（含被授权的宠物）
 petsRoute.get("/", async (c) => {
   const userId = c.get("userId" as never) as string;
-  const result = await db.select().from(pets).where(eq(pets.userId, userId));
-  return c.json({ pets: result });
+
+  // 自己的宠物
+  const ownPets = await db.select().from(pets).where(eq(pets.userId, userId));
+
+  // 被授权的宠物
+  const authorizedRecords = await db
+    .select()
+    .from(deviceAuthorizations)
+    .where(
+      and(
+        eq(deviceAuthorizations.toUserId, userId),
+        eq(deviceAuthorizations.status, "accepted")
+      )
+    );
+  const authorizedPetIds = authorizedRecords.map((a) => a.petId);
+  let authorizedPets: typeof ownPets = [];
+  if (authorizedPetIds.length > 0) {
+    authorizedPets = await db
+      .select()
+      .from(pets)
+      .where(inArray(pets.id, authorizedPetIds));
+  }
+
+  return c.json({ pets: ownPets, authorizedPets });
 });
 
 // 获取单个宠物详情（含动态图像）
@@ -49,7 +71,19 @@ petsRoute.get("/:id", async (c) => {
     }
   }
 
-  return c.json({ pet, avatars, actions });
+  // 计算活跃值：基于最近 7 天的行为记录数量
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const behaviors = await db
+    .select()
+    .from(petBehaviors)
+    .where(eq(petBehaviors.petId, petId));
+  const recentCount = behaviors.filter(
+    (b) => new Date(b.timestamp) >= sevenDaysAgo
+  ).length;
+  // TODO: 活跃值算法待产品定义，当前简单按行为次数映射 0-100
+  const activityScore = Math.min(100, recentCount * 10);
+
+  return c.json({ pet: { ...pet, activityScore }, avatars, actions });
 });
 
 // 创建宠物

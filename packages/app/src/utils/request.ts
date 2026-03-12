@@ -3,7 +3,7 @@ import Taro from "@tarojs/taro";
 // TODO: 部署后替换为真实地址
 const BASE_URL = "http://localhost:9527";
 
-function getToken(): string | null {
+export function getToken(): string | null {
   return Taro.getStorageSync("token") || null;
 }
 

@@ -1,0 +1,52 @@
+.splash-page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.logo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-icon {
+  font-size: 120px;
+}
+
+.logo-text {
+  font-size: 48px;
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 8px;
+}
+
+.progress-bar {
+  width: 400px;
+  height: 8px;
+  background: #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #333;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.loading-text {
+  font-size: 24px;
+  color: #999;
+}

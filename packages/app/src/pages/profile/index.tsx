@@ -7,11 +7,11 @@ import type { User, Pet } from "@pet-wechat/shared";
 import "./index.scss";
 
 const MEMBER_BENEFITS = [
-  { icon: "\uD83D\uDC3E", label: "升级宠物数量" },
-  { icon: "\uD83C\uDFA8", label: "升级定制图像" },
-  { icon: "\uD83D\uDCBE", label: "五倍存储空间" },
-  { icon: "\uD83D\uDCDE", label: "优先客服支持" },
-  { icon: "\uD83C\uDFA8", label: "专属主题皮肤" },
+  { label: "升级宠物数量", checked: true },
+  { label: "升级定制图像", checked: true },
+  { label: "云端存储扩容", checked: false },
+  { label: "优先客服支持", checked: false },
+  { label: "专属主题皮肤", checked: false },
 ];
 
 function formatDate(dateStr: string): string {
@@ -41,6 +41,31 @@ export default function Profile() {
     } catch {
       // ignore
     }
+  };
+
+  const handleEditNickname = () => {
+    Taro.showModal({
+      title: "编辑昵称",
+      editable: true,
+      placeholderText: user?.nickname || "请输入昵称",
+      success: async (res) => {
+        if (res.confirm && res.content?.trim()) {
+          try {
+            await request({
+              url: "/api/me",
+              method: "PUT",
+              data: { nickname: res.content.trim() },
+            });
+            setUser((prev) =>
+              prev ? { ...prev, nickname: res.content!.trim() } : prev
+            );
+            Taro.showToast({ title: "修改成功", icon: "success" });
+          } catch {
+            Taro.showToast({ title: "修改失败", icon: "none" });
+          }
+        }
+      },
+    });
   };
 
   const handleLogout = () => {
@@ -107,7 +132,12 @@ export default function Profile() {
 
       {/* 账户信息 */}
       <View className="section">
-        <Text className="section-title">账户信息</Text>
+        <View className="section-header">
+          <Text className="section-title">账户信息</Text>
+          <View className="edit-btn" onClick={handleEditNickname}>
+            <Text className="edit-btn-text">编辑资料</Text>
+          </View>
+        </View>
         <View className="info-card">
           <View className="info-row">
             <Text className="info-label">手机号</Text>
@@ -117,7 +147,8 @@ export default function Profile() {
           </View>
           <View className="info-row">
             <Text className="info-label">邮箱</Text>
-            <Text className="info-value">未绑定</Text>
+            {/* TODO: 邮箱为mock数据，待后端用户表增加email字段后替换 */}
+            <Text className="info-value">YEHEY6780@guagua.com</Text>
           </View>
           <View className="info-row last">
             <Text className="info-label">注册日期</Text>
@@ -159,11 +190,15 @@ export default function Profile() {
       {/* 会员专属权益 */}
       <View className="section">
         <Text className="section-title">会员专属权益</Text>
-        <View className="benefits-grid">
+        <View className="benefits-list">
           {MEMBER_BENEFITS.map((b, i) => (
-            <View key={i} className="benefit-item">
-              <Text className="benefit-icon">{b.icon}</Text>
-              <Text className="benefit-label">{b.label}</Text>
+            <View key={i} className="benefit-check-item">
+              <View className={`benefit-checkbox ${b.checked ? "checked" : ""}`}>
+                {b.checked && <Text className="check-mark">✓</Text>}
+              </View>
+              <Text className={`benefit-check-label ${b.checked ? "checked" : ""}`}>
+                {b.label}
+              </Text>
             </View>
           ))}
         </View>

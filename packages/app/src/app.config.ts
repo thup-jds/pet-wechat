@@ -1,5 +1,6 @@
 export default defineAppConfig({
   pages: [
+    "pages/splash/index",
     "pages/index/index",
     "pages/login/index",
     "pages/guide/index",
@@ -10,6 +11,7 @@ export default defineAppConfig({
     "pages/avatar-progress/index",
     "pages/desktop-bind/index",
     "pages/desktop-pair/index",
+    "pages/invite/index",
     "pages/devices/index",
     "pages/messages/index",
     "pages/profile/index",

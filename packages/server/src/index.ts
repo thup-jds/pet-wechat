@@ -9,6 +9,9 @@ import devicesRoute from "./routes/devices";
 import behaviorsRoute from "./routes/behaviors";
 import messagesRoute from "./routes/messages";
 import meRoute from "./routes/me";
+import debugRoute from "./routes/debug";
+import uploadRoute from "./routes/upload";
+import invitePublicRoute from "./routes/invite-public";
 
 const app = new Hono();
 
@@ -18,8 +21,9 @@ app.use("*", cors());
 app.get("/", (c) => c.json({ name: "YEHEY Pet API", version: "0.1.0" }));
 app.get("/health", (c) => c.json({ status: "ok" }));
 
-// 公开路由（登录接口）
+// 公开路由（登录接口 + 邀请预览）
 app.route("/api/auth", authRoute);
+app.route("/api/invite", invitePublicRoute);
 
 // 需要鉴权的路由
 app.use("/api/*", authMiddleware);
@@ -29,6 +33,8 @@ app.route("/api/avatars", avatarsRoute);
 app.route("/api/devices", devicesRoute);
 app.route("/api/behaviors", behaviorsRoute);
 app.route("/api/messages", messagesRoute);
+app.route("/api/upload", uploadRoute);
+app.route("/api/debug", debugRoute);
 
 const port = Number(process.env.PORT ?? 9527);
 console.log(`Server running on http://localhost:${port}`);

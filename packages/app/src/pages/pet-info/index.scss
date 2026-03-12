@@ -18,16 +18,88 @@
     z-index: 2;
   }
 
+  /* Pet switcher bar */
+  .pet-switcher {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    width: 100%;
+    padding: 16px 32px;
+    box-sizing: border-box;
+    z-index: 2;
+    margin-bottom: 16px;
+
+    .switcher-arrow {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+      .switcher-arrow-text {
+        font-size: 36px;
+        color: #333;
+        line-height: 1;
+      }
+    }
+
+    .switcher-pet-name {
+      font-size: 32px;
+      font-weight: bold;
+      color: #333;
+      min-width: 120px;
+      text-align: center;
+    }
+  }
+
   .bg-illustration {
-    position: absolute;
-    top: 120px;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0.08;
-    z-index: 0;
+    position: relative;
+    width: 240px;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    margin-bottom: 24px;
 
     .bg-illustration-emoji {
-      font-size: 300px;
+      font-size: 160px;
+      opacity: 0.15;
+    }
+
+    .progress-ring-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .progress-ring {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        /* TODO: 进度值82%为mock，conic-gradient角度 = 82% * 360 = 295.2deg */
+        background: conic-gradient(#ff9800 295.2deg, rgba(0, 0, 0, 0.08) 295.2deg);
+        mask: radial-gradient(transparent 55%, #000 56%);
+        -webkit-mask: radial-gradient(transparent 55%, #000 56%);
+      }
+
+      .progress-text {
+        font-size: 32px;
+        font-weight: bold;
+        color: #ff9800;
+        z-index: 1;
+      }
     }
   }
 

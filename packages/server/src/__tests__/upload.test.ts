@@ -1,0 +1,76 @@
+import { describe, it, expect, beforeEach } from "bun:test";
+import { mockDb } from "./setup";
+import { createApp, authHeader } from "./helpers";
+
+const app = createApp();
+
+describe("Upload Routes", () => {
+  beforeEach(() => {
+    mockDb._reset();
+  });
+
+  describe("POST /api/upload", () => {
+    it("returns 401 without token", async () => {
+      const res = await app.request(
+        new Request("http://localhost/api/upload", { method: "POST" })
+      );
+      expect(res.status).toBe(401);
+    });
+
+    it("returns 400 when no file is provided", async () => {
+      const headers = await authHeader("user-1");
+      const formData = new FormData();
+
+      const res = await app.request(
+        new Request("http://localhost/api/upload", {
+          method: "POST",
+          headers,
+          body: formData,
+        })
+      );
+      expect(res.status).toBe(400);
+      const json = await res.json();
+      expect(json.error).toContain("No file");
+    });
+
+    it("returns 400 when file field is a string", async () => {
+      const headers = await authHeader("user-1");
+      const formData = new FormData();
+      formData.append("file", "not-a-file");
+
+      const res = await app.request(
+        new Request("http://localhost/api/upload", {
+          method: "POST",
+          headers,
+          body: formData,
+        })
+      );
+      expect(res.status).toBe(400);
+      const json = await res.json();
+      expect(json.error).toContain("No file");
+    });
+
+    it("returns mock URL when file is uploaded", async () => {
+      const headers = await authHeader("user-1");
+      const formData = new FormData();
+      const file = new File(["test content"], "photo.jpg", {
+        type: "image/jpeg",
+      });
+      formData.append("file", file);
+
+      const res = await app.request(
+        new Request("http://localhost/api/upload", {
+          method: "POST",
+          headers,
+          body: formData,
+        })
+      );
+      expect(res.status).toBe(201);
+      const json = await res.json();
+      expect(json.url).toContain("mock-storage.yehey.com");
+      expect(json.url).toContain("user-1");
+      expect(json.url).toEndWith(".jpg");
+      expect(json.fileId).toBeDefined();
+    });
+  });
+});

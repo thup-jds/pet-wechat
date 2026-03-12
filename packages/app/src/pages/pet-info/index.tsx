@@ -1,6 +1,6 @@
 import { View, Text, Input, Picker } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { request } from "../../utils/request";
 import type { Pet, Species, Gender } from "@pet-wechat/shared";
 import "./index.scss";
@@ -11,7 +11,8 @@ const genderMap: Record<string, Gender> = {
   母: "female",
   未知: "unknown",
 };
-const genderReverseMap: Record<Gender, string> = {
+// Kept for potential future use in display
+const _genderReverseMap: Record<Gender, string> = {
   male: "公",
   female: "母",
   unknown: "未知",
@@ -30,20 +31,81 @@ export default function PetInfo() {
   const [weight, setWeight] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Pet switcher state
+  const [allPets, setAllPets] = useState<Pet[]>([]);
+  const [currentPetIndex, setCurrentPetIndex] = useState(0);
+  const [avatarStatus, setAvatarStatus] = useState<string | null>(null);
+
+  const loadPetData = useCallback((pet: Pet) => {
+    setName(pet.name);
+    setSpecies(pet.species);
+    if (pet.breed) setBreed(pet.breed);
+    else setBreed("");
+    setGender(pet.gender);
+    if (pet.birthday) setBirthday(pet.birthday);
+    else setBirthday("");
+    if (pet.weight) setWeight(String(pet.weight));
+    else setWeight("");
+  }, []);
+
   useEffect(() => {
-    if (petId) {
-      request<{ pet: Pet }>({ url: `/api/pets/${petId}` }).then(
-        ({ pet }) => {
-          setName(pet.name);
-          setSpecies(pet.species);
-          if (pet.breed) setBreed(pet.breed);
-          setGender(pet.gender);
-          if (pet.birthday) setBirthday(pet.birthday);
-          if (pet.weight) setWeight(String(pet.weight));
+    // Load all pets for the switcher
+    request<{ pets: Pet[] }>({ url: "/api/pets" })
+      .then(({ pets }) => {
+        setAllPets(pets);
+        if (petId) {
+          const idx = pets.findIndex((p) => p.id === petId);
+          if (idx >= 0) {
+            setCurrentPetIndex(idx);
+            loadPetData(pets[idx]);
+          }
+        } else if (pets.length > 0) {
+          loadPetData(pets[0]);
         }
-      );
+      })
+      .catch(() => {});
+  }, [petId, loadPetData]);
+
+  // TODO: 后端暂无按petId查询avatars的接口，此处mock avatar状态用于展示进度环
+  // 待后端新增 GET /api/pets/:petId/avatars 接口后替换
+  useEffect(() => {
+    const currentPet = allPets[currentPetIndex];
+    if (!currentPet) {
+      setAvatarStatus(null);
+      return;
     }
-  }, [petId]);
+    // Mock: 假设第一个宠物的形象正在处理中
+    if (currentPetIndex === 0) {
+      setAvatarStatus("processing");
+    } else {
+      setAvatarStatus("done");
+    }
+  }, [allPets, currentPetIndex]);
+
+  const switchPet = (direction: "prev" | "next") => {
+    if (allPets.length === 0) return;
+    const newIndex =
+      direction === "prev"
+        ? (currentPetIndex - 1 + allPets.length) % allPets.length
+        : (currentPetIndex + 1) % allPets.length;
+    setCurrentPetIndex(newIndex);
+    loadPetData(allPets[newIndex]);
+  };
+
+  const handleImageLongPress = () => {
+    const currentPet = allPets[currentPetIndex];
+    if (!currentPet) return;
+    Taro.showActionSheet({
+      itemList: ["重新定制动态形象"],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          Taro.navigateTo({
+            url: `/pages/pet-avatar/index?petId=${currentPet.id}`,
+          });
+        }
+      },
+    });
+  };
 
   const handleSubmit = async () => {
     if (!name.trim()) {
@@ -61,8 +123,13 @@ export default function PetInfo() {
         weight: weight ? Number(weight) : null,
       };
 
-      if (petId) {
-        await request({ url: `/api/pets/${petId}`, method: "PUT", data });
+      const currentPet = allPets[currentPetIndex];
+      if (currentPet) {
+        await request({
+          url: `/api/pets/${currentPet.id}`,
+          method: "PUT",
+          data,
+        });
         Taro.showToast({ title: "更新成功", icon: "success" });
       } else {
         const { pet } = await request<{ pet: Pet }>({
@@ -94,13 +161,41 @@ export default function PetInfo() {
     }
   };
 
+  const isProcessing =
+    avatarStatus === "processing" || avatarStatus === "pending";
+
   return (
     <View className="pet-info-page">
       <Text className="brand-title">YEHEY</Text>
 
-      {/* TODO: 替换为半透明猫狗背景插画 */}
-      <View className="bg-illustration">
+      {/* Pet switcher top bar */}
+      {allPets.length > 0 && (
+        <View className="pet-switcher">
+          <View className="switcher-arrow" onClick={() => switchPet("prev")}>
+            <Text className="switcher-arrow-text">‹</Text>
+          </View>
+          <Text className="switcher-pet-name">
+            {allPets[currentPetIndex]?.name || ""}
+          </Text>
+          <View className="switcher-arrow" onClick={() => switchPet("next")}>
+            <Text className="switcher-arrow-text">›</Text>
+          </View>
+        </View>
+      )}
+
+      {/* Pet image area with progress ring overlay */}
+      <View
+        className="bg-illustration"
+        onLongPress={handleImageLongPress}
+      >
         <Text className="bg-illustration-emoji">🐾</Text>
+        {isProcessing && (
+          <View className="progress-ring-overlay">
+            <View className="progress-ring" />
+            {/* TODO: 进度值暂为mock，待后端接口返回真实进度 */}
+            <Text className="progress-text">82%</Text>
+          </View>
+        )}
       </View>
 
       <View className="main-card">

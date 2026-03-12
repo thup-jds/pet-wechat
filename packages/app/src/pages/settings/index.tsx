@@ -30,7 +30,25 @@ export default function Settings() {
     }, 1000);
   };
 
-  // TODO: 待各设置页面实现后添加 onClick 导航
+  const showComingSoon = () => {
+    Taro.showToast({ title: "功能开发中", icon: "none" });
+  };
+
+  const handleCollectData = async () => {
+    try {
+      const result = await request<Record<string, unknown>>({
+        url: "/api/debug/collect-data",
+      });
+      Taro.showModal({
+        title: "采集对照数据",
+        content: JSON.stringify(result, null, 2),
+        showCancel: false,
+      });
+    } catch (e: any) {
+      Taro.showToast({ title: e.message || "请求失败", icon: "none" });
+    }
+  };
+
   const menuItems = [
     { label: "通知设置" },
     { label: "隐私设置" },
@@ -87,6 +105,7 @@ export default function Settings() {
             <View
               key={item.label}
               className={`settings-item ${index === 0 ? "first" : ""} ${index === menuItems.length - 1 ? "last" : ""}`}
+              onClick={showComingSoon}
             >
               <Text className="item-label">{item.label}</Text>
               <Text className="item-arrow">›</Text>
@@ -100,6 +119,7 @@ export default function Settings() {
             <View
               key={item.label}
               className={`settings-item ${index === 0 ? "first" : ""} ${index === infoItems.length - 1 ? "last" : ""}`}
+              onClick={showComingSoon}
             >
               <Text className="item-label">{item.label}</Text>
               <Text className="item-arrow">›</Text>
@@ -107,12 +127,9 @@ export default function Settings() {
           ))}
         </View>
 
-        {/* Collection reference section */}
-        <View className="settings-group">
-          <View className="settings-item first last">
-            <Text className="item-label">采集对照</Text>
-            <Text className="item-arrow">›</Text>
-          </View>
+        {/* 采集对照 large button */}
+        <View className="collect-data-btn" onClick={handleCollectData}>
+          <Text className="collect-data-btn-text">采集对照</Text>
         </View>
 
         {/* Logout */}

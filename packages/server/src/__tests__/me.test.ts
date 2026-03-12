@@ -1,0 +1,67 @@
+import { describe, it, expect, beforeEach } from "bun:test";
+import { mockDb } from "./setup";
+import { createApp, authHeader, jsonReq, fakeUser } from "./helpers";
+
+const app = createApp();
+
+describe("Me Routes", () => {
+  beforeEach(() => {
+    mockDb._reset();
+  });
+
+  describe("PUT /api/me", () => {
+    it("returns 401 without token", async () => {
+      const res = await app.request(jsonReq("PUT", "/api/me"));
+      expect(res.status).toBe(401);
+    });
+
+    it("updates nickname", async () => {
+      const existing = fakeUser();
+      const updated = fakeUser({ nickname: "New Name" });
+      mockDb._results.select = [[existing]];
+      mockDb._results.update = [[updated]];
+
+      const headers = await authHeader("user-1");
+      const res = await app.request(
+        jsonReq("PUT", "/api/me", {
+          headers,
+          body: { nickname: "New Name" },
+        })
+      );
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.user.nickname).toBe("New Name");
+    });
+
+    it("updates avatarUrl", async () => {
+      const existing = fakeUser();
+      const updated = fakeUser({ avatarUrl: "https://example.com/new.jpg" });
+      mockDb._results.select = [[existing]];
+      mockDb._results.update = [[updated]];
+
+      const headers = await authHeader("user-1");
+      const res = await app.request(
+        jsonReq("PUT", "/api/me", {
+          headers,
+          body: { avatarUrl: "https://example.com/new.jpg" },
+        })
+      );
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.user.avatarUrl).toBe("https://example.com/new.jpg");
+    });
+
+    it("returns 404 when user not found", async () => {
+      mockDb._results.select = [[]];
+
+      const headers = await authHeader("nonexistent");
+      const res = await app.request(
+        jsonReq("PUT", "/api/me", {
+          headers,
+          body: { nickname: "Ghost" },
+        })
+      );
+      expect(res.status).toBe(404);
+    });
+  });
+});

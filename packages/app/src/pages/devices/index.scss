@@ -101,6 +101,52 @@
     margin-bottom: 16px;
   }
 
+  // Inline edit: device name row
+  .device-name-row {
+    margin-bottom: 16px;
+  }
+
+  .device-name-display {
+    display: flex;
+    align-items: center;
+
+    .device-name-text {
+      font-size: 30px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .edit-icon {
+      font-size: 26px;
+      color: #bbb;
+      margin-left: 12px;
+    }
+  }
+
+  .device-name-input {
+    font-size: 30px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #7b4f9e;
+    padding: 4px 0;
+    width: 100%;
+  }
+
+  // Share authorization button on collar cards
+  .share-auth-btn {
+    margin-top: 16px;
+    background: #7b4f9e;
+    border-radius: 16px;
+    padding: 14px 0;
+    text-align: center;
+
+    .share-auth-text {
+      font-size: 26px;
+      color: #fff;
+      font-weight: 500;
+    }
+  }
+
   // Collar card
   .collar-status-row {
     display: flex;
@@ -220,10 +266,17 @@
         flex: 1;
 
         .desktop-name {
-          display: block;
           font-size: 28px;
           font-weight: 600;
           color: #333;
+          margin-bottom: 6px;
+        }
+
+        .device-name-display {
+          margin-bottom: 6px;
+        }
+
+        .device-name-input {
           margin-bottom: 6px;
         }
 
@@ -240,6 +293,33 @@
             color: #ef6c00;
           }
         }
+      }
+    }
+
+    // Authorization details on desktop cards
+    .desktop-auth-details {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+
+      .desktop-auth-item {
+        margin-bottom: 12px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      .desktop-auth-info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .desktop-auth-label {
+        font-size: 24px;
+        color: #999;
+        display: block;
       }
     }
   }
@@ -267,6 +347,13 @@
       }
     }
 
+    .auth-from-label {
+      display: block;
+      font-size: 24px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
     .auth-actions {
       display: flex;
       gap: 20px;
@@ -292,6 +379,11 @@
         &.reject {
           background: #f0f0f0;
           color: #666;
+        }
+
+        &.revoke {
+          background: #f0f0f0;
+          color: #e53935;
         }
       }
     }
