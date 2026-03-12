@@ -1,11 +1,13 @@
-import { View, Text } from "@tarojs/components";
+import { View, Text, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
+import NavBar from "../../components/NavBar";
+import { ICON_COLLAR, ICON_CAT, ICON_DOG, ICON_DESKTOP } from "../../assets/icons";
 import "./index.scss";
 
 export default function Guide() {
   return (
     <View className="guide-page">
-      <Text className="brand-title">YEHEY</Text>
+      <NavBar title="YEHEY" />
 
       <View
         className="section-card"
@@ -19,7 +21,11 @@ export default function Guide() {
         </Text>
         <View className="illustration-area">
           {/* TODO: 替换为项圈+猫狗剪影插画 */}
-          <Text className="illustration-placeholder">🐕 📿 🐈</Text>
+          <View className="illustration-icons">
+            <Image className="illustration-icon" src={ICON_DOG} mode="aspectFit" />
+            <Image className="illustration-icon" src={ICON_COLLAR} mode="aspectFit" />
+            <Image className="illustration-icon" src={ICON_CAT} mode="aspectFit" />
+          </View>
         </View>
       </View>
 
@@ -37,7 +43,7 @@ export default function Guide() {
         </Text>
         <View className="illustration-area">
           {/* TODO: 替换为水晶球插画 */}
-          <Text className="illustration-placeholder">🔮</Text>
+          <Image className="illustration-icon large" src={ICON_DESKTOP} mode="aspectFit" />
         </View>
       </View>
     </View>

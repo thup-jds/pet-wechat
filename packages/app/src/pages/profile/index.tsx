@@ -3,6 +3,7 @@ import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
+import { ICON_PAW, ICON_DONE, ICON_CAT } from "../../assets/icons";
 import type { User, Pet } from "@pet-wechat/shared";
 import "./index.scss";
 
@@ -171,7 +172,7 @@ export default function Profile() {
             pets.map((pet) => (
               <View key={pet.id} className="pet-card">
                 <View className="pet-avatar-box">
-                  <Text className="pet-avatar-emoji">🐾</Text>
+                  <Image className="pet-avatar-icon" src={ICON_PAW} mode="aspectFit" />
                 </View>
                 <View className="pet-info">
                   <Text className="pet-name">{pet.name}</Text>
@@ -194,7 +195,7 @@ export default function Profile() {
           {MEMBER_BENEFITS.map((b, i) => (
             <View key={i} className="benefit-check-item">
               <View className={`benefit-checkbox ${b.checked ? "checked" : ""}`}>
-                {b.checked && <Text className="check-mark">✓</Text>}
+                {b.checked && <Image className="check-mark-img" src={ICON_DONE} mode="aspectFit" />}
               </View>
               <Text className={`benefit-check-label ${b.checked ? "checked" : ""}`}>
                 {b.label}
@@ -214,10 +215,9 @@ export default function Profile() {
         </Text>
       </View>
 
-      {/* 底部装饰 */}
+      {/* TODO: 替换为真实装饰猫插画 (image-import-30.png) */}
       <View className="bottom-cat">
-        {/* TODO: 替换为实际猫咪装饰图 */}
-        <Text className="cat-deco">🐱</Text>
+        <Image className="cat-deco-img" src={ICON_CAT} mode="aspectFit" />
       </View>
     </View>
   );

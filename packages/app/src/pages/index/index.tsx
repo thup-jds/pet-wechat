@@ -1,26 +1,22 @@
-import { View, Text, Swiper, SwiperItem } from "@tarojs/components";
+import { View, Text, Image, Swiper, SwiperItem } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState, useMemo } from "react";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
-import type { Pet, CollarDevice, DesktopDevice, PetBehavior } from "@pet-wechat/shared";
+import {
+  ICON_PAW,
+  ICON_COLLAR,
+  ICON_DESKTOP,
+  ICON_BATTERY,
+  ICON_SIGNAL,
+  ICON_BELL,
+  ICON_CAT,
+  ICON_DOG,
+} from "../../assets/icons";
+import type { Pet, CollarDevice, DesktopDevice } from "@pet-wechat/shared";
 import "./index.scss";
 
-type HomeState = "not-logged" | "no-pet" | "waiting" | "normal";
-
-const ACTION_EMOJIS: Record<string, string> = {
-  sleeping: "\u{1F634}",
-  lying: "\u{1F6CB}\uFE0F",
-  standing: "\u{1F9CD}",
-  walking: "\u{1F6B6}",
-};
-
-const ACTION_LABELS: Record<string, string> = {
-  sleeping: "\u7761\u89C9\u4E2D",
-  lying: "\u8D96\u7740",
-  standing: "\u7AD9\u7740",
-  walking: "\u6563\u6B65\u4E2D",
-};
+type HomeState = "not-logged" | "no-pet" | "no-device" | "normal";
 
 function getActivityColor(score: number): string {
   if (score < 30) return "#ff3b30";
@@ -29,9 +25,9 @@ function getActivityColor(score: number): string {
 }
 
 function getActivityLabel(score: number): string {
-  if (score < 30) return "\u4F4E";
-  if (score < 70) return "\u4E2D";
-  return "\u9AD8";
+  if (score < 30) return "低";
+  if (score < 70) return "中";
+  return "高";
 }
 
 export default function Index() {
@@ -40,7 +36,6 @@ export default function Index() {
   const [currentPetIndex, setCurrentPetIndex] = useState(0);
   const [collars, setCollars] = useState<CollarDevice[]>([]);
   const [desktops, setDesktops] = useState<DesktopDevice[]>([]);
-  const [behaviors, setBehaviors] = useState<PetBehavior[]>([]);
   const [state, setState] = useState<HomeState>("not-logged");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -62,7 +57,7 @@ export default function Index() {
       own = res.pets;
       authorized = res.authorizedPets;
     } catch {
-      Taro.showToast({ title: "\u7F51\u7EDC\u5F02\u5E38\uFF0C\u8BF7\u91CD\u8BD5", icon: "none" });
+      Taro.showToast({ title: "网络异常，请重试", icon: "none" });
       return;
     }
 
@@ -75,13 +70,10 @@ export default function Index() {
       return;
     }
 
-    // 防止切换后宠物列表变短导致越界
     const safeIndex = currentPetIndex >= petList.length ? 0 : currentPetIndex;
     if (safeIndex !== currentPetIndex) {
       setCurrentPetIndex(safeIndex);
     }
-
-    setState("normal");
 
     try {
       const { collars: collarList } = await request<{ collars: CollarDevice[] }>({
@@ -89,82 +81,99 @@ export default function Index() {
       });
       setCollars(collarList);
 
-      // TODO: 后端暂无桌面设备列表接口，待实现
+      // TODO: 后端暂无桌面设备列表接口，待实现后取消注释并加入判断
       // const { desktops: desktopList } = await request<{ desktops: DesktopDevice[] }>({
       //   url: "/api/devices/desktops",
       // });
       // setDesktops(desktopList);
 
-      const pet = petList[safeIndex];
-      if (pet) {
-        await loadBehaviors(pet.id);
+      // 判断是否有设备配置（目前仅检查项圈，桌面端接口待实现）
+      if (collarList.length === 0 && desktops.length === 0) {
+        setState("no-device");
+      } else {
+        setState("normal");
       }
     } catch {
-      // 设备/行为数据加载失败不影响主页显示
-    }
-  };
-
-  const loadBehaviors = async (petId: string) => {
-    try {
-      const { behaviors: behaviorList } = await request<{ behaviors: PetBehavior[] }>({
-        url: `/api/behaviors/${petId}`,
-      });
-      setBehaviors(behaviorList);
-    } catch {
-      setBehaviors([]);
+      setState("normal");
     }
   };
 
   const currentPet = allPets[currentPetIndex];
-
-  // 根据最新行为推断当前动作
-  const currentAction = useMemo(() => {
-    if (behaviors.length === 0) return "standing";
-    return behaviors[0]?.actionType || "standing";
-  }, [behaviors]);
-
   const activityScore = currentPet?.activityScore ?? 0;
   const activityColor = getActivityColor(activityScore);
+  const isAuthorizedPet = authorizedPets.some((p) => currentPet && p.id === currentPet.id);
+  const petIcon = currentPet?.species === "dog" ? ICON_DOG : ICON_CAT;
 
+  const handleSwiperChange = (e) => {
+    setCurrentPetIndex(e.detail.current);
+  };
+
+  // --- 未登录状态 ---
   if (state === "not-logged") {
     return (
       <View className="home-page">
         <View className="empty-state">
-          <Text className="empty-emoji">{"\u{1F43E}"}</Text>
-          <Text className="empty-text">{"\u767B\u5F55\u540E\u67E5\u770B\u4F60\u7684\u5BA0\u7269"}</Text>
+          <Image className="empty-icon" src={ICON_PAW} mode="aspectFit" />
+          <Text className="empty-text">登录后查看你的宠物</Text>
           <View
             className="btn-primary"
             onClick={() => Taro.navigateTo({ url: "/pages/login/index" })}
           >
-            {"\u53BB\u767B\u5F55"}
+            去登录
           </View>
         </View>
       </View>
     );
   }
 
+  // --- 无宠物状态 (设计稿 c9sf4) ---
   if (state === "no-pet") {
     return (
       <View className="home-page">
-        <View className="empty-state">
-          <Text className="empty-emoji">{"\u{1F431}"}</Text>
-          <Text className="empty-text">{"\u8FD8\u6CA1\u6709\u6DFB\u52A0\u5BA0\u7269"}</Text>
-          <Text className="empty-desc">{"\u7ED1\u5B9A\u9879\u5708\uFF0C\u5F00\u59CB\u8BB0\u5F55\u5BA0\u7269\u7684\u6BCF\u4E00\u5929"}</Text>
+        <View className="top-bar">
+          <View className="pet-profile">
+            <View className="pet-avatar-circle empty">
+              <Image className="avatar-icon" src={ICON_CAT} mode="aspectFit" />
+            </View>
+            <View className="pet-info">
+              <Text className="pet-name">宠物的昵称</Text>
+            </View>
+          </View>
+        </View>
+
+        <View className="center-area">
+          <View className="activity-bar">
+            <Text className="activity-label">活跃值</Text>
+            <View className="activity-track">
+              <View className="activity-fill" style={{ height: "0%", background: "#ccc" }} />
+            </View>
+          </View>
+          <View className="pet-photo-wrapper">
+            {/* TODO: 替换为真实猫咪占位图 (image-import-31.png) */}
+            <View className="pet-photo empty" onClick={() => Taro.navigateTo({ url: "/pages/pet-info/index" })}>
+              <Image className="pet-photo-icon" src={ICON_CAT} mode="aspectFit" />
+              <Text className="pet-photo-hint">点击添加宠物</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* 设备引导卡片 (设计稿 c9sf4 底部) */}
+        <View className="device-cards">
           <View
-            className="btn-primary"
-            onClick={() =>
-              Taro.navigateTo({ url: "/pages/collar-bind/index" })
-            }
+            className="device-card empty"
+            onClick={() => Taro.navigateTo({ url: "/pages/collar-bind/index" })}
           >
-            {"\u7ED1\u5B9A\u9879\u5708"}
+            <Image className="device-card-icon" src={ICON_COLLAR} mode="aspectFit" />
+            <Text className="device-card-label">项圈</Text>
+            <Text className="device-card-hint">点击此处配置项圈</Text>
           </View>
           <View
-            className="btn-secondary"
-            onClick={() =>
-              Taro.navigateTo({ url: "/pages/pet-info/index" })
-            }
+            className="device-card empty"
+            onClick={() => Taro.navigateTo({ url: "/pages/desktop-bind/index" })}
           >
-            {"\u5148\u6DFB\u52A0\u5BA0\u7269"}
+            <Image className="device-card-icon" src={ICON_DESKTOP} mode="aspectFit" />
+            <Text className="device-card-label">桌面端</Text>
+            <Text className="device-card-hint">点击此处配置桌面端</Text>
           </View>
         </View>
       </View>
@@ -178,35 +187,27 @@ export default function Index() {
   // TODO: 桌面设备关联逻辑待实现
   const onlineDesktopCount = desktops.filter((d) => d.status === "online").length;
 
-  const isAuthorizedPet = authorizedPets.some((p) => currentPet && p.id === currentPet.id);
-
-  const handleSwiperChange = async (e) => {
-    const idx = e.detail.current;
-    setCurrentPetIndex(idx);
-    const pet = allPets[idx];
-    if (pet) {
-      await loadBehaviors(pet.id);
-    }
-  };
-
   // TODO: 语音气泡文案待接入后端数据
-  const speechText = "\u4E3B\u4EBA\uFF01\u4E0D\u7ED9\u6211\u5F00\u7A7A\u8C03\uFF01\u6211\u8981\u53CD\u5929\uFF01";
+  const speechText = state === "no-device"
+    ? "主人，我要装上项圈，住进大House"
+    : "主人！不给我开空调！我要反天！";
+
+  // 是否显示"未配置设备"引导
+  const showDeviceGuide = state === "no-device";
 
   return (
     <View className="home-page">
-      {/* 顶部区域：宠物头像 + 名称 + 消息通知 */}
+      {/* 顶部区域 */}
       <View className="top-bar">
         <View className="pet-profile">
-          {/* TODO: 接入宠物头像图片 URL */}
+          {/* TODO: 接入宠物头像图片 URL (image-import-52.png) */}
           <View className="pet-avatar-circle">
-            <Text className="pet-avatar-placeholder">
-              {currentPet?.species === "cat" ? "\u{1F431}" : "\u{1F436}"}
-            </Text>
+            <Image className="avatar-icon" src={petIcon} mode="aspectFit" />
           </View>
           <View className="pet-info">
-            <Text className="pet-name">{currentPet?.name || "\u5BA0\u7269"}</Text>
+            <Text className="pet-name">{currentPet?.name || "宠物"}</Text>
             <Text className="pet-subtitle">
-              {isAuthorizedPet ? "\u6388\u6743\u5BA0\u7269" : "\u5C5E\u4E8E\u4F60\u7684\u5BA0\u7269"}
+              {isAuthorizedPet ? "被授权的宠物" : "属于你的宠物"}
             </Text>
           </View>
         </View>
@@ -214,32 +215,17 @@ export default function Index() {
           className="notification-icon"
           onClick={() => Taro.switchTab({ url: "/pages/messages/index" })}
         >
-          {/* TODO: 替换为实际消息图标 */}
-          <Text className="notification-bell">{"\u{1F514}"}</Text>
+          <Image className="notification-bell-img" src={ICON_BELL} mode="aspectFit" />
           {/* TODO: 接入未读消息数判断是否显示红点 */}
           <View className="notification-dot" />
         </View>
       </View>
 
-      {/* 宠物 Swiper 切换区域 */}
-      <View className="pet-swiper-section">
-        {allPets.length > 1 && (
-          <View className="swiper-dots">
-            {allPets.map((pet, idx) => (
-              <View
-                key={pet.id}
-                className={`swiper-dot ${idx === currentPetIndex ? "active" : ""}`}
-              />
-            ))}
-          </View>
-        )}
-      </View>
-
-      {/* 中间区域：宠物大图 + 语音气泡 + 活跃值 */}
+      {/* 中间区域 */}
       <View className="center-area">
         {/* 左侧活跃值 */}
         <View className="activity-bar">
-          <Text className="activity-label">{"\u6D3B\u8DC3\u503C"}</Text>
+          <Text className="activity-label">活跃值</Text>
           <View className="activity-track">
             <View
               className="activity-fill"
@@ -274,9 +260,7 @@ export default function Index() {
                 <SwiperItem key={pet.id}>
                   <View className="pet-photo">
                     {/* TODO: 接入宠物形象大图 URL */}
-                    <Text className="pet-photo-placeholder">
-                      {pet.species === "cat" ? "\u{1F431}" : "\u{1F436}"}
-                    </Text>
+                    <Image className="pet-photo-icon" src={pet.species === "dog" ? ICON_DOG : ICON_CAT} mode="aspectFit" />
                   </View>
                 </SwiperItem>
               ))}
@@ -284,106 +268,111 @@ export default function Index() {
           ) : (
             <View className="pet-photo">
               {/* TODO: 接入宠物形象大图 URL */}
-              <Text className="pet-photo-placeholder">
-                {currentPet?.species === "cat" ? "\u{1F431}" : "\u{1F436}"}
-              </Text>
+              <Image className="pet-photo-icon" src={petIcon} mode="aspectFit" />
             </View>
           )}
 
           {allPets.length > 1 && (
-            <View className="swipe-hint">
-              <Text className="swipe-arrow">{"<"}</Text>
-              <Text className="swipe-text">{"\u5DE6\u53F3\u6ED1\u52A8\u5207\u6362\u5BA0\u7269"}</Text>
-              <Text className="swipe-arrow">{">"}</Text>
+            <View className="swiper-dots">
+              {allPets.map((pet, idx) => (
+                <View
+                  key={pet.id}
+                  className={`swiper-dot ${idx === currentPetIndex ? "active" : ""}`}
+                />
+              ))}
             </View>
           )}
-        </View>
-      </View>
-
-      {/* 宠物动态（行为状态） */}
-      <View className="behavior-section">
-        <Text className="behavior-section-title">{"\u5B9E\u65F6\u52A8\u6001"}</Text>
-        <View className="behavior-actions">
-          {(["sleeping", "lying", "standing", "walking"] as const).map((action) => (
-            <View
-              key={action}
-              className={`behavior-action-item ${currentAction === action ? "active" : ""}`}
-            >
-              <Text className="behavior-action-emoji">{ACTION_EMOJIS[action]}</Text>
-              <Text className={`behavior-action-label ${currentAction === action ? "active" : ""}`}>
-                {ACTION_LABELS[action]}
-              </Text>
-            </View>
-          ))}
         </View>
       </View>
 
       {/* 底部设备卡片 */}
       <View className="device-cards">
-        <View className="device-card" onClick={() => Taro.switchTab({ url: "/pages/devices/index" })}>
-          <View className="device-card-header">
-            {/* TODO: 替换为项圈设备图标 */}
-            <Text className="device-icon">{"\u{1F4FF}"}</Text>
-            <Text className="device-name">
-              {currentCollar?.name || `${currentPet?.name || "\u5BA0\u7269"}\u7684\u5C0F\u5708\u5708`}
-            </Text>
-          </View>
-          <View className="device-card-status">
+        {showDeviceGuide ? (
+          <>
+            {/* 设计稿 QfXnu: 未配置设备引导 */}
             <View
-              className={`status-dot ${currentCollar?.status === "online" ? "online" : "offline"}`}
-            />
-            <Text className="status-text">
-              {currentCollar
-                ? currentCollar.status === "online"
-                  ? "\u5728\u7EBF"
-                  : "\u79BB\u7EBF"
-                : "\u672A\u7ED1\u5B9A"}
-            </Text>
-            {currentCollar?.battery != null && (
-              <Text className="battery-text">
-                {"\u{1F50B}"} {currentCollar.battery}%
-              </Text>
-            )}
-            {currentCollar?.signal != null && (
-              <Text className="signal-text">
-                {"\u{1F4F6}"} {currentCollar.signal}%
-              </Text>
-            )}
-          </View>
-        </View>
+              className="device-card empty"
+              onClick={() => Taro.navigateTo({ url: "/pages/collar-bind/index" })}
+            >
+              <Image className="device-card-icon" src={ICON_COLLAR} mode="aspectFit" />
+              <Text className="device-card-label">项圈</Text>
+              <Text className="device-card-hint">点击此处配置项圈</Text>
+            </View>
+            <View
+              className="device-card empty"
+              onClick={() => Taro.navigateTo({ url: "/pages/desktop-bind/index" })}
+            >
+              <Image className="device-card-icon" src={ICON_DESKTOP} mode="aspectFit" />
+              <Text className="device-card-label">桌面端</Text>
+              <Text className="device-card-hint">点击此处配置桌面端</Text>
+            </View>
+          </>
+        ) : (
+          <>
+            <View className="device-card" onClick={() => Taro.switchTab({ url: "/pages/devices/index" })}>
+              <View className="device-card-header">
+                <Image className="device-icon-img" src={ICON_COLLAR} mode="aspectFit" />
+                <Text className="device-name">
+                  {currentCollar?.name || `${currentPet?.name || "宠物"}的小圈圈`}
+                </Text>
+              </View>
+              <View className="device-card-status">
+                <View
+                  className={`status-dot ${currentCollar?.status === "online" ? "online" : "offline"}`}
+                />
+                <Text className="status-text">
+                  {currentCollar
+                    ? currentCollar.status === "online" ? "在线" : "离线"
+                    : "未绑定"}
+                </Text>
+                {currentCollar?.battery != null && (
+                  <View className="battery-info">
+                    <Image className="status-icon" src={ICON_BATTERY} mode="aspectFit" />
+                    <Text className="status-value">{currentCollar.battery}%</Text>
+                  </View>
+                )}
+                {currentCollar?.signal != null && (
+                  <View className="signal-info">
+                    <Image className="status-icon" src={ICON_SIGNAL} mode="aspectFit" />
+                    <Text className="status-value">{currentCollar.signal}%</Text>
+                  </View>
+                )}
+              </View>
+            </View>
 
-        <View className="device-card" onClick={() => Taro.switchTab({ url: "/pages/devices/index" })}>
-          <View className="device-card-header">
-            {/* TODO: 替换为桌面设备图标 */}
-            <Text className="device-icon">{"\u{1F5A5}\uFE0F"}</Text>
-            <Text className="device-name">
-              {`${currentPet?.name || "\u5BA0\u7269"}\u7684\u79D8\u5BC6\u57FA\u5730`}
-            </Text>
-          </View>
-          <View className="device-card-status">
-            <View className={`status-dot ${onlineDesktopCount > 0 ? "online" : "offline"}`} />
-            <Text className="status-text">
-              {onlineDesktopCount > 0
-                ? `${onlineDesktopCount}\u4E2A\u5728\u7EBF\u8BBE\u5907`
-                : "\u65E0\u5728\u7EBF\u8BBE\u5907"}
-            </Text>
-          </View>
-        </View>
+            <View className="device-card" onClick={() => Taro.switchTab({ url: "/pages/devices/index" })}>
+              <View className="device-card-header">
+                <Image className="device-icon-img" src={ICON_DESKTOP} mode="aspectFit" />
+                <Text className="device-name">
+                  {`${currentPet?.name || "宠物"}的秘密基地`}
+                </Text>
+              </View>
+              <View className="device-card-status">
+                <View className={`status-dot ${onlineDesktopCount > 0 ? "online" : "offline"}`} />
+                <Text className="status-text">
+                  {onlineDesktopCount > 0
+                    ? `${onlineDesktopCount}个在线设备`
+                    : "无在线设备"}
+                </Text>
+              </View>
+            </View>
+          </>
+        )}
       </View>
 
       {/* 右侧管理设备侧边栏触发器 */}
       <View className="sidebar-trigger" onClick={() => setSidebarOpen(!sidebarOpen)}>
-        <Text className="sidebar-text">{"\u7BA1"}</Text>
-        <Text className="sidebar-text">{"\u7406"}</Text>
-        <Text className="sidebar-text">{"\u8BBE"}</Text>
-        <Text className="sidebar-text">{"\u5907"}</Text>
+        <Text className="sidebar-text">管</Text>
+        <Text className="sidebar-text">理</Text>
+        <Text className="sidebar-text">设</Text>
+        <Text className="sidebar-text">备</Text>
       </View>
 
       {/* 侧边栏弹出层 */}
       {sidebarOpen && (
         <View className="sidebar-overlay" onClick={() => setSidebarOpen(false)}>
           <View className="sidebar-panel" onClick={(e) => e.stopPropagation()}>
-            <Text className="sidebar-title">{"\u8BBE\u5907\u7BA1\u7406"}</Text>
+            <Text className="sidebar-title">设备管理</Text>
             <View
               className="sidebar-item"
               onClick={() => {
@@ -391,7 +380,7 @@ export default function Index() {
                 Taro.switchTab({ url: "/pages/devices/index" });
               }}
             >
-              <Text>{"\u67E5\u770B\u6240\u6709\u8BBE\u5907"}</Text>
+              <Text>查看所有设备</Text>
             </View>
           </View>
         </View>

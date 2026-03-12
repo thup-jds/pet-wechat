@@ -1,6 +1,7 @@
 import { View, Text, Input } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
+import NavBar from "../../components/NavBar";
 import { request } from "../../utils/request";
 import "./index.scss";
 
@@ -11,6 +12,7 @@ export default function WifiConfig() {
 
   // TODO: 接入真实 WiFi 配置流程，当前为 Mock
   const handleConfigure = async () => {
+    if (loading) return;
     if (!ssid) {
       Taro.showToast({ title: "请输入 WiFi 名称", icon: "none" });
       return;
@@ -29,15 +31,19 @@ export default function WifiConfig() {
       });
 
       Taro.showLoading({ title: "配置中..." });
+      // TODO: 接入真实 WiFi 配置流程，当前模拟延迟后跳转结果页
       setTimeout(() => {
         Taro.hideLoading();
-        Taro.showToast({ title: "配置成功", icon: "success" });
-        setTimeout(() => {
-          Taro.navigateTo({ url: `/pages/pet-info/index?collarId=${collar.id}` });
-        }, 1000);
+        // Mock: 随机成功/失败，实际应根据设备返回结果
+        const success = true;
+        Taro.navigateTo({
+          url: `/pages/wifi-result/index?success=${success}&collarId=${collar.id}`,
+        });
       }, 2000);
     } catch (e: any) {
-      Taro.showToast({ title: e.message || "配置失败", icon: "none" });
+      Taro.navigateTo({
+        url: "/pages/wifi-result/index?success=false",
+      });
     } finally {
       setLoading(false);
     }
@@ -45,6 +51,7 @@ export default function WifiConfig() {
 
   return (
     <View className="wifi-config-page container">
+      <NavBar title="WiFi 配置" />
       <View className="step-indicator">
         <View className="step active">
           <Text className="step-num">1</Text>

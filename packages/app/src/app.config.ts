@@ -6,6 +6,7 @@ export default defineAppConfig({
     "pages/guide/index",
     "pages/collar-bind/index",
     "pages/wifi-config/index",
+    "pages/wifi-result/index",
     "pages/pet-info/index",
     "pages/pet-avatar/index",
     "pages/avatar-progress/index",

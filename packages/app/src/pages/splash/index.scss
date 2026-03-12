@@ -1,16 +1,19 @@
+// 设计稿: SM9fm - Splash 页
+// 背景 #ededed, 猫爪图标 425x425, 进度条 604x12
+
 .splash-page {
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
+  background: #ededed;
 }
 
 .splash-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
+  gap: 32px;
 }
 
 .logo-area {
@@ -21,27 +24,31 @@
 }
 
 .logo-icon {
-  font-size: 120px;
+  // 设计稿 425x425 → Taro 750/1284 ≈ 0.584 → ~248px
+  width: 248px;
+  height: 248px;
 }
 
 .logo-text {
+  font-family: "Inter", sans-serif;
   font-size: 48px;
-  font-weight: 700;
+  font-weight: 600;
   color: #333;
   letter-spacing: 8px;
 }
 
 .progress-bar {
-  width: 400px;
-  height: 8px;
-  background: #ddd;
+  // 设计稿 604x12 → ~352x7
+  width: 352px;
+  height: 7px;
+  background: #d9d9d9;
   border-radius: 4px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: #333;
+  background: #ffffff;
   border-radius: 4px;
   transition: width 0.3s ease;
 }

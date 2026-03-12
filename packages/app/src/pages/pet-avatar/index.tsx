@@ -2,6 +2,8 @@ import { View, Text, Image } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect } from "react";
 import { request, getToken } from "../../utils/request";
+import NavBar from "../../components/NavBar";
+import { ICON_PAW, ICON_CAT, ICON_DOG, ICON_PHOTO } from "../../assets/icons";
 import type { Pet, User } from "@pet-wechat/shared";
 import "./index.scss";
 
@@ -78,11 +80,11 @@ export default function PetAvatar() {
 
   return (
     <View className="pet-avatar-page">
-      <Text className="brand-title">YEHEY</Text>
+      <NavBar title="定制宠物动态" />
 
-      {/* TODO: 替换为半透明猫狗背景插画 */}
+      {/* TODO: 替换为半透明猫狗背景插画 (image-import-24.png) */}
       <View className="bg-illustration">
-        <Text className="bg-illustration-emoji">🐾</Text>
+        <Image className="bg-illustration-icon" src={ICON_PAW} mode="aspectFit" />
       </View>
 
       <View className="main-card">
@@ -90,9 +92,7 @@ export default function PetAvatar() {
 
         <View className="pet-info-brief">
           <View className="pet-avatar-icon">
-            <Text className="pet-avatar-emoji">
-              {pet?.species === "dog" ? "🐶" : "🐱"}
-            </Text>
+            <Image className="pet-avatar-img" src={pet?.species === "dog" ? ICON_DOG : ICON_CAT} mode="aspectFit" />
           </View>
           <View className="pet-meta">
             <Text className="pet-name">{pet?.name ?? "我的宠物"}</Text>
@@ -137,7 +137,7 @@ export default function PetAvatar() {
             </View>
           ) : (
             <View className="upload-placeholder">
-              <Text className="upload-icon">📷</Text>
+              <Image className="upload-icon-img" src={ICON_PHOTO} mode="aspectFit" />
               <Text className="upload-text">点击上传照片</Text>
             </View>
           )}

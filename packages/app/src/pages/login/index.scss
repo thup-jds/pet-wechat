@@ -1,5 +1,6 @@
-// Design width: 1284px, Taro design width: 750px
-// Scale factor: 750/1284 ≈ 0.584
+// 设计稿: dAxim - 登录注册页
+// 设计宽度 1284px, Taro designWidth 750px, 缩放 ≈ 0.584
+// 背景 #ededed, 白色卡片 cornerRadius [600,600,0,0]
 
 .login-page {
   min-height: 100vh;
@@ -13,45 +14,47 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 100px;
-  padding-bottom: 40px;
+  padding-top: 50px; // 设计稿 y=86 → ~50px
+  padding-bottom: 20px;
   flex-shrink: 0;
 
   .brand-name {
     font-family: "Inter", sans-serif;
-    font-size: 28px;
+    font-size: 28px; // 设计稿 48 * 0.584
     font-weight: 600;
     letter-spacing: 4px;
-    color: #333;
+    color: #000;
   }
 }
 
-.illustration-placeholder {
-  width: 400px;
-  height: 300px;
+// 猫狗插画区域 (设计稿 995x525 → ~581x307)
+.illustration-area {
+  width: 581px;
+  height: 307px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 40px 0;
+  margin: 24px 0;
 }
 
-.illustration-text {
-  font-size: 120px;
+.illustration-img {
+  width: 100%;
+  height: 100%;
 }
 
 .welcome-title {
   font-family: "Inter", sans-serif;
-  font-size: 37px;
+  font-size: 37px; // 设计稿 64 * 0.584
   font-weight: 600;
-  color: #333;
-  margin-bottom: 20px;
+  color: #000;
+  margin-bottom: 10px;
 }
 
 .login-card {
   flex: 1;
   background: #fff;
-  border-radius: 350px 350px 0 0;
-  padding: 100px 60px 60px;
+  border-radius: 350px 350px 0 0; // 设计稿 600 * 0.584
+  padding: 80px 50px 60px; // 按钮距卡片顶部留白
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -61,20 +64,22 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  margin-bottom: 48px;
+  gap: 24px; // 设计稿按钮间距 (1878-1698-120) * 0.584 ≈ 35, 实际视觉 24 合适
+  margin-bottom: 36px;
 }
 
+// 设计稿按钮: 750x120, cornerRadius 30
 .btn-phone {
   width: 100% !important;
-  height: 70px !important;
+  height: 70px !important; // 120 * 0.584
   line-height: 70px !important;
   background: #d3d3d3cc !important;
-  color: #333 !important;
+  color: #000 !important;
   border: none !important;
-  border-radius: 18px !important;
-  font-size: 28px !important;
-  font-weight: 500;
+  border-radius: 18px !important; // 30 * 0.584
+  font-family: "Inter", sans-serif;
+  font-size: 21px !important; // 36 * 0.584
+  font-weight: normal;
 }
 
 .btn-wechat {
@@ -82,55 +87,68 @@
   height: 70px !important;
   line-height: 70px !important;
   background: #f8f8f8cc !important;
-  color: #333 !important;
+  color: #000 !important;
   border: none !important;
   border-radius: 18px !important;
-  font-size: 28px !important;
-  font-weight: 500;
+  font-family: "Inter", sans-serif;
+  font-size: 21px !important;
+  font-weight: normal;
 }
 
-.agreement {
+// 设计稿: "本人已阅读并同意以下条款" 32px
+.agreement-header {
+  font-family: "Inter", sans-serif;
+  font-size: 19px; // 32 * 0.584
+  color: #000;
+  margin-bottom: 16px;
+}
+
+// 设计稿: 两个独立 checkbox 行, checkbox 60x60, 文字 28px
+.agreement-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 32px;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 0 10px;
 
   .checkbox {
-    width: 35px;
+    width: 35px; // 60 * 0.584
     height: 35px;
-    border: 2px solid #ccc;
     border-radius: 4px;
     margin-right: 12px;
     flex-shrink: 0;
-    background: #ededed;
+    background: #d9d9d9;
 
     &.checked {
       background: #333;
-      border-color: #333;
     }
   }
 
-  .agreement-text {
-    font-size: 22px;
-    color: #999;
+  .agreement-detail {
+    font-family: "Inter", sans-serif;
+    font-size: 16px; // 28 * 0.584
+    color: #000;
+    line-height: 1.5;
+    flex: 1;
   }
 }
 
+// 设计稿: "还没有账号？立即注册" 32px
 .register-link {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 16px;
+  margin-top: 48px;
 
   .register-text {
-    font-size: 24px;
-    color: #999;
+    font-size: 19px; // 32 * 0.584
+    color: #000;
   }
 
   .register-action {
-    font-size: 24px;
-    color: #333;
+    font-size: 19px;
+    color: #000;
     font-weight: 500;
-    margin-left: 8px;
+    margin-left: 4px;
   }
 }

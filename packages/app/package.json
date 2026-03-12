@@ -29,7 +29,9 @@
   ],
   "dependencies": {
     "@tarojs/components": "4.1.11",
+    "@tarojs/react": "4.1.11",
     "@tarojs/runtime": "4.1.11",
+    "@tarojs/shared": "4.1.11",
     "@tarojs/taro": "4.1.11",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -37,16 +39,21 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.0",
-    "babel-preset-taro": "4.1.11",
+    "@babel/preset-env": "^7.29.0",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
     "@tarojs/cli": "4.1.11",
     "@tarojs/helper": "4.1.11",
     "@tarojs/plugin-framework-react": "4.1.11",
-    "@tarojs/plugin-sass": "2.2.10",
+    "@tarojs/plugin-platform-weapp": "^4.1.11",
+    "@tarojs/plugin-sass": "2.2.22",
     "@tarojs/webpack5-runner": "4.1.11",
-    "@types/react": "^18.0.0",
     "@types/node": "^18.0.0",
+    "@types/react": "^18.0.0",
+    "babel-preset-taro": "4.1.11",
     "sass": "^1.62.0",
+    "tsconfig-paths-webpack-plugin": "^4.2.0",
     "typescript": "^5.0.0",
-    "webpack": "^5.0.0"
+    "webpack": "^5.91.0"
   }
 }

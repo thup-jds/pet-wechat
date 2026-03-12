@@ -1,7 +1,8 @@
-import { View, Text } from "@tarojs/components";
+import { View, Text, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";
 import { isLoggedIn } from "../../utils/storage";
+import { ICON_PAW } from "../../assets/icons";
 import "./index.scss";
 
 export default function Splash() {
@@ -13,7 +14,6 @@ export default function Splash() {
         const next = prev + Math.random() * 20 + 10;
         if (next >= 100) {
           clearInterval(timer);
-          // 加载完成后跳转
           setTimeout(() => {
             if (isLoggedIn()) {
               Taro.switchTab({ url: "/pages/index/index" });
@@ -34,7 +34,8 @@ export default function Splash() {
     <View className="splash-page">
       <View className="splash-content">
         <View className="logo-area">
-          <Text className="logo-icon">🐾</Text>
+          {/* 设计稿: 深灰猫爪矢量图 425x425 (image-import-24.png / TY49r) */}
+          <Image className="logo-icon" src={ICON_PAW} mode="aspectFit" />
           <Text className="logo-text">YEHEY</Text>
         </View>
         <View className="progress-bar">

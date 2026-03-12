@@ -1,8 +1,8 @@
 {
-  "miniprogramRoot": "./dist/",
+  "miniprogramRoot": "dist/",
   "projectname": "pet-wechat-app",
   "description": "宠物微信小程序",
-  "appid": "touristappid",
+  "appid": "wx8f7c3d89da8b0eb1",
   "setting": {
     "urlCheck": false,
     "es6": false,
@@ -42,11 +42,15 @@
     "useCompilerPlugins": false
   },
   "compileType": "miniprogram",
-  "libVersion": "2.28.3",
-  "srcMiniprogramRoot": "./dist/",
+  "libVersion": "3.14.3",
+  "srcMiniprogramRoot": "dist/",
   "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
+  },
+  "packOptions": {
+    "ignore": [],
+    "include": []
   }
 }

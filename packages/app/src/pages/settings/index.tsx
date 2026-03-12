@@ -1,7 +1,9 @@
-import { View, Text } from "@tarojs/components";
+import { View, Text, Image } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import { clearToken, request } from "../../utils/request";
+import NavBar from "../../components/NavBar";
+import { ICON_CAT, ICON_PLUS, ICON_ARROW_RIGHT } from "../../assets/icons";
 import type { Pet } from "@pet-wechat/shared";
 import "./index.scss";
 
@@ -64,9 +66,7 @@ export default function Settings() {
 
   return (
     <View className="settings-page">
-      <View className="nav-bar">
-        <Text className="nav-title">设置</Text>
-      </View>
+      <NavBar title="设置" />
 
       <View className="settings-content">
         {/* My pets section */}
@@ -92,7 +92,7 @@ export default function Settings() {
               onClick={() => Taro.navigateTo({ url: "/pages/pet-info/index" })}
             >
               <View className="pet-thumb-avatar add">
-                <Text className="pet-thumb-plus">+</Text>
+                <Image className="pet-thumb-plus-img" src={ICON_PLUS} mode="aspectFit" />
               </View>
               <Text className="pet-thumb-name">添加</Text>
             </View>
@@ -108,7 +108,7 @@ export default function Settings() {
               onClick={showComingSoon}
             >
               <Text className="item-label">{item.label}</Text>
-              <Text className="item-arrow">›</Text>
+              <Image className="item-arrow-img" src={ICON_ARROW_RIGHT} mode="aspectFit" />
             </View>
           ))}
         </View>
@@ -122,7 +122,7 @@ export default function Settings() {
               onClick={showComingSoon}
             >
               <Text className="item-label">{item.label}</Text>
-              <Text className="item-arrow">›</Text>
+              <Image className="item-arrow-img" src={ICON_ARROW_RIGHT} mode="aspectFit" />
             </View>
           ))}
         </View>
@@ -137,9 +137,9 @@ export default function Settings() {
           退出登录
         </View>
 
-        {/* Decorative cat */}
+        {/* TODO: 替换为真实装饰猫插画 (image-import-30.png) */}
         <View className="deco-cat-wrap">
-          <Text className="deco-cat-emoji">🐱</Text>
+          <Image className="deco-cat-img" src={ICON_CAT} mode="aspectFit" />
         </View>
       </View>
     </View>

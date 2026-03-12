@@ -2,6 +2,8 @@ import { View, Text, Image } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect, useRef } from "react";
 import { request } from "../../utils/request";
+import NavBar from "../../components/NavBar";
+import { ICON_CAT, ICON_CHECK_GREEN, ICON_ERROR_RED, ICON_DONE } from "../../assets/icons";
 import type { AvatarStatus } from "@pet-wechat/shared";
 import "./index.scss";
 
@@ -74,7 +76,7 @@ export default function AvatarProgress() {
 
   return (
     <View className="progress-page">
-      <Text className="brand-title">YEHEY</Text>
+      <NavBar title="定制进度" />
 
       <View className="main-card">
         <Text className="card-title">正在定制专属动态</Text>
@@ -106,14 +108,14 @@ export default function AvatarProgress() {
                   }}
                 >
                   {/* TODO: 替换为宠物图标 */}
-                  <Text className="ring-icon">🐱</Text>
+                  <Image className="ring-icon-img" src={ICON_CAT} mode="aspectFit" />
                 </View>
               </View>
             </View>
             <Text className="progress-percent">{progress}%</Text>
             {isComplete && (
               <View className="check-badge">
-                <Text className="check-icon">✓</Text>
+                <Image className="check-icon-img" src={ICON_DONE} mode="aspectFit" />
               </View>
             )}
           </View>
@@ -137,7 +139,7 @@ export default function AvatarProgress() {
           <View className="result-preview">
             {/* TODO: 替换为真实生成的宠物动态图像 */}
             <View className="result-placeholder">
-              <Text className="result-placeholder-emoji">🎉</Text>
+              <Image className="result-placeholder-img" src={ICON_CHECK_GREEN} mode="aspectFit" />
               <Text className="result-placeholder-text">动态图像已生成</Text>
             </View>
             <View className="swipe-hint">
@@ -148,7 +150,7 @@ export default function AvatarProgress() {
           </View>
         ) : status === "failed" ? (
           <View className="failed-section">
-            <Text className="failed-emoji">😞</Text>
+            <Image className="failed-icon-img" src={ICON_ERROR_RED} mode="aspectFit" />
             <Text className="failed-text">
               定制失败，照片可能不太清晰，请重新上传
             </Text>

@@ -1,7 +1,15 @@
-import { View, Text, Input, Picker } from "@tarojs/components";
+import { View, Text, Image, Input, Picker } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect, useCallback } from "react";
+import NavBar from "../../components/NavBar";
 import { request } from "../../utils/request";
+import {
+  ICON_PAW,
+  ICON_CAT,
+  ICON_DOG,
+  ICON_ARROW_LEFT,
+  ICON_ARROW_RIGHT,
+} from "../../assets/icons";
 import type { Pet, Species, Gender } from "@pet-wechat/shared";
 import "./index.scss";
 
@@ -166,19 +174,19 @@ export default function PetInfo() {
 
   return (
     <View className="pet-info-page">
-      <Text className="brand-title">YEHEY</Text>
+      <NavBar title="宠物信息" />
 
       {/* Pet switcher top bar */}
       {allPets.length > 0 && (
         <View className="pet-switcher">
           <View className="switcher-arrow" onClick={() => switchPet("prev")}>
-            <Text className="switcher-arrow-text">‹</Text>
+            <Image className="switcher-arrow-img" src={ICON_ARROW_LEFT} mode="aspectFit" />
           </View>
           <Text className="switcher-pet-name">
             {allPets[currentPetIndex]?.name || ""}
           </Text>
           <View className="switcher-arrow" onClick={() => switchPet("next")}>
-            <Text className="switcher-arrow-text">›</Text>
+            <Image className="switcher-arrow-img" src={ICON_ARROW_RIGHT} mode="aspectFit" />
           </View>
         </View>
       )}
@@ -188,7 +196,7 @@ export default function PetInfo() {
         className="bg-illustration"
         onLongPress={handleImageLongPress}
       >
-        <Text className="bg-illustration-emoji">🐾</Text>
+        <Image className="bg-illustration-icon" src={ICON_PAW} mode="aspectFit" />
         {isProcessing && (
           <View className="progress-ring-overlay">
             <View className="progress-ring" />
@@ -206,8 +214,8 @@ export default function PetInfo() {
             className={`species-option ${species === "cat" ? "active" : ""}`}
             onClick={() => setSpecies("cat")}
           >
-            {/* TODO: 替换为可爱猫咪图标 */}
-            <Text className="species-icon">🐱</Text>
+            {/* 设计稿: 猫咪图标 (image-import-17.png / Jk3FN) */}
+            <Image className="species-icon-img" src={ICON_CAT} mode="aspectFit" />
             <Text className="species-label">猫咪</Text>
           </View>
           <Text className="species-or">or</Text>
@@ -215,8 +223,8 @@ export default function PetInfo() {
             className={`species-option ${species === "dog" ? "active" : ""}`}
             onClick={() => setSpecies("dog")}
           >
-            {/* TODO: 替换为可爱狗狗图标 */}
-            <Text className="species-icon">🐶</Text>
+            {/* 设计稿: 狗狗图标 (image-import-10.png / E0V0d) */}
+            <Image className="species-icon-img" src={ICON_DOG} mode="aspectFit" />
             <Text className="species-label">狗狗</Text>
           </View>
         </View>

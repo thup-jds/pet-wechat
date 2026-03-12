@@ -116,10 +116,11 @@
       color: #333;
     }
 
-    .edit-icon {
-      font-size: 26px;
-      color: #bbb;
+    .edit-icon-img {
+      width: 28px;
+      height: 28px;
       margin-left: 12px;
+      opacity: 0.5;
     }
   }
 
@@ -135,10 +136,18 @@
   // Share authorization button on collar cards
   .share-auth-btn {
     margin-top: 16px;
-    background: #7b4f9e;
+    background: #333;
     border-radius: 16px;
     padding: 14px 0;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    .share-icon {
+      width: 28px;
+      height: 28px;
+    }
 
     .share-auth-text {
       font-size: 26px;
@@ -257,8 +266,9 @@
         justify-content: center;
         margin-right: 20px;
 
-        .desktop-icon-text {
-          font-size: 36px;
+        .desktop-icon-img {
+          width: 48px;
+          height: 48px;
         }
       }
 
@@ -389,14 +399,23 @@
     }
   }
 
-  // Add device button
+  // 设计稿: 添加新设备按钮 (加号图标 + 文字)
   .add-device-btn {
     background: #fff;
     border-radius: 48px;
     padding: 24px 0;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     margin-top: 16px;
     border: 2px dashed #ddd;
+
+    .add-icon {
+      width: 32px;
+      height: 32px;
+      opacity: 0.6;
+    }
 
     .add-device-text {
       font-size: 28px;
@@ -418,8 +437,9 @@
     text-align: center;
     margin-top: 48px;
 
-    .deco-cat-emoji {
-      font-size: 80px;
+    .deco-cat-img {
+      width: 120px;
+      height: 120px;
       opacity: 0.3;
     }
   }

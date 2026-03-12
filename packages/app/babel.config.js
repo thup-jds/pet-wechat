@@ -1,7 +1,7 @@
 module.exports = {
   presets: [
     [
-      '@tarojs/babel-preset-taro',
+      'babel-preset-taro',
       {
         framework: 'react',
         ts: true,

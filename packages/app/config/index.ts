@@ -17,7 +17,10 @@ export default defineConfig(async (merge, { command, mode }) => {
     },
     sourceRoot: 'src',
     outputRoot: 'dist',
-    plugins: ['@tarojs/plugin-framework-react', '@tarojs/plugin-sass'],
+    plugins: [
+      '@tarojs/plugin-framework-react',
+      ['@tarojs/plugin-sass', { implementation: require('sass') }],
+    ],
     defineConstants: {},
     copy: {
       patterns: [],

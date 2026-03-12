@@ -40,10 +40,9 @@
       justify-content: center;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
-      .switcher-arrow-text {
-        font-size: 36px;
-        color: #333;
-        line-height: 1;
+      .switcher-arrow-img {
+        width: 28px;
+        height: 28px;
       }
     }
 
@@ -66,8 +65,9 @@
     z-index: 1;
     margin-bottom: 24px;
 
-    .bg-illustration-emoji {
-      font-size: 160px;
+    .bg-illustration-icon {
+      width: 180px;
+      height: 180px;
       opacity: 0.15;
     }
 
@@ -147,8 +147,9 @@
         box-shadow: 0 0 0 3px #ff9800;
       }
 
-      .species-icon {
-        font-size: 56px;
+      .species-icon-img {
+        width: 56px;
+        height: 56px;
       }
 
       .species-label {

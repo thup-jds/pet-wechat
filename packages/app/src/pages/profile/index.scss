@@ -188,8 +188,9 @@
       justify-content: center;
       flex-shrink: 0;
 
-      .pet-avatar-emoji {
-        font-size: 36px;
+      .pet-avatar-icon {
+        width: 48px;
+        height: 48px;
       }
     }
 
@@ -245,10 +246,9 @@
         border-color: #ff9800;
       }
 
-      .check-mark {
-        font-size: 22px;
-        color: #fff;
-        font-weight: bold;
+      .check-mark-img {
+        width: 24px;
+        height: 24px;
       }
     }
 
@@ -298,8 +298,9 @@
   justify-content: flex-end;
   padding: 0 48px 40px;
 
-  .cat-deco {
-    font-size: 80px;
+  .cat-deco-img {
+    width: 120px;
+    height: 120px;
     opacity: 0.3;
   }
 }

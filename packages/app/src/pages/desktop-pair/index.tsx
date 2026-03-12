@@ -1,7 +1,9 @@
-import { View, Text, ScrollView } from "@tarojs/components";
+import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState, useEffect } from "react";
+import NavBar from "../../components/NavBar";
 import { request } from "../../utils/request";
+import { ICON_CAT, ICON_DOG, ICON_DESKTOP } from "../../assets/icons";
 import type { Pet, DesktopDevice } from "@pet-wechat/shared";
 import "./index.scss";
 
@@ -40,7 +42,7 @@ export default function DesktopPair() {
 
   return (
     <View className="desktop-pair-page container">
-      <Text className="page-title">项圈配对桌面端</Text>
+      <NavBar title="项圈配对桌面端" />
 
       <Text className="section-title">选择宠物</Text>
       <ScrollView className="list-section" scrollY>
@@ -53,9 +55,10 @@ export default function DesktopPair() {
               className={`list-item card ${selectedPet === pet.id ? "selected" : ""}`}
               onClick={() => setSelectedPet(pet.id)}
             >
-              <Text className="item-name">
-                {pet.species === "cat" ? "🐱" : "🐶"} {pet.name}
-              </Text>
+              <View className="item-name-row">
+                <Image className="item-species-icon" src={pet.species === "dog" ? ICON_DOG : ICON_CAT} mode="aspectFit" />
+                <Text className="item-name">{pet.name}</Text>
+              </View>
             </View>
           ))
         )}
@@ -72,7 +75,10 @@ export default function DesktopPair() {
               className={`list-item card ${selectedDesktop === d.id ? "selected" : ""}`}
               onClick={() => setSelectedDesktop(d.id)}
             >
-              <Text className="item-name">🖥️ {d.name}</Text>
+              <View className="item-name-row">
+                <Image className="item-desktop-icon" src={ICON_DESKTOP} mode="aspectFit" />
+                <Text className="item-name">{d.name}</Text>
+              </View>
             </View>
           ))
         )}

@@ -1,6 +1,7 @@
 import { View, Text, Input } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
+import NavBar from "../../components/NavBar";
 import { request } from "../../utils/request";
 import "./index.scss";
 
@@ -37,7 +38,7 @@ export default function DesktopBind() {
 
   return (
     <View className="desktop-bind-page container">
-      <Text className="page-title">绑定桌面端</Text>
+      <NavBar title="绑定桌面端" />
       <Text className="bind-desc">
         将桌面端设备与小程序关联，随时在桌面看到宠物动态
       </Text>

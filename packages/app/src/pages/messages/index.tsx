@@ -1,23 +1,44 @@
-import { View, Text, ScrollView } from "@tarojs/components";
+import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import { request } from "../../utils/request";
+import {
+  ICON_CHECK_GREEN,
+  ICON_ERROR_RED,
+  ICON_SETTINGS,
+  ICON_PAW_SMALL,
+  ICON_CAT,
+} from "../../assets/icons";
 import type { Message, MessageType } from "@pet-wechat/shared";
 import "./index.scss";
 
 type TabType = "all" | MessageType;
 
-/** 根据消息内容推断是通过/拒绝/系统类型，用于图标展示 */
+/** 根据消息内容推断变体，决定图标 */
 function getMessageVariant(
   msg: Message
-): "approved" | "rejected" | "system" {
-  if (msg.type === "system") return "system";
+): "approved" | "rejected" | "system" | "custom" {
+  if (msg.type === "system") {
+    // 设计稿: 定制完成消息用猫爪图标
+    if (msg.title.includes("定制") || msg.title.includes("图像")) {
+      return "custom";
+    }
+    return "system";
+  }
   // TODO: 后端暂无 subType 字段，暂通过 title 关键词判断
   if (msg.title.includes("拒绝") || msg.title.includes("rejected")) {
     return "rejected";
   }
   return "approved";
 }
+
+// 设计稿图标映射: 绿勾=授权通过, 红X=拒绝, 齿轮=系统, 猫爪=定制完成
+const VARIANT_ICONS = {
+  approved: ICON_CHECK_GREEN,
+  rejected: ICON_ERROR_RED,
+  system: ICON_SETTINGS,
+  custom: ICON_PAW_SMALL,
+};
 
 function formatTime(dateStr: string): string {
   const d = new Date(dateStr);
@@ -90,13 +111,10 @@ export default function Messages() {
   };
 
   const handleDetail = (msg: Message) => {
-    // 标记已读
     if (!msg.isRead) handleRead(msg.id);
-    // 根据消息类型跳转
     if (msg.type === "authorization") {
       Taro.switchTab({ url: "/pages/devices/index" });
     } else {
-      // 系统消息显示详情弹窗
       Taro.showModal({
         title: msg.title,
         content: msg.content,
@@ -110,12 +128,6 @@ export default function Messages() {
     { key: "authorization", label: "授权通知" },
     { key: "system", label: "系统消息" },
   ];
-
-  const iconMap = {
-    approved: { text: "\u2713", className: "icon-approved" },
-    rejected: { text: "\u2717", className: "icon-rejected" },
-    system: { text: "\u2699", className: "icon-system" },
-  };
 
   return (
     <View className="messages-page">
@@ -150,7 +162,7 @@ export default function Messages() {
         ) : (
           messages.map((msg) => {
             const variant = getMessageVariant(msg);
-            const icon = iconMap[variant];
+            const iconSrc = VARIANT_ICONS[variant];
             return (
               <View
                 key={msg.id}
@@ -160,9 +172,8 @@ export default function Messages() {
                 }}
               >
                 <View className="card-body">
-                  <View className={`msg-icon ${icon.className}`}>
-                    <Text className="msg-icon-text">{icon.text}</Text>
-                  </View>
+                  {/* 设计稿: 消息类型图标 (image-import-20/26/14/48) */}
+                  <Image className="msg-icon-img" src={iconSrc} mode="aspectFit" />
                   <View className="msg-content">
                     <View className="msg-top">
                       <Text className="msg-title">{msg.title}</Text>
@@ -188,8 +199,8 @@ export default function Messages() {
         )}
 
         <View className="bottom-decoration">
-          {/* TODO: 替换为实际猫咪装饰图 */}
-          <Text className="cat-emoji">🐱</Text>
+          {/* TODO: 替换为真实装饰猫插画 (image-import-30.png 像素猫) */}
+          <Image className="cat-deco-img" src={ICON_CAT} mode="aspectFit" />
         </View>
       </ScrollView>
     </View>
