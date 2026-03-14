@@ -15,7 +15,8 @@ import {
   fakeDesktop,
   fakeAvatar,
   fakeBinding,
-  fakeAuthorization,
+  fakeShareLink,
+  fakeShareRecord,
   fakeMessage,
 } from "./helpers";
 
@@ -120,90 +121,66 @@ describe("E2E Flows", () => {
     });
   });
 
-  // ===== Flow 3: 设备授权 → 接受/拒绝 =====
+  // ===== Flow 3: 分享码 → 使用分享码绑定 =====
 
-  describe("Device Authorization → Accept/Reject", () => {
-    it("creates authorization and target user accepts", async () => {
-      const auth = fakeAuthorization({ id: "auth-flow" });
-      const headersFrom = await authHeader("user-1");
-      const headersTo = await authHeader("user-2");
+  describe("Share Link → Use Share Code", () => {
+    it("creates share link and another user uses it", async () => {
+      const shareLink = fakeShareLink({ id: "share-flow" });
+      const headersOwner = await authHeader("user-1");
+      const headersOther = await authHeader("user-2");
 
-      // Step 1: user-1 sends authorization to user-2
+      // Step 1: user-1 creates a share link for their pet
       mockDb._results.select = [[fakePet()]]; // pet ownership check
-      mockDb._results.insert = [[auth]];
+      mockDb._results.insert = [[shareLink]];
 
       const createRes = await app.request(
-        jsonReq("POST", "/api/devices/authorizations", {
-          headers: headersFrom,
-          body: { toUserId: "user-2", petId: "pet-1" },
+        jsonReq("POST", "/api/devices/share-links", {
+          headers: headersOwner,
+          body: { shareType: "pet", targetId: "pet-1" },
         })
       );
       expect(createRes.status).toBe(201);
       const createJson = await createRes.json();
-      expect(createJson.authorization.status).toBe("pending");
+      expect(createJson.shareLink.shareCode).toBeDefined();
 
-      // Step 2: user-2 accepts the authorization
+      // Step 2: user-2 uses the share code
       mockDb._reset();
-      const accepted = fakeAuthorization({ id: "auth-flow", status: "accepted" });
-      mockDb._results.update = [[accepted]];
+      // select 1: share link lookup
+      mockDb._results.select = [
+        [shareLink],
+        [fakeDesktop({ userId: "user-2", id: "desk-2" })], // user-2's desktops
+      ];
+      // update 1: conditional used_count increment
+      mockDb._results.update = [
+        [fakeShareLink({ usedCount: 1 })],
+      ];
+      mockDb._results.insert = [
+        [fakeBinding({ bindingType: "authorized" })], // desktop binding
+        [fakeShareRecord()], // share record
+      ];
 
-      const acceptRes = await app.request(
-        jsonReq("PUT", "/api/devices/authorizations/auth-flow", {
-          headers: headersTo,
-          body: { status: "accepted" },
+      const useRes = await app.request(
+        jsonReq("POST", "/api/devices/share-links/abc12345/use", {
+          headers: headersOther,
         })
       );
-      expect(acceptRes.status).toBe(200);
-      const acceptJson = await acceptRes.json();
-      expect(acceptJson.authorization.status).toBe("accepted");
+      expect(useRes.status).toBe(200);
+      const useJson = await useRes.json();
+      expect(useJson.record).toBeDefined();
     });
 
-    it("creates authorization and target user rejects", async () => {
-      const auth = fakeAuthorization({ id: "auth-reject" });
-      const headersFrom = await authHeader("user-1");
-      const headersTo = await authHeader("user-2");
+    it("prevents owner from using their own share link", async () => {
+      const headersOwner = await authHeader("user-1");
+      const shareLink = fakeShareLink({ createdBy: "user-1" });
 
-      // Step 1: create
-      mockDb._results.select = [[fakePet()]]; // pet ownership
-      mockDb._results.insert = [[auth]];
-
-      const createRes = await app.request(
-        jsonReq("POST", "/api/devices/authorizations", {
-          headers: headersFrom,
-          body: { toUserId: "user-2", petId: "pet-1" },
-        })
-      );
-      expect(createRes.status).toBe(201);
-
-      // Step 2: reject
-      mockDb._reset();
-      const rejected = fakeAuthorization({ id: "auth-reject", status: "rejected" });
-      mockDb._results.update = [[rejected]];
-
-      const rejectRes = await app.request(
-        jsonReq("PUT", "/api/devices/authorizations/auth-reject", {
-          headers: headersTo,
-          body: { status: "rejected" },
-        })
-      );
-      expect(rejectRes.status).toBe(200);
-      const rejectJson = await rejectRes.json();
-      expect(rejectJson.authorization.status).toBe("rejected");
-    });
-
-    it("prevents non-target user from accepting", async () => {
-      const headersFrom = await authHeader("user-1");
-
-      // user-1 tries to accept their own authorization (should fail)
-      mockDb._results.update = [[]]; // where clause won't match
+      mockDb._results.select = [[shareLink]];
 
       const res = await app.request(
-        jsonReq("PUT", "/api/devices/authorizations/auth-1", {
-          headers: headersFrom,
-          body: { status: "accepted" },
+        jsonReq("POST", "/api/devices/share-links/abc12345/use", {
+          headers: headersOwner,
         })
       );
-      expect(res.status).toBe(404);
+      expect(res.status).toBe(400);
     });
   });
 

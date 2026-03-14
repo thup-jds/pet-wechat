@@ -1,5 +1,5 @@
 {
-  "id": "2748b343-4ac6-4b4d-b040-7956258763f9",
+  "id": "2f9dfdb3-6f20-4c7a-897b-bf47f2513529",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -58,8 +58,27 @@
           "primaryKey": false,
           "notNull": false
         },
+        "firmware_version": {
+          "name": "firmware_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_online_at": {
+          "name": "last_online_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -67,34 +86,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "collar_devices_user_id_users_id_fk": {
-          "name": "collar_devices_user_id_users_id_fk",
-          "tableFrom": "collar_devices",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "collar_devices_pet_id_pets_id_fk": {
-          "name": "collar_devices_pet_id_pets_id_fk",
-          "tableFrom": "collar_devices",
-          "tableTo": "pets",
-          "columnsFrom": [
-            "pet_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "collar_devices_mac_address_unique": {
@@ -145,8 +137,27 @@
           "notNull": true,
           "default": "'offline'"
         },
+        "firmware_version": {
+          "name": "firmware_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_online_at": {
+          "name": "last_online_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -154,21 +165,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "desktop_devices_user_id_users_id_fk": {
-          "name": "desktop_devices_user_id_users_id_fk",
-          "tableFrom": "desktop_devices",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "desktop_devices_mac_address_unique": {
@@ -218,148 +215,16 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "desktop_pet_bindings_desktop_device_id_desktop_devices_id_fk": {
-          "name": "desktop_pet_bindings_desktop_device_id_desktop_devices_id_fk",
-          "tableFrom": "desktop_pet_bindings",
-          "tableTo": "desktop_devices",
-          "columnsFrom": [
-            "desktop_device_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
         },
-        "desktop_pet_bindings_pet_id_pets_id_fk": {
-          "name": "desktop_pet_bindings_pet_id_pets_id_fk",
-          "tableFrom": "desktop_pet_bindings",
-          "tableTo": "pets",
-          "columnsFrom": [
-            "pet_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.device_authorizations": {
-      "name": "device_authorizations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "from_user_id": {
-          "name": "from_user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "to_user_id": {
-          "name": "to_user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "pet_id": {
-          "name": "pet_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "desktop_device_id": {
-          "name": "desktop_device_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "status": {
-          "name": "status",
-          "type": "authorization_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
-        },
-        "created_at": {
-          "name": "created_at",
+        "unbound_at": {
+          "name": "unbound_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "device_authorizations_from_user_id_users_id_fk": {
-          "name": "device_authorizations_from_user_id_users_id_fk",
-          "tableFrom": "device_authorizations",
-          "tableTo": "users",
-          "columnsFrom": [
-            "from_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "device_authorizations_to_user_id_users_id_fk": {
-          "name": "device_authorizations_to_user_id_users_id_fk",
-          "tableFrom": "device_authorizations",
-          "tableTo": "users",
-          "columnsFrom": [
-            "to_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "device_authorizations_pet_id_pets_id_fk": {
-          "name": "device_authorizations_pet_id_pets_id_fk",
-          "tableFrom": "device_authorizations",
-          "tableTo": "pets",
-          "columnsFrom": [
-            "pet_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "device_authorizations_desktop_device_id_desktop_devices_id_fk": {
-          "name": "device_authorizations_desktop_device_id_desktop_devices_id_fk",
-          "tableFrom": "device_authorizations",
-          "tableTo": "desktop_devices",
-          "columnsFrom": [
-            "desktop_device_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -417,21 +282,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "messages_user_id_users_id_fk": {
-          "name": "messages_user_id_users_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -475,21 +326,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "pet_avatar_actions_pet_avatar_id_pet_avatars_id_fk": {
-          "name": "pet_avatar_actions_pet_avatar_id_pet_avatars_id_fk",
-          "tableFrom": "pet_avatar_actions",
-          "tableTo": "pet_avatars",
-          "columnsFrom": [
-            "pet_avatar_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -535,21 +372,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "pet_avatars_pet_id_pets_id_fk": {
-          "name": "pet_avatars_pet_id_pets_id_fk",
-          "tableFrom": "pet_avatars",
-          "tableTo": "pets",
-          "columnsFrom": [
-            "pet_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -593,34 +416,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "pet_behaviors_pet_id_pets_id_fk": {
-          "name": "pet_behaviors_pet_id_pets_id_fk",
-          "tableFrom": "pet_behaviors",
-          "tableTo": "pets",
-          "columnsFrom": [
-            "pet_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "pet_behaviors_collar_device_id_collar_devices_id_fk": {
-          "name": "pet_behaviors_collar_device_id_collar_devices_id_fk",
-          "tableFrom": "pet_behaviors",
-          "tableTo": "collar_devices",
-          "columnsFrom": [
-            "collar_device_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -695,24 +491,142 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "pets_user_id_users_id_fk": {
-          "name": "pets_user_id_users_id_fk",
-          "tableFrom": "pets",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.share_links": {
+      "name": "share_links",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "share_code": {
+          "name": "share_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "share_type": {
+          "name": "share_type",
+          "type": "share_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_id": {
+          "name": "target_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max_uses": {
+          "name": "max_uses",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "used_count": {
+          "name": "used_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "expire_at": {
+          "name": "expire_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "share_link_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "share_links_share_code_unique": {
+          "name": "share_links_share_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "share_code"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.share_records": {
+      "name": "share_records",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "share_link_id": {
+          "name": "share_link_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -766,6 +680,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -793,15 +714,6 @@
     }
   },
   "enums": {
-    "public.authorization_status": {
-      "name": "authorization_status",
-      "schema": "public",
-      "values": [
-        "pending",
-        "accepted",
-        "rejected"
-      ]
-    },
     "public.avatar_status": {
       "name": "avatar_status",
       "schema": "public",
@@ -844,6 +756,23 @@
       "values": [
         "authorization",
         "system"
+      ]
+    },
+    "public.share_link_status": {
+      "name": "share_link_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "expired",
+        "disabled"
+      ]
+    },
+    "public.share_type": {
+      "name": "share_type",
+      "schema": "public",
+      "values": [
+        "pet",
+        "desktop"
       ]
     },
     "public.species": {

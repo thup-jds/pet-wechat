@@ -77,6 +77,7 @@ export function fakeUser(overrides: Record<string, unknown> = {}) {
     avatarUrl: null,
     avatarQuota: 2,
     createdAt: new Date(),
+    updatedAt: new Date(),
     ...overrides,
   };
 }
@@ -93,6 +94,7 @@ export function fakePet(overrides: Record<string, unknown> = {}) {
     weight: null,
     activityScore: 0,
     createdAt: new Date(),
+    updatedAt: new Date(),
     ...overrides,
   };
 }
@@ -107,7 +109,10 @@ export function fakeCollar(overrides: Record<string, unknown> = {}) {
     status: "offline",
     battery: null,
     signal: null,
+    firmwareVersion: null,
+    lastOnlineAt: null,
     createdAt: new Date(),
+    updatedAt: new Date(),
     ...overrides,
   };
 }
@@ -119,7 +124,10 @@ export function fakeDesktop(overrides: Record<string, unknown> = {}) {
     name: "My Desktop",
     macAddress: "11:22:33:44:55:66",
     status: "offline",
+    firmwareVersion: null,
+    lastOnlineAt: null,
     createdAt: new Date(),
+    updatedAt: new Date(),
     ...overrides,
   };
 }
@@ -166,18 +174,32 @@ export function fakeBinding(overrides: Record<string, unknown> = {}) {
     petId: "pet-1",
     bindingType: "owner",
     createdAt: new Date(),
+    unboundAt: null,
     ...overrides,
   };
 }
 
-export function fakeAuthorization(overrides: Record<string, unknown> = {}) {
+export function fakeShareLink(overrides: Record<string, unknown> = {}) {
   return {
-    id: "auth-1",
-    fromUserId: "user-1",
-    toUserId: "user-2",
-    petId: "pet-1",
-    desktopDeviceId: null,
-    status: "pending",
+    id: "share-1",
+    shareCode: "abc12345",
+    shareType: "pet",
+    targetId: "pet-1",
+    createdBy: "user-1",
+    maxUses: 1,
+    usedCount: 0,
+    expireAt: null,
+    status: "active",
+    createdAt: new Date(),
+    ...overrides,
+  };
+}
+
+export function fakeShareRecord(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "record-1",
+    shareLinkId: "share-1",
+    userId: "user-2",
     createdAt: new Date(),
     ...overrides,
   };
