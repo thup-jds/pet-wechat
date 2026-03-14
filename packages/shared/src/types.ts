@@ -4,9 +4,10 @@ export type Species = "cat" | "dog";
 export type Gender = "male" | "female" | "unknown";
 export type DeviceStatus = "online" | "offline" | "pairing";
 export type AvatarStatus = "pending" | "processing" | "done" | "failed";
-export type AuthorizationStatus = "pending" | "accepted" | "rejected";
 export type MessageType = "authorization" | "system";
 export type BindingType = "owner" | "authorized";
+export type ShareType = "pet" | "desktop";
+export type ShareLinkStatus = "active" | "expired" | "disabled";
 
 // ===== 用户 =====
 
@@ -18,6 +19,7 @@ export interface User {
   avatarUrl: string | null;
   avatarQuota: number;
   createdAt: string;
+  updatedAt: string;
 }
 
 // ===== 宠物 =====
@@ -33,6 +35,7 @@ export interface Pet {
   weight: number | null;
   activityScore: number;
   createdAt: string;
+  updatedAt: string;
 }
 
 // ===== 设备 =====
@@ -46,7 +49,10 @@ export interface CollarDevice {
   status: DeviceStatus;
   battery: number | null;
   signal: number | null;
+  firmwareVersion: string | null;
+  lastOnlineAt: string | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface DesktopDevice {
@@ -55,7 +61,10 @@ export interface DesktopDevice {
   name: string;
   macAddress: string;
   status: DeviceStatus;
+  firmwareVersion: string | null;
+  lastOnlineAt: string | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface DesktopPetBinding {
@@ -64,17 +73,28 @@ export interface DesktopPetBinding {
   petId: string;
   bindingType: BindingType;
   createdAt: string;
+  unboundAt: string | null;
 }
 
-// ===== 授权 =====
+// ===== 分享 =====
 
-export interface DeviceAuthorization {
+export interface ShareLink {
   id: string;
-  fromUserId: string;
-  toUserId: string;
-  petId: string;
-  desktopDeviceId: string | null;
-  status: AuthorizationStatus;
+  shareCode: string;
+  shareType: ShareType;
+  targetId: string;
+  createdBy: string;
+  maxUses: number;
+  usedCount: number;
+  expireAt: string | null;
+  status: ShareLinkStatus;
+  createdAt: string;
+}
+
+export interface ShareRecord {
+  id: string;
+  shareLinkId: string;
+  userId: string;
   createdAt: string;
 }
 

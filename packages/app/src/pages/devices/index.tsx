@@ -6,7 +6,6 @@ import type {
   Pet,
   CollarDevice,
   DesktopDevice,
-  DeviceAuthorization,
 } from "@pet-wechat/shared";
 import "./index.scss";
 
@@ -15,9 +14,6 @@ export default function Devices() {
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
   const [collars, setCollars] = useState<CollarDevice[]>([]);
   const [desktops, setDesktops] = useState<DesktopDevice[]>([]);
-  const [receivedAuths, setReceivedAuths] = useState<DeviceAuthorization[]>([]);
-  const [sentAuths, setSentAuths] = useState<DeviceAuthorization[]>([]);
-  const [authLoading, setAuthLoading] = useState(false);
   const loadSeqRef = useRef(0);
 
   useDidShow(() => {
@@ -27,18 +23,15 @@ export default function Devices() {
   const loadData = async () => {
     const seq = ++loadSeqRef.current;
     try {
-      const [petsRes, collarsRes, desktopsRes, authRes] = await Promise.all([
+      const [petsRes, collarsRes, desktopsRes] = await Promise.all([
         request<{ pets: Pet[] }>({ url: "/api/pets" }),
         request<{ collars: CollarDevice[] }>({ url: "/api/devices/collars" }),
         request<{ desktops: DesktopDevice[] }>({ url: "/api/devices/desktops" }),
-        request<{ received: DeviceAuthorization[]; sent: DeviceAuthorization[] }>({ url: "/api/devices/authorizations" }),
       ]);
       if (seq !== loadSeqRef.current) return;
       setPets(petsRes.pets);
       setCollars(collarsRes.collars);
       setDesktops(desktopsRes.desktops);
-      setReceivedAuths(authRes.received);
-      setSentAuths(authRes.sent);
       // Auto-select first pet if none selected or selected pet no longer exists
       if (petsRes.pets.length > 0) {
         const stillExists = petsRes.pets.some((p) => p.id === selectedPetId);
@@ -51,21 +44,22 @@ export default function Devices() {
     }
   };
 
-  const handleAuthAction = async (id: string, status: "accepted" | "rejected") => {
-    if (authLoading) return;
-    setAuthLoading(true);
+  const handleShare = async (shareType: "pet" | "desktop", targetId: string) => {
     try {
-      await request({
-        url: `/api/devices/authorizations/${id}`,
-        method: "PUT",
-        data: { status },
+      const res = await request<{ shareLink: { shareCode: string } }>({
+        url: "/api/devices/share-links",
+        method: "POST",
+        data: { shareType, targetId },
       });
-      Taro.showToast({ title: status === "accepted" ? "已接受" : "已拒绝", icon: "success" });
-      await loadData();
+      const shareCode = res.shareLink.shareCode;
+      // TODO: 调用微信分享 API 转发小程序卡片，卡片路径携带 shareCode 参数
+      Taro.showModal({
+        title: "分享码已生成",
+        content: `分享码：${shareCode}`,
+        showCancel: false,
+      });
     } catch (e: any) {
-      Taro.showToast({ title: e.message || "操作失败", icon: "none" });
-    } finally {
-      setAuthLoading(false);
+      Taro.showToast({ title: e.message || "分享失败", icon: "none" });
     }
   };
 
@@ -101,11 +95,6 @@ export default function Devices() {
     setSelectedPetId(pets[nextIndex].id);
   };
 
-  const getPetName = (petId: string) => {
-    const pet = pets.find((p) => p.id === petId);
-    return pet?.name || "未知宠物";
-  };
-
   return (
     <View className="devices-page">
       <View className="nav-bar">
@@ -125,6 +114,17 @@ export default function Devices() {
               <Text className="pet-switcher-name">{selectedPet?.name}</Text>
               {pets.length > 1 && <Text className="pet-switcher-arrow">▸</Text>}
             </View>
+            {selectedPet && (
+              <View
+                className="share-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleShare("pet", selectedPet.id);
+                }}
+              >
+                <Text className="share-btn-text">分享</Text>
+              </View>
+            )}
           </View>
         )}
 
@@ -215,65 +215,6 @@ export default function Devices() {
             ))
           )}
         </View>
-
-        {/* Authorization section */}
-        {(receivedAuths.length > 0 || sentAuths.length > 0) && (
-          <View className="section">
-            <View className="section-title-bar">
-              <Text className="section-title">授权通知</Text>
-            </View>
-
-            {receivedAuths.map((auth) => (
-              <View key={auth.id} className="device-card auth-card">
-                <View className="auth-header">
-                  <Text className="auth-title">
-                    {getPetName(auth.petId)}的授权请求
-                  </Text>
-                  <Text className="auth-status-tag">
-                    {auth.status === "pending"
-                      ? "待确认"
-                      : auth.status === "accepted"
-                        ? "已通过"
-                        : "已拒绝"}
-                  </Text>
-                </View>
-                {auth.status === "pending" && (
-                  <View className={`auth-actions ${authLoading ? "disabled" : ""}`}>
-                    <View
-                      className="auth-btn accept"
-                      onClick={() => handleAuthAction(auth.id, "accepted")}
-                    >
-                      <Text>接受</Text>
-                    </View>
-                    <View
-                      className="auth-btn reject"
-                      onClick={() => handleAuthAction(auth.id, "rejected")}
-                    >
-                      <Text>拒绝</Text>
-                    </View>
-                  </View>
-                )}
-              </View>
-            ))}
-
-            {sentAuths.map((auth) => (
-              <View key={auth.id} className="device-card auth-card">
-                <View className="auth-header">
-                  <Text className="auth-title">
-                    {getPetName(auth.petId)}的授权
-                  </Text>
-                  <Text className="auth-status-tag">
-                    {auth.status === "pending"
-                      ? "待确认"
-                      : auth.status === "accepted"
-                        ? "已通过"
-                        : "已拒绝"}
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
 
         {/* Add new device button */}
         <View

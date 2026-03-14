@@ -7,9 +7,10 @@ import {
   petBehaviors,
   collarDevices,
   desktopPetBindings,
-  deviceAuthorizations,
+  shareLinks,
+  shareRecords,
 } from "../db/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, isNull, inArray } from "drizzle-orm";
 
 const petsRoute = new Hono();
 
@@ -93,6 +94,7 @@ petsRoute.put("/:id", async (c) => {
       gender: body.gender ?? existing.gender,
       birthday: body.birthday ?? existing.birthday,
       weight: body.weight ?? existing.weight,
+      updatedAt: new Date(),
     })
     .where(eq(pets.id, petId))
     .returning();
@@ -124,8 +126,20 @@ petsRoute.delete("/:id", async (c) => {
   }
   await db.delete(petAvatars).where(eq(petAvatars.petId, petId));
   await db.delete(petBehaviors).where(eq(petBehaviors.petId, petId));
-  await db.delete(desktopPetBindings).where(eq(desktopPetBindings.petId, petId));
-  await db.delete(deviceAuthorizations).where(eq(deviceAuthorizations.petId, petId));
+  // 软删除绑定记录
+  await db
+    .update(desktopPetBindings)
+    .set({ unboundAt: new Date() })
+    .where(and(eq(desktopPetBindings.petId, petId), isNull(desktopPetBindings.unboundAt)));
+  // 删除分享记录再删分享链接（FK 约束）
+  const petLinks = await db
+    .select({ id: shareLinks.id })
+    .from(shareLinks)
+    .where(and(eq(shareLinks.targetId, petId), eq(shareLinks.shareType, "pet")));
+  for (const link of petLinks) {
+    await db.delete(shareRecords).where(eq(shareRecords.shareLinkId, link.id));
+  }
+  await db.delete(shareLinks).where(and(eq(shareLinks.targetId, petId), eq(shareLinks.shareType, "pet")));
   // 解除项圈与该宠物的关联（不删除项圈本身）
   await db
     .update(collarDevices)
