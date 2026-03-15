@@ -1,19 +1,33 @@
 import { View, Text, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import NavBar from "../../components/NavBar";
+import { markGuideCompleted } from "../../utils/storage";
 import { ICON_COLLAR, ICON_CAT, ICON_DOG, ICON_DESKTOP } from "../../assets/icons";
 import "./index.scss";
 
 export default function Guide() {
+  const handleSkip = () => {
+    markGuideCompleted();
+    Taro.switchTab({ url: "/pages/index/index" });
+  };
+
+  const handleCollarSetup = () => {
+    markGuideCompleted();
+    Taro.navigateTo({ url: "/pages/collar-bind/index" });
+  };
+
+  const handleDesktopSetup = () => {
+    markGuideCompleted();
+    Taro.navigateTo({ url: "/pages/desktop-bind/index" });
+  };
+
   return (
     <View className="guide-page">
       <NavBar title="YEHEY" />
 
       <View
         className="section-card"
-        onClick={() =>
-          Taro.navigateTo({ url: "/pages/collar-bind/index" })
-        }
+        onClick={handleCollarSetup}
       >
         <Text className="section-title">我有宠物陪伴</Text>
         <Text className="section-subtitle">
@@ -33,9 +47,7 @@ export default function Guide() {
 
       <View
         className="section-card"
-        onClick={() =>
-          Taro.navigateTo({ url: "/pages/desktop-bind/index" })
-        }
+        onClick={handleDesktopSetup}
       >
         <Text className="section-title">开启桌面宠物</Text>
         <Text className="section-subtitle">
@@ -46,6 +58,10 @@ export default function Guide() {
           <Image className="illustration-icon large" src={ICON_DESKTOP} mode="aspectFit" />
         </View>
       </View>
+
+      <Text className="skip-link" onClick={handleSkip}>
+        跳过，稍后再设置
+      </Text>
     </View>
   );
 }

@@ -94,8 +94,9 @@ export default function WifiConfig() {
         </View>
       </View>
 
-      <View className="btn-primary" onClick={handleConfigure}>
-        {loading ? "配置中..." : "完成配置"}
+      <Text className="mock-badge">⚠ Mock 模式：WiFi 配网使用模拟流程</Text>
+      <View className="btn-primary mock-btn" onClick={handleConfigure}>
+        {loading ? "Mock 配置中..." : "Mock 完成配置"}
       </View>
     </View>
   );

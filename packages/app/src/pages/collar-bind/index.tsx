@@ -83,13 +83,14 @@ export default function CollarBind() {
           )}
         </View>
 
+        <Text className="mock-badge">⚠ Mock 模式：蓝牙搜索使用模拟数据</Text>
         {step === 1 ? (
-          <View className="btn-primary" onClick={handleSearch}>
-            搜索设备
+          <View className="btn-primary mock-btn" onClick={handleSearch}>
+            Mock 搜索设备
           </View>
         ) : (
-          <View className="btn-primary" onClick={handleConnect}>
-            连接设备
+          <View className="btn-primary mock-btn" onClick={handleConnect}>
+            Mock 连接设备
           </View>
         )}
       </View>

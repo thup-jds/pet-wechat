@@ -53,8 +53,9 @@ export default function DesktopBind() {
         />
       </View>
 
-      <View className="btn-primary" onClick={handleBind}>
-        {loading ? "绑定中..." : "绑定设备"}
+      <Text className="mock-badge">⚠ Mock 模式：蓝牙搜索使用模拟数据</Text>
+      <View className="btn-primary mock-btn" onClick={handleBind}>
+        {loading ? "Mock 绑定中..." : "Mock 绑定设备"}
       </View>
 
       <View className="alt-option card">

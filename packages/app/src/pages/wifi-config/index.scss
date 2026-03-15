@@ -1,6 +1,24 @@
 .wifi-config-page {
   background: #fff;
 
+  .mock-badge {
+    display: block;
+    color: #ff0000;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 16px;
+    padding: 8px 24px;
+    background: #fff0f0;
+    border: 2px solid #ffcccc;
+    border-radius: 12px;
+  }
+
+  .mock-btn {
+    background: #cc0000 !important;
+    border: 2px solid #ff0000;
+  }
+
   .step-indicator {
     display: flex;
     align-items: center;

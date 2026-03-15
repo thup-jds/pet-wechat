@@ -219,13 +219,21 @@ export default function Devices() {
         {/* Add new device button */}
         <View
           className="add-device-btn"
-          onClick={() => Taro.navigateTo({ url: "/pages/desktop-bind/index" })}
+          onClick={() => {
+            Taro.showActionSheet({
+              itemList: ["添加项圈", "添加桌面端"],
+              success: (res) => {
+                if (res.tapIndex === 0) {
+                  Taro.navigateTo({ url: "/pages/collar-bind/index" });
+                } else {
+                  Taro.navigateTo({ url: "/pages/desktop-bind/index" });
+                }
+              },
+            });
+          }}
         >
           <Text className="add-device-text">+ 添加新设备</Text>
         </View>
-        <Text className="add-device-note">
-          底部"添加新设备"只能添加桌面端设备
-        </Text>
 
         {/* Decorative cat */}
         <View className="deco-cat">

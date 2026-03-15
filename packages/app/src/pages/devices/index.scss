@@ -144,6 +144,11 @@
     justify-content: center;
     gap: 8px;
 
+    &.mock-share-btn {
+      background: #cc0000;
+      border: 2px solid #ff0000;
+    }
+
     .share-icon {
       width: 28px;
       height: 28px;

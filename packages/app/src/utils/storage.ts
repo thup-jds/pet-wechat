@@ -12,3 +12,11 @@ export function getUserInfo(): any {
 export function setUserInfo(user: any) {
   Taro.setStorageSync("userInfo", JSON.stringify(user));
 }
+
+export function isFirstLogin(): boolean {
+  return !Taro.getStorageSync("hasCompletedGuide");
+}
+
+export function markGuideCompleted() {
+  Taro.setStorageSync("hasCompletedGuide", "1");
+}

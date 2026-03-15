@@ -1,17 +1,34 @@
 import { View, Text, Button, Image } from "@tarojs/components";
-import Taro from "@tarojs/taro";
+import Taro, { useRouter } from "@tarojs/taro";
 import { useState } from "react";
 import { request, setToken } from "../../utils/request";
-import { setUserInfo } from "../../utils/storage";
+import { setUserInfo, isFirstLogin } from "../../utils/storage";
 import { ICON_CAT } from "../../assets/icons";
 import "./index.scss";
 
 export default function Login() {
+  const router = useRouter();
+  const redirect = router.params.redirect;
+
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const agreed = agreedTerms && agreedPrivacy;
+
+  const navigateAfterLogin = () => {
+    // 支持 redirect 参数（邀请页等场景）
+    if (redirect) {
+      Taro.redirectTo({ url: decodeURIComponent(redirect) });
+      return;
+    }
+    // 首次登录跳引导页
+    if (isFirstLogin()) {
+      Taro.redirectTo({ url: "/pages/guide/index" });
+      return;
+    }
+    Taro.switchTab({ url: "/pages/index/index" });
+  };
 
   const handleWechatLogin = async () => {
     if (!agreed) {
@@ -30,7 +47,7 @@ export default function Login() {
       });
       setToken(res.token);
       setUserInfo(res.user);
-      Taro.switchTab({ url: "/pages/index/index" });
+      navigateAfterLogin();
     } catch (e: any) {
       Taro.showToast({ title: e.message || "登录失败", icon: "none" });
     } finally {
@@ -53,20 +70,21 @@ export default function Login() {
       </View>
 
       <View className="login-card">
+        <Text className="mock-badge">⚠ Mock 模式：登录使用模拟数据</Text>
         <View className="login-buttons">
           <Button
-            className="btn-phone"
+            className="btn-phone mock-btn"
             loading={loading}
             onClick={handlePhoneLogin}
           >
-            本机号码快捷登录
+            Mock 手机号登录
           </Button>
           <Button
-            className="btn-wechat"
+            className="btn-wechat mock-btn"
             loading={loading}
             onClick={handleWechatLogin}
           >
-            微信账号登录
+            Mock 微信登录
           </Button>
         </View>
 

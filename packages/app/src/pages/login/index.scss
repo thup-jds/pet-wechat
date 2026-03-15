@@ -133,6 +133,24 @@
   }
 }
 
+// Mock 标注样式
+.mock-badge {
+  color: #ff0000;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 12px;
+  padding: 6px 16px;
+  background: #fff0f0;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+}
+
+.mock-btn {
+  border: 2px solid #ff0000 !important;
+  position: relative;
+}
+
 // 设计稿: "还没有账号？立即注册" 32px
 .register-link {
   display: flex;

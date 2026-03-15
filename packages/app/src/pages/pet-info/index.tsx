@@ -120,6 +120,10 @@ export default function PetInfo() {
       Taro.showToast({ title: "请输入宠物名字", icon: "none" });
       return;
     }
+    if (!breed.trim()) {
+      Taro.showToast({ title: "请输入宠物品种", icon: "none" });
+      return;
+    }
     setLoading(true);
     try {
       const data = {

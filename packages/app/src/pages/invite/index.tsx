@@ -29,7 +29,7 @@ export default function Invite() {
       setError("邀请链接无效");
       return;
     }
-    request<InviteInfo>({ url: `/api/devices/invite/${code}`, needAuth: false })
+    request<InviteInfo>({ url: `/api/invite/${code}`, needAuth: false })
       .then(setInfo)
       .catch(() => setError("邀请链接无效或已过期"));
   }, [code]);
