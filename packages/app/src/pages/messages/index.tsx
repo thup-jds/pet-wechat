@@ -50,6 +50,9 @@ function formatTime(dateStr: string): string {
 }
 
 export default function Messages() {
+  const { top, height } = Taro.getMenuButtonBoundingClientRect();
+  const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
+  const navHeight = (top - statusBarHeight) * 2 + height;
   const [tab, setTab] = useState<TabType>("all");
   const [messages, setMessages] = useState<Message[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -131,14 +134,16 @@ export default function Messages() {
 
   return (
     <View className="messages-page">
-      <View className="nav-bar">
-        <Text className="nav-title">消息中心</Text>
-        <Text
-          className={`nav-read-all ${unreadCount > 0 ? "active" : ""}`}
-          onClick={() => unreadCount > 0 && handleReadAll()}
-        >
-          全部已读
-        </Text>
+      <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
+        <View className="nav-bar-content" style={{ height: `${navHeight}px` }}>
+          <Text className="nav-title">消息中心</Text>
+          <Text
+            className={`nav-read-all ${unreadCount > 0 ? "active" : ""}`}
+            onClick={() => unreadCount > 0 && handleReadAll()}
+          >
+            全部已读
+          </Text>
+        </View>
       </View>
 
       <View className="tab-bar">

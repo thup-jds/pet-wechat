@@ -23,6 +23,9 @@ function formatDate(dateStr: string): string {
 }
 
 export default function Profile() {
+  const { top, height } = Taro.getMenuButtonBoundingClientRect();
+  const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
+  const navHeight = (top - statusBarHeight) * 2 + height;
   const [user, setUser] = useState<User | null>(null);
   const [pets, setPets] = useState<Pet[]>([]);
 
@@ -85,8 +88,10 @@ export default function Profile() {
   if (!isLoggedIn()) {
     return (
       <View className="profile-page">
-        <View className="nav-bar">
-          <Text className="nav-title">用户信息</Text>
+        <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
+          <View className="nav-bar-content" style={{ height: `${navHeight}px` }}>
+            <Text className="nav-title">用户信息</Text>
+          </View>
         </View>
         <View className="not-logged">
           <Text className="not-logged-text">登录后查看个人信息</Text>
@@ -103,7 +108,7 @@ export default function Profile() {
 
   return (
     <View className="profile-page">
-      <View className="nav-bar">
+      <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
         <Text className="nav-title">用户信息</Text>
       </View>
 

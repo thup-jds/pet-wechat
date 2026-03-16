@@ -1,5 +1,5 @@
-import { View, Text, ScrollView } from "@tarojs/components";
-import Taro, { useDidShow, useShareAppMessage } from "@tarojs/taro";
+import { View, Text, ScrollView, Button } from "@tarojs/components";
+import Taro, { definePageConfig, useDidShow, useShareAppMessage } from "@tarojs/taro";
 import { useState, useRef } from "react";
 import { request } from "../../utils/request";
 import type {
@@ -9,17 +9,35 @@ import type {
 } from "@pet-wechat/shared";
 import "./index.scss";
 
+definePageConfig({ enableShareAppMessage: true });
+
 export default function Devices() {
+  const { top, height } = Taro.getMenuButtonBoundingClientRect();
   const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
+  const navHeight = (top - statusBarHeight) * 2 + height;
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
-  const [shareInfo, setShareInfo] = useState<{ path: string; title: string } | null>(null);
+  const selectedPet = pets.find((p) => p.id === selectedPetId) || null;
 
   useShareAppMessage(() => {
-    if (shareInfo) {
-      return { title: shareInfo.title, path: shareInfo.path };
+    if (!selectedPetId) {
+      return { title: "YEHEY 宠物在场", path: "/pages/index/index" };
     }
-    return { title: "YEHEY 宠物在场", path: "/pages/index/index" };
+    return new Promise((resolve) => {
+      request<{ inviteCode: string }>({
+        url: "/api/devices/invite",
+        method: "POST",
+        data: { petId: selectedPetId },
+      }).then((res) => {
+        resolve({
+          title: `${selectedPet?.name ?? "我的宠物"}邀请你查看 TA 的宠物空间`,
+          path: `/pages/invite/index?code=${encodeURIComponent(res.inviteCode)}`,
+        });
+      }).catch(() => {
+        Taro.showToast({ title: "邀请码生成失败，请重试", icon: "none" });
+        resolve({ title: "YEHEY 宠物在场", path: "/pages/index/index" });
+      });
+    });
   });
   const [collars, setCollars] = useState<CollarDevice[]>([]);
   const [desktops, setDesktops] = useState<DesktopDevice[]>([]);
@@ -55,27 +73,6 @@ export default function Devices() {
     }
   };
 
-  const handleShare = async (petId: string) => {
-    try {
-      const res = await request<{ inviteCode: string }>({
-        url: "/api/devices/invite",
-        method: "POST",
-        data: { petId },
-      });
-      const sharePath = `/pages/invite/index?code=${encodeURIComponent(res.inviteCode)}`;
-      const title = `${selectedPet?.name ?? "我的宠物"}邀请你查看 TA 的宠物空间`;
-      setShareInfo({ path: sharePath, title });
-
-      // 触发微信转发菜单
-      Taro.showShareMenu({ withShareTicket: false });
-      Taro.showToast({ title: "请点击右上角「...」转发给好友", icon: "none", duration: 3000 });
-    } catch (e: any) {
-      Taro.showToast({ title: e.message || "分享失败", icon: "none" });
-    }
-  };
-
-  const selectedPet = pets.find((p) => p.id === selectedPetId) || null;
-
   const petCollars = selectedPet
     ? collars.filter((c) => c.petId === selectedPet.id)
     : collars;
@@ -110,7 +107,9 @@ export default function Devices() {
   return (
     <View className="devices-page">
       <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
-        <Text className="nav-title">我的设备</Text>
+        <View className="nav-bar-content" style={{ height: `${navHeight}px` }}>
+          <Text className="nav-title">我的设备</Text>
+        </View>
       </View>
 
       <ScrollView className="device-content" scrollY>
@@ -126,18 +125,12 @@ export default function Devices() {
               <Text className="pet-switcher-name">{selectedPet?.name}</Text>
               {pets.length > 1 && <Text className="pet-switcher-arrow">▸</Text>}
             </View>
-            {selectedPet && (
-              <View
-                className="share-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleShare(selectedPet.id);
-                }}
-              >
-                <Text className="share-btn-text">分享</Text>
-              </View>
-            )}
           </View>
+        )}
+        {selectedPet && (
+          <Button className="share-btn" openType="share">
+            <Text className="share-btn-text">分享</Text>
+          </Button>
         )}
 
         {/* Collar section */}
