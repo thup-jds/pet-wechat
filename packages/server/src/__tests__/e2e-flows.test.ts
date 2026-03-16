@@ -15,8 +15,7 @@ import {
   fakeDesktop,
   fakeAvatar,
   fakeBinding,
-  fakeShareLink,
-  fakeShareRecord,
+  fakeAuthorization,
   fakeMessage,
 } from "./helpers";
 
@@ -121,62 +120,74 @@ describe("E2E Flows", () => {
     });
   });
 
-  // ===== Flow 3: 分享码 → 使用分享码绑定 =====
+  // ===== Flow 3: 邀请码 → 接受邀请 =====
 
-  describe("Share Link → Use Share Code", () => {
-    it("creates share link and another user uses it", async () => {
-      const shareLink = fakeShareLink({ id: "share-flow" });
+  describe("Invite → Accept Invite", () => {
+    it("creates an invite and another user accepts it", async () => {
       const headersOwner = await authHeader("user-1");
       const headersOther = await authHeader("user-2");
+      const pet = fakePet();
+      const owner = fakeUser();
+      const desktop = fakeDesktop({ userId: "user-2", id: "desk-2" });
+      const authorization = fakeAuthorization({ toUserId: "user-2" });
+      const binding = fakeBinding({
+        desktopDeviceId: desktop.id,
+        petId: pet.id,
+        bindingType: "authorized",
+      });
 
-      // Step 1: user-1 creates a share link for their pet
-      mockDb._results.select = [[fakePet()]]; // pet ownership check
-      mockDb._results.insert = [[shareLink]];
+      // Step 1: user-1 creates an invite for their pet
+      mockDb._results.select = [[pet], [owner]];
 
       const createRes = await app.request(
-        jsonReq("POST", "/api/devices/share-links", {
+        jsonReq("POST", "/api/devices/invite", {
           headers: headersOwner,
-          body: { shareType: "pet", targetId: "pet-1" },
+          body: { petId: "pet-1" },
         })
       );
-      expect(createRes.status).toBe(201);
+      expect(createRes.status).toBe(200);
       const createJson = await createRes.json();
-      expect(createJson.shareLink.shareCode).toBeDefined();
+      expect(createJson.inviteCode).toBeDefined();
 
-      // Step 2: user-2 uses the share code
+      // Step 2: user-2 accepts the invite
       mockDb._reset();
-      // select 1: share link lookup
       mockDb._results.select = [
-        [shareLink],
-        [fakeDesktop({ userId: "user-2", id: "desk-2" })], // user-2's desktops
-      ];
-      // update 1: conditional used_count increment
-      mockDb._results.update = [
-        [fakeShareLink({ usedCount: 1 })],
+        [pet],
+        [],
+        [desktop],
       ];
       mockDb._results.insert = [
-        [fakeBinding({ bindingType: "authorized" })], // desktop binding
-        [fakeShareRecord()], // share record
+        [authorization],
+        [binding],
       ];
 
       const useRes = await app.request(
-        jsonReq("POST", "/api/devices/share-links/abc12345/use", {
+        jsonReq("POST", `/api/devices/invite/${createJson.inviteCode}/accept`, {
           headers: headersOther,
         })
       );
-      expect(useRes.status).toBe(200);
+      expect(useRes.status).toBe(201);
       const useJson = await useRes.json();
-      expect(useJson.record).toBeDefined();
+      expect(useJson.authorization).toBeDefined();
     });
 
-    it("prevents owner from using their own share link", async () => {
+    it("prevents owner from accepting their own invite", async () => {
       const headersOwner = await authHeader("user-1");
-      const shareLink = fakeShareLink({ createdBy: "user-1" });
+      const pet = fakePet();
+      const owner = fakeUser();
 
-      mockDb._results.select = [[shareLink]];
+      mockDb._results.select = [[pet], [owner]];
+
+      const createRes = await app.request(
+        jsonReq("POST", "/api/devices/invite", {
+          headers: headersOwner,
+          body: { petId: "pet-1" },
+        })
+      );
+      const { inviteCode } = await createRes.json();
 
       const res = await app.request(
-        jsonReq("POST", "/api/devices/share-links/abc12345/use", {
+        jsonReq("POST", `/api/devices/invite/${inviteCode}/accept`, {
           headers: headersOwner,
         })
       );

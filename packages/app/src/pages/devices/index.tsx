@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "@tarojs/components";
-import Taro, { useDidShow } from "@tarojs/taro";
+import Taro, { useDidShow, useShareAppMessage } from "@tarojs/taro";
 import { useState, useRef } from "react";
 import { request } from "../../utils/request";
 import type {
@@ -10,8 +10,17 @@ import type {
 import "./index.scss";
 
 export default function Devices() {
+  const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
+  const [shareInfo, setShareInfo] = useState<{ path: string; title: string } | null>(null);
+
+  useShareAppMessage(() => {
+    if (shareInfo) {
+      return { title: shareInfo.title, path: shareInfo.path };
+    }
+    return { title: "YEHEY 宠物在场", path: "/pages/index/index" };
+  });
   const [collars, setCollars] = useState<CollarDevice[]>([]);
   const [desktops, setDesktops] = useState<DesktopDevice[]>([]);
   const loadSeqRef = useRef(0);
@@ -38,26 +47,28 @@ export default function Devices() {
         if (!stillExists) {
           setSelectedPetId(petsRes.pets[0].id);
         }
+      } else {
+        setSelectedPetId(null);
       }
     } catch {
       // ignore
     }
   };
 
-  const handleShare = async (shareType: "pet" | "desktop", targetId: string) => {
+  const handleShare = async (petId: string) => {
     try {
-      const res = await request<{ shareLink: { shareCode: string } }>({
-        url: "/api/devices/share-links",
+      const res = await request<{ inviteCode: string }>({
+        url: "/api/devices/invite",
         method: "POST",
-        data: { shareType, targetId },
+        data: { petId },
       });
-      const shareCode = res.shareLink.shareCode;
-      // TODO: 调用微信分享 API 转发小程序卡片，卡片路径携带 shareCode 参数
-      Taro.showModal({
-        title: "分享码已生成",
-        content: `分享码：${shareCode}`,
-        showCancel: false,
-      });
+      const sharePath = `/pages/invite/index?code=${encodeURIComponent(res.inviteCode)}`;
+      const title = `${selectedPet?.name ?? "我的宠物"}邀请你查看 TA 的宠物空间`;
+      setShareInfo({ path: sharePath, title });
+
+      // 触发微信转发菜单
+      Taro.showShareMenu({ withShareTicket: false });
+      Taro.showToast({ title: "请点击右上角「...」转发给好友", icon: "none", duration: 3000 });
     } catch (e: any) {
       Taro.showToast({ title: e.message || "分享失败", icon: "none" });
     }
@@ -73,6 +84,7 @@ export default function Devices() {
     if (!birthday) return "";
     const birth = new Date(birthday);
     const now = new Date();
+    if (Number.isNaN(birth.getTime()) || birth > now) return "";
     const months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
     const years = Math.floor(months / 12);
     const remainMonths = months % 12;
@@ -97,7 +109,7 @@ export default function Devices() {
 
   return (
     <View className="devices-page">
-      <View className="nav-bar">
+      <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
         <Text className="nav-title">我的设备</Text>
       </View>
 
@@ -119,7 +131,7 @@ export default function Devices() {
                 className="share-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleShare("pet", selectedPet.id);
+                  handleShare(selectedPet.id);
                 }}
               >
                 <Text className="share-btn-text">分享</Text>

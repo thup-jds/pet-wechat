@@ -6,8 +6,7 @@ export type DeviceStatus = "online" | "offline" | "pairing";
 export type AvatarStatus = "pending" | "processing" | "done" | "failed";
 export type MessageType = "authorization" | "system";
 export type BindingType = "owner" | "authorized";
-export type ShareType = "pet" | "desktop";
-export type ShareLinkStatus = "active" | "expired" | "disabled";
+export type AuthorizationStatus = "pending" | "accepted" | "rejected";
 
 // ===== 用户 =====
 
@@ -76,32 +75,15 @@ export interface DesktopPetBinding {
   unboundAt: string | null;
 }
 
-// ===== 分享 =====
+// ===== 设备授权 =====
 
-export interface ShareLink {
+export interface DeviceAuthorization {
   id: string;
-  shareCode: string;
-  shareType: ShareType;
-  targetId: string;
-  createdBy: string;
-  maxUses: number;
-  usedCount: number;
-  expireAt: string | null;
-  status: ShareLinkStatus;
+  fromUserId: string;
+  toUserId: string;
+  petId: string;
+  status: AuthorizationStatus;
   createdAt: string;
-}
-
-export interface ShareRecord {
-  id: string;
-  shareLinkId: string;
-  userId: string;
-  createdAt: string;
-}
-
-/** 授权列表接口返回时附带的用户昵称 */
-export interface DeviceAuthorizationWithUser extends DeviceAuthorization {
-  fromNickname?: string;
-  toNickname?: string;
 }
 
 // ===== 宠物形象 =====

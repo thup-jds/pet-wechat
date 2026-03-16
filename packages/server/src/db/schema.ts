@@ -6,8 +6,9 @@ import {
   real,
   boolean,
   pgEnum,
+  unique,
 } from "drizzle-orm/pg-core";
-import { createId, createShareCode } from "../utils/id";
+import { createId } from "../utils/id";
 
 // ===== 枚举 =====
 
@@ -32,11 +33,10 @@ export const bindingTypeEnum = pgEnum("binding_type", [
   "owner",
   "authorized",
 ]);
-export const shareTypeEnum = pgEnum("share_type", ["pet", "desktop"]);
-export const shareLinkStatusEnum = pgEnum("share_link_status", [
-  "active",
-  "expired",
-  "disabled",
+export const authorizationStatusEnum = pgEnum("authorization_status", [
+  "pending",
+  "accepted",
+  "rejected",
 ]);
 
 // ===== 用户 =====
@@ -128,31 +128,22 @@ export const desktopPetBindings = pgTable("desktop_pet_bindings", {
   unboundAt: timestamp("unbound_at", { withTimezone: true }),
 });
 
-// ===== 分享链接 =====
+// ===== 设备授权 =====
 
-export const shareLinks = pgTable("share_links", {
-  id: text("id").primaryKey().$defaultFn(createId),
-  shareCode: text("share_code").notNull().unique().$defaultFn(createShareCode),
-  shareType: shareTypeEnum("share_type").notNull(),
-  targetId: text("target_id").notNull(),
-  createdBy: text("created_by").notNull(),
-  maxUses: integer("max_uses").notNull().default(1),
-  usedCount: integer("used_count").notNull().default(0),
-  expireAt: timestamp("expire_at", { withTimezone: true }),
-  status: shareLinkStatusEnum("status").notNull().default("active"),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
-
-export const shareRecords = pgTable("share_records", {
-  id: text("id").primaryKey().$defaultFn(createId),
-  shareLinkId: text("share_link_id").notNull(),
-  userId: text("user_id").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const deviceAuthorizations = pgTable(
+  "device_authorizations",
+  {
+    id: text("id").primaryKey().$defaultFn(createId),
+    fromUserId: text("from_user_id").notNull(),
+    toUserId: text("to_user_id").notNull(),
+    petId: text("pet_id").notNull(),
+    status: authorizationStatusEnum("status").notNull().default("accepted"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique().on(t.fromUserId, t.toUserId, t.petId)],
+);
 
 // ===== 宠物形象 =====
 
@@ -160,6 +151,7 @@ export const petAvatars = pgTable("pet_avatars", {
   id: text("id").primaryKey().$defaultFn(createId),
   petId: text("pet_id").notNull(),
   sourceImageUrl: text("source_image_url").notNull(),
+  additionalImageUrls: text("additional_image_urls"),
   status: avatarStatusEnum("status").notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()

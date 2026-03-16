@@ -1,13 +1,11 @@
 import { View, Text, Image } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect } from "react";
-import { request, getToken } from "../../utils/request";
+import { request, getToken, BASE_URL } from "../../utils/request";
 import NavBar from "../../components/NavBar";
 import { ICON_PAW, ICON_CAT, ICON_DOG, ICON_PHOTO } from "../../assets/icons";
 import type { Pet, User } from "@pet-wechat/shared";
 import "./index.scss";
-
-const BASE_URL = "http://localhost:9527"; // TODO: 从环境变量获取
 
 export default function PetAvatar() {
   const router = useRouter();
@@ -15,6 +13,7 @@ export default function PetAvatar() {
 
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState("上传中...");
   const [pet, setPet] = useState<Pet | null>(null);
   const [quota, setQuota] = useState({ remaining: 2, total: 2 });
 
@@ -47,22 +46,35 @@ export default function PetAvatar() {
     if (images.length === 0 || !petId) return;
     setLoading(true);
     try {
-      // 上传图片到服务端
       const token = getToken();
-      const uploadRes = await Taro.uploadFile({
-        url: `${BASE_URL}/api/upload`,
-        filePath: images[0],
-        name: "file",
-        header: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      const uploadData = JSON.parse(uploadRes.data);
-      const sourceImageUrl = uploadData.url ?? images[0];
+      const uploadedUrls: string[] = [];
 
-      // 创建定制任务
+      for (const [index, imagePath] of images.entries()) {
+        setLoadingText(`上传中 (${index + 1}/${images.length})...`);
+        const uploadRes = await Taro.uploadFile({
+          url: `${BASE_URL}/api/upload`,
+          filePath: imagePath,
+          name: "file",
+          header: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const uploadData = JSON.parse(uploadRes.data ?? "{}");
+        if (uploadRes.statusCode >= 400) {
+          throw new Error(uploadData.error ?? "上传失败");
+        }
+        if (!uploadData.url) {
+          throw new Error("上传结果缺少 URL");
+        }
+        uploadedUrls.push(uploadData.url);
+      }
+
       const { avatar } = await request<{ avatar: { id: string } }>({
         url: "/api/avatars",
         method: "POST",
-        data: { petId, sourceImageUrl },
+        data: {
+          petId,
+          sourceImageUrl: uploadedUrls[0],
+          additionalImages: uploadedUrls.slice(1),
+        },
       });
       Taro.redirectTo({
         url: `/pages/avatar-progress/index?avatarId=${avatar.id}`,
@@ -151,7 +163,7 @@ export default function PetAvatar() {
           className={`btn-primary start-btn ${images.length === 0 ? "disabled" : ""}`}
           onClick={handleUpload}
         >
-          {loading ? "上传中..." : "开始定制！您的宠物动态图像"}
+          {loading ? loadingText : "开始定制！您的宠物动态图像"}
         </View>
 
         <Text className="skip-link" onClick={handleSkip}>

@@ -7,10 +7,9 @@ import {
   petBehaviors,
   collarDevices,
   desktopPetBindings,
-  shareLinks,
-  shareRecords,
+  deviceAuthorizations,
 } from "../db/schema";
-import { eq, and, isNull, inArray } from "drizzle-orm";
+import { eq, and, isNull, inArray, gte } from "drizzle-orm";
 
 const petsRoute = new Hono();
 
@@ -28,7 +27,7 @@ petsRoute.get("/", async (c) => {
     .where(
       and(
         eq(deviceAuthorizations.toUserId, userId),
-        eq(deviceAuthorizations.status, "accepted")
+        eq(deviceAuthorizations.status, "accepted"),
       )
     );
   const authorizedPetIds = authorizedRecords.map((a) => a.petId);
@@ -60,26 +59,21 @@ petsRoute.get("/:id", async (c) => {
     .where(eq(petAvatars.petId, petId));
 
   const avatarIds = avatars.map((a) => a.id);
-  let actions: (typeof petAvatarActions.$inferSelect)[] = [];
-  if (avatarIds.length > 0) {
-    for (const avatarId of avatarIds) {
-      const acts = await db
-        .select()
-        .from(petAvatarActions)
-        .where(eq(petAvatarActions.petAvatarId, avatarId));
-      actions.push(...acts);
-    }
-  }
+  const actions: (typeof petAvatarActions.$inferSelect)[] =
+    avatarIds.length > 0
+      ? await db
+          .select()
+          .from(petAvatarActions)
+          .where(inArray(petAvatarActions.petAvatarId, avatarIds))
+      : [];
 
   // 计算活跃值：基于最近 7 天的行为记录数量
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const behaviors = await db
     .select()
     .from(petBehaviors)
-    .where(eq(petBehaviors.petId, petId));
-  const recentCount = behaviors.filter(
-    (b) => new Date(b.timestamp) >= sevenDaysAgo
-  ).length;
+    .where(and(eq(petBehaviors.petId, petId), gte(petBehaviors.timestamp, sevenDaysAgo)));
+  const recentCount = behaviors.length;
   // TODO: 活跃值算法待产品定义，当前简单按行为次数映射 0-100
   const activityScore = Math.min(100, recentCount * 10);
 
@@ -165,15 +159,7 @@ petsRoute.delete("/:id", async (c) => {
     .update(desktopPetBindings)
     .set({ unboundAt: new Date() })
     .where(and(eq(desktopPetBindings.petId, petId), isNull(desktopPetBindings.unboundAt)));
-  // 删除分享记录再删分享链接（FK 约束）
-  const petLinks = await db
-    .select({ id: shareLinks.id })
-    .from(shareLinks)
-    .where(and(eq(shareLinks.targetId, petId), eq(shareLinks.shareType, "pet")));
-  for (const link of petLinks) {
-    await db.delete(shareRecords).where(eq(shareRecords.shareLinkId, link.id));
-  }
-  await db.delete(shareLinks).where(and(eq(shareLinks.targetId, petId), eq(shareLinks.shareType, "pet")));
+  await db.delete(deviceAuthorizations).where(eq(deviceAuthorizations.petId, petId));
   // 解除项圈与该宠物的关联（不删除项圈本身）
   await db
     .update(collarDevices)
