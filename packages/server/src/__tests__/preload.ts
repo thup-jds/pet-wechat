@@ -21,3 +21,10 @@ mock.module("../db/index.ts", () => ({ db: mockDb }));
 // Also mock with absolute-like path
 const dbPath = new URL("../db", import.meta.url).pathname;
 mock.module(dbPath, () => ({ db: mockDb }));
+
+const uploadFile = async (key: string) => `https://test-storage.local/${key}`;
+mock.module("../utils/storage", () => ({ uploadFile }));
+mock.module("../utils/storage.ts", () => ({ uploadFile }));
+
+const storagePath = new URL("../utils/storage.ts", import.meta.url).pathname;
+mock.module(storagePath, () => ({ uploadFile }));

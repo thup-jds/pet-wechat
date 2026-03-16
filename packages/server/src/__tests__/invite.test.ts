@@ -7,7 +7,8 @@ import {
   fakePet,
   fakeUser,
   fakeAuthorization,
-  fakeMessage,
+  fakeDesktop,
+  fakeBinding,
 } from "./helpers";
 
 const app = createApp();
@@ -117,10 +118,15 @@ describe("Invite Routes", () => {
       // Accept as user-2
       mockDb._reset();
       const auth = fakeAuthorization({ status: "accepted", toUserId: "user-2" });
-      const acceptUser = fakeUser({ id: "user-2", nickname: "Acceptor" });
-      // select 1: existing auth check (empty), select 2: acceptUser lookup, select 3: pet lookup
-      mockDb._results.select = [[], [acceptUser], [pet]];
-      mockDb._results.insert = [[auth], [fakeMessage()]]; // auth insert, message insert
+      const desktop = fakeDesktop({ id: "desktop-2", userId: "user-2" });
+      const binding = fakeBinding({
+        desktopDeviceId: desktop.id,
+        petId: pet.id,
+        bindingType: "authorized",
+      });
+      // select 1: pet lookup, select 2: existing auth check, select 3: user desktops
+      mockDb._results.select = [[pet], [], [desktop]];
+      mockDb._results.insert = [[auth], [binding]];
 
       const headers2 = await authHeader("user-2");
       const res = await app.request(
@@ -131,6 +137,7 @@ describe("Invite Routes", () => {
       expect(res.status).toBe(201);
       const json = await res.json();
       expect(json.authorization.status).toBe("accepted");
+      expect(json.bindings).toHaveLength(1);
     });
 
     it("returns 400 when accepting own invite", async () => {
@@ -178,7 +185,7 @@ describe("Invite Routes", () => {
       // Accept as user-2 but existing authorization found
       mockDb._reset();
       const existingAuth = fakeAuthorization();
-      mockDb._results.select = [[existingAuth]]; // existing auth found
+      mockDb._results.select = [[pet], [existingAuth]]; // pet lookup, existing auth found
 
       const headers2 = await authHeader("user-2");
       const res = await app.request(

@@ -18,7 +18,7 @@ describe("Avatar Routes", () => {
 
   it("returns 401 without token", async () => {
     const res = await app.request(
-      jsonReq("POST", "/api/avatars", { body: { petId: "pet-1", sourceImageUrl: "url" } })
+      jsonReq("POST", "/api/avatars", { body: { petId: "pet-1", sourceImageUrl: "https://example.com/photo.jpg" } })
     );
     expect(res.status).toBe(401);
   });
@@ -56,7 +56,7 @@ describe("Avatar Routes", () => {
       const res = await app.request(
         jsonReq("POST", "/api/avatars", {
           headers,
-          body: { petId: "pet-1", sourceImageUrl: "url" },
+          body: { petId: "pet-1", sourceImageUrl: "https://example.com/photo.jpg" },
         })
       );
       expect(res.status).toBe(404);
@@ -72,7 +72,7 @@ describe("Avatar Routes", () => {
       const res = await app.request(
         jsonReq("POST", "/api/avatars", {
           headers,
-          body: { petId: "pet-1", sourceImageUrl: "url" },
+          body: { petId: "pet-1", sourceImageUrl: "https://example.com/photo.jpg" },
         })
       );
       expect(res.status).toBe(403);
@@ -91,7 +91,7 @@ describe("Avatar Routes", () => {
         id: "action-1",
         petAvatarId: "avatar-1",
         actionType: "idle",
-        imageUrl: "url",
+        imageUrl: "https://example.com/action.jpg",
         sortOrder: 0,
       };
       // select 1: avatar by id, select 2: pet ownership, select 3: actions
@@ -142,7 +142,7 @@ describe("Avatar Routes", () => {
         id: "action-1",
         petAvatarId: "avatar-1",
         actionType: "idle",
-        imageUrl: "url",
+        imageUrl: "https://example.com/action.jpg",
         sortOrder: 0,
       };
       mockDb._results.insert = [[action]];
@@ -154,7 +154,7 @@ describe("Avatar Routes", () => {
           headers,
           body: {
             actions: [
-              { actionType: "idle", imageUrl: "url", sortOrder: 0 },
+              { actionType: "idle", imageUrl: "https://example.com/action.jpg", sortOrder: 0 },
             ],
           },
         })
@@ -173,7 +173,7 @@ describe("Avatar Routes", () => {
       const res = await app.request(
         jsonReq("POST", "/api/avatars/avatar-1/actions", {
           headers,
-          body: { actions: [{ actionType: "idle", imageUrl: "url", sortOrder: 0 }] },
+          body: { actions: [{ actionType: "idle", imageUrl: "https://example.com/action.jpg", sortOrder: 0 }] },
         })
       );
       expect(res.status).toBe(403);
@@ -186,7 +186,7 @@ describe("Avatar Routes", () => {
       const res = await app.request(
         jsonReq("POST", "/api/avatars/nonexistent/actions", {
           headers,
-          body: { actions: [] },
+          body: { actions: [{ actionType: "idle", imageUrl: "https://example.com/a.jpg", sortOrder: 0 }] },
         })
       );
       expect(res.status).toBe(404);

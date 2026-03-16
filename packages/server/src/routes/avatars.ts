@@ -5,10 +5,27 @@ import { eq, and, gt, sql } from "drizzle-orm";
 
 const avatarsRoute = new Hono();
 
+function isSafeImageUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 // 上传图片，创建定制任务
 avatarsRoute.post("/", async (c) => {
   const userId = c.get("userId" as never) as string;
-  const body = await c.req.json<{ petId: string; sourceImageUrl: string }>();
+  const body = await c.req.json<{
+    petId: string;
+    sourceImageUrl: string;
+    additionalImages?: string[];
+  }>();
+
+  if (!isSafeImageUrl(body.sourceImageUrl)) {
+    return c.json({ error: "Invalid sourceImageUrl" }, 400);
+  }
 
   // 检查宠物归属
   const [pet] = await db
@@ -27,12 +44,20 @@ avatarsRoute.post("/", async (c) => {
     return c.json({ error: "定制额度不足" }, 403);
   }
 
+  // 校验 additionalImages 中的 URL
+  if (body.additionalImages?.some((url) => !isSafeImageUrl(url))) {
+    return c.json({ error: "Invalid additionalImages URL" }, 400);
+  }
+
   // 创建定制任务
   const [avatar] = await db
     .insert(petAvatars)
     .values({
       petId: body.petId,
       sourceImageUrl: body.sourceImageUrl,
+      additionalImageUrls: body.additionalImages?.length
+        ? JSON.stringify(body.additionalImages)
+        : null,
       status: "pending",
     })
     .returning();
@@ -73,6 +98,13 @@ avatarsRoute.post("/:id/actions", async (c) => {
     actions: { actionType: string; imageUrl: string; sortOrder: number }[];
   }>();
 
+  if (!Array.isArray(body.actions) || body.actions.length === 0) {
+    return c.json({ error: "actions is required" }, 400);
+  }
+  if (body.actions.some((action) => !isSafeImageUrl(action.imageUrl))) {
+    return c.json({ error: "Invalid action imageUrl" }, 400);
+  }
+
   const [avatar] = await db
     .select()
     .from(petAvatars)
@@ -86,19 +118,17 @@ avatarsRoute.post("/:id/actions", async (c) => {
     .where(and(eq(pets.id, avatar.petId), eq(pets.userId, userId)));
   if (!pet) return c.json({ error: "Unauthorized" }, 403);
 
-  const inserted = [];
-  for (const action of body.actions) {
-    const [row] = await db
-      .insert(petAvatarActions)
-      .values({
+  const inserted = await db
+    .insert(petAvatarActions)
+    .values(
+      body.actions.map((action) => ({
         petAvatarId: avatarId,
         actionType: action.actionType,
         imageUrl: action.imageUrl,
         sortOrder: action.sortOrder,
-      })
-      .returning();
-    inserted.push(row);
-  }
+      })),
+    )
+    .returning();
 
   // 标记为完成
   await db

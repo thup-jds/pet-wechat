@@ -1,68 +1,14 @@
-// 设计稿: 33Qo7(主页), QfXnu(未配置设备), c9sf4(无宠物)
-// 设计宽度 1284px → Taro 750px, 缩放 ≈ 0.584
-
 .home-page {
   min-height: 100vh;
-  background: #ededed;
-  padding-bottom: 120px; // tab bar space
-  position: relative;
+  padding: 0 24px 116px;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.95), rgba(237, 237, 237, 0.92) 38%, #ece8df 100%);
+  box-sizing: border-box;
   overflow-x: hidden;
 }
 
-// ===== 空状态（未登录） =====
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-top: 200px;
-
-  .empty-icon {
-    width: 120px;
-    height: 120px;
-    margin-bottom: 24px;
-  }
-
-  .empty-text {
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 12px;
-    color: #333;
-  }
-
-  .empty-desc {
-    font-size: 26px;
-    color: #999;
-    margin-bottom: 48px;
-  }
-}
-
-.btn-primary {
-  background: #333;
-  color: #fff;
-  font-size: 28px;
-  padding: 20px 80px;
-  border-radius: 40px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.btn-secondary {
-  background: transparent;
-  color: #333;
-  font-size: 28px;
-  padding: 20px 80px;
-  border-radius: 40px;
-  border: 2px solid #ccc;
-  text-align: center;
-}
-
-// ===== 顶部栏 =====
 .top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 100px 32px 24px;
+  padding: 24px 8px 18px;
 }
 
 .pet-profile {
@@ -72,155 +18,130 @@
 }
 
 .pet-avatar-circle {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background: #d9d9d9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-
-  &.empty {
-    opacity: 0.5;
-  }
-
-  .avatar-icon {
-    width: 48px;
-    height: 48px;
-  }
+  width: 72px;
+  height: 72px;
+  border-radius: 36px;
+  flex-shrink: 0;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
 }
 
 .pet-info {
   display: flex;
   flex-direction: column;
-
-  .pet-name {
-    font-size: 30px;
-    font-weight: bold;
-    color: #333;
-    line-height: 1.2;
-  }
-
-  .pet-subtitle {
-    font-size: 20px;
-    color: #999;
-    line-height: 1.4;
-  }
+  gap: 6px;
 }
 
-.notification-icon {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .notification-bell-img {
-    width: 40px;
-    height: 40px;
-  }
-
-  .notification-dot {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #ff3b30;
-  }
+.pet-name {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2b2b2b;
+  line-height: 1.2;
 }
 
-// ===== Swiper 指示点 =====
-.swiper-dots {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px 0;
+.pet-subtitle {
+  font-size: 22px;
+  color: #7b746b;
+  line-height: 1.3;
 }
 
-.swiper-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ccc;
-  transition: all 0.2s ease;
-
-  &.active {
-    width: 28px;
-    border-radius: 6px;
-    background: #333;
-  }
-}
-
-// ===== 中间区域 =====
-.center-area {
+.home-main {
   display: flex;
   align-items: flex-start;
-  padding: 0 24px;
-  gap: 12px;
+  gap: 20px;
 }
 
-// 左侧活跃值
-.activity-bar {
+.left-rail {
+  width: 88px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 80px;
-
-  .activity-label {
-    font-size: 20px;
-    color: #999;
-    writing-mode: vertical-rl;
-    margin-bottom: 12px;
-  }
-
-  .activity-track {
-    width: 16px;
-    height: 300px;
-    background: #d9d9d9;
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .activity-fill {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    border-radius: 8px;
-    transition: height 0.3s ease;
-  }
+  gap: 18px;
+  padding-top: 34px;
 }
 
-.activity-score-badge {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+.activity-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.activity-label {
+  font-size: 20px;
+  color: #7f776c;
+  letter-spacing: 2px;
+  writing-mode: vertical-rl;
+}
+
+.activity-track {
+  width: 18px;
+  height: 248px;
+  border-radius: 999px;
+  background: rgba(77, 71, 58, 0.16);
+  position: relative;
+  overflow: hidden;
+}
+
+.activity-fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  border-radius: inherit;
+}
+
+.activity-score {
+  width: 58px;
+  height: 58px;
+  border-radius: 29px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 3px solid #5aa67a;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
 
-  .activity-score-text {
-    font-size: 20px;
-    font-weight: bold;
-    color: #fff;
-  }
+.activity-score-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2b2b2b;
 }
 
 .activity-level {
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 600;
 }
 
-// 宠物大图
-.pet-photo-wrapper {
+.notification-card {
+  width: 58px;
+  height: 58px;
+  border-radius: 29px;
+  background: rgba(255, 255, 255, 0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.notification-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5d5d;
+}
+
+.hero-section {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -228,228 +149,212 @@
 }
 
 .speech-bubble {
-  background: #fff;
-  border-radius: 24px;
-  padding: 16px 24px;
-  margin-bottom: 12px;
-  position: relative;
-  max-width: 80%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 560px;
+  min-height: 124px;
+  margin-bottom: 16px;
+  padding: 24px 40px 30px;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .speech-text {
-    font-size: 24px;
-    color: #333;
-    line-height: 1.5;
-  }
-
-  .speech-arrow {
-    position: absolute;
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 14px solid #fff;
-  }
+.speech-text {
+  font-size: 26px;
+  line-height: 1.5;
+  color: #3a342e;
+  text-align: center;
 }
 
 .pet-swiper {
   width: 100%;
-  height: 460px;
+  height: 520px;
 }
 
-.pet-photo {
-  width: 460px;
-  height: 460px;
-  border-radius: 32px;
-  background: #e8e8e8;
+.hero-shell {
+  width: 100%;
+  min-height: 520px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
-  overflow: hidden;
-
-  &.empty {
-    opacity: 0.5;
-  }
-
-  .pet-photo-icon {
-    width: 200px;
-    height: 200px;
-    opacity: 0.3;
-  }
-
-  .pet-photo-hint {
-    font-size: 24px;
-    color: #999;
-    margin-top: 16px;
-  }
 }
 
-// ===== 底部设备卡片 =====
+.hero-image {
+  width: 100%;
+  max-width: 560px;
+  height: 500px;
+}
+
+.hero-caption {
+  margin-top: -8px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #5e5548;
+}
+
+.swipe-indicator {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.swipe-arrow {
+  width: 120px;
+  height: 22px;
+}
+
+.swipe-text {
+  font-size: 22px;
+  color: #6e665c;
+}
+
+.swipe-progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(58, 52, 46, 0.12);
+  overflow: hidden;
+}
+
+.swipe-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #c27e5f 0%, #6b8f71 100%);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 12px 0 26px;
+}
+
+.action-button {
+  width: 118px;
+  height: 118px;
+  border-radius: 59px;
+  background: rgba(255, 255, 255, 0.94);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.08);
+}
+
+.action-button-icon {
+  width: 42px;
+  height: 42px;
+}
+
+.action-button-label {
+  font-size: 22px;
+  color: #4b453d;
+}
+
 .device-cards {
   display: flex;
   gap: 16px;
-  padding: 24px 32px;
 }
 
 .device-card {
   flex: 1;
-  background: #fff;
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-
-  // 设计稿空设备引导状态
-  &.empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 16px;
-    opacity: 0.7;
-
-    .device-card-icon {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 12px;
-      opacity: 0.5;
-    }
-
-    .device-card-label {
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 8px;
-    }
-
-    .device-card-hint {
-      font-size: 20px;
-      color: #999;
-      text-align: center;
-    }
-  }
-
-  .device-card-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-
-    .device-icon-img {
-      width: 40px;
-      height: 40px;
-    }
-
-    .device-name {
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
-      flex: 1;
-    }
-  }
-
-  .device-card-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-
-    .status-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #ccc;
-
-      &.online {
-        background: #86f066;
-      }
-    }
-
-    .status-text {
-      font-size: 22px;
-      color: #666;
-    }
-
-    .battery-info,
-    .signal-info {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-
-      .status-icon {
-        width: 24px;
-        height: 24px;
-      }
-
-      .status-value {
-        font-size: 20px;
-        color: #999;
-      }
-    }
-
-    .battery-info {
-      margin-left: auto;
-    }
-  }
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 28px;
+  padding: 24px 22px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.06);
 }
 
-// ===== 右侧管理设备触发器 =====
-.sidebar-trigger {
-  position: fixed;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  padding: 16px 8px;
-  border-radius: 12px 0 0 12px;
+.device-card.empty {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.device-card-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.device-card-icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.device-card-title {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2f2b28;
+  margin-bottom: 6px;
+}
+
+.device-card-desc {
+  display: block;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #7b746b;
+}
+
+.empty-state {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  z-index: 10;
-
-  .sidebar-text {
-    font-size: 22px;
-    line-height: 1.4;
-  }
+  justify-content: center;
+  padding: 0 56px;
+  text-align: center;
 }
 
-// ===== 侧边栏弹出层 =====
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 100;
-  display: flex;
-  justify-content: flex-end;
+.empty-icon {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 28px;
 }
 
-.sidebar-panel {
-  width: 500px;
-  height: 100%;
-  background: #fff;
-  padding: 120px 32px 32px;
-  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
+.empty-title {
+  font-size: 34px;
+  font-weight: 700;
+  color: #2d2925;
+}
 
-  .sidebar-title {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 48px;
-    display: block;
-  }
+.empty-desc {
+  margin: 16px 0 40px;
+  font-size: 24px;
+  line-height: 1.6;
+  color: #7a7268;
+}
 
-  .sidebar-item {
-    padding: 24px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 28px;
-    color: #333;
-  }
+.btn-primary {
+  min-width: 220px;
+  padding: 22px 36px;
+  border-radius: 999px;
+  background: #2f2b28;
+  color: #fff;
+  font-size: 28px;
+  text-align: center;
+}
+
+.empty-main {
+  display: block;
+  margin-top: 8px;
+}
+
+.empty-hero {
+  min-height: 480px;
+}
+
+.empty-hero-text {
+  margin-top: 12px;
+  font-size: 24px;
+  color: #7f776c;
 }

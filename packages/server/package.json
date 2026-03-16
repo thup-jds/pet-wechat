@@ -11,6 +11,7 @@
     "test": "bun test src/__tests__/"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.888.0",
     "hono": "^4",
     "drizzle-orm": "^0.39",
     "postgres": "^3",

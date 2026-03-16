@@ -19,6 +19,7 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "typeRoots": [
+      "types",
       "node_modules/@tarojs/components/types",
       "node_modules/@types"
     ],

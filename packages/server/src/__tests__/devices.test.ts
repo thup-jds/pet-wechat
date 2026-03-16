@@ -8,8 +8,6 @@ import {
   fakeDesktop,
   fakePet,
   fakeBinding,
-  fakeShareLink,
-  fakeShareRecord,
 } from "./helpers";
 
 const app = createApp();
@@ -244,75 +242,6 @@ describe("Device Routes", () => {
         })
       );
       expect(res.status).toBe(404);
-    });
-  });
-
-  // ===== Share links =====
-
-  describe("POST /api/devices/share-links", () => {
-    it("creates a share link for own pet", async () => {
-      mockDb._results.select = [[fakePet()]]; // pet ownership check
-      mockDb._results.insert = [[fakeShareLink()]];
-
-      const headers = await authHeader("user-1");
-      const res = await app.request(
-        jsonReq("POST", "/api/devices/share-links", {
-          headers,
-          body: { shareType: "pet", targetId: "pet-1" },
-        })
-      );
-      expect(res.status).toBe(201);
-      const json = await res.json();
-      expect(json.shareLink.shareCode).toBeDefined();
-    });
-
-    it("returns 404 when pet not owned by user", async () => {
-      mockDb._results.select = [[]]; // pet not found
-
-      const headers = await authHeader("user-2");
-      const res = await app.request(
-        jsonReq("POST", "/api/devices/share-links", {
-          headers,
-          body: { shareType: "pet", targetId: "pet-1" },
-        })
-      );
-      expect(res.status).toBe(404);
-    });
-  });
-
-  describe("GET /api/devices/share-links", () => {
-    it("returns user's share links", async () => {
-      mockDb._results.select = [[fakeShareLink()]];
-
-      const headers = await authHeader("user-1");
-      const res = await app.request(
-        jsonReq("GET", "/api/devices/share-links", { headers })
-      );
-      expect(res.status).toBe(200);
-      const json = await res.json();
-      expect(json.shareLinks).toHaveLength(1);
-    });
-  });
-
-  describe("POST /api/devices/share-links/:code/use", () => {
-    it("returns 404 for non-existent share code", async () => {
-      mockDb._results.select = [[]]; // share link not found
-
-      const headers = await authHeader("user-2");
-      const res = await app.request(
-        jsonReq("POST", "/api/devices/share-links/badcode/use", { headers })
-      );
-      expect(res.status).toBe(404);
-    });
-
-    it("returns 400 when using own share link", async () => {
-      mockDb._results.select = [[fakeShareLink({ createdBy: "user-1" })]];
-
-      const headers = await authHeader("user-1");
-      const res = await app.request(
-        jsonReq("POST", "/api/devices/share-links/abc12345/use", { headers })
-      );
-      expect(res.status).toBe(400);
     });
   });
 });

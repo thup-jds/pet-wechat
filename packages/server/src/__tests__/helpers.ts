@@ -185,27 +185,13 @@ export function fakeBinding(overrides: Record<string, unknown> = {}) {
   };
 }
 
-export function fakeShareLink(overrides: Record<string, unknown> = {}) {
+export function fakeAuthorization(overrides: Record<string, unknown> = {}) {
   return {
-    id: "share-1",
-    shareCode: "abc12345",
-    shareType: "pet",
-    targetId: "pet-1",
-    createdBy: "user-1",
-    maxUses: 1,
-    usedCount: 0,
-    expireAt: null,
-    status: "active",
-    createdAt: new Date(),
-    ...overrides,
-  };
-}
-
-export function fakeShareRecord(overrides: Record<string, unknown> = {}) {
-  return {
-    id: "record-1",
-    shareLinkId: "share-1",
-    userId: "user-2",
+    id: "auth-1",
+    fromUserId: "user-1",
+    toUserId: "user-2",
+    petId: "pet-1",
+    status: "accepted",
     createdAt: new Date(),
     ...overrides,
   };

@@ -50,7 +50,7 @@ describe("Upload Routes", () => {
       expect(json.error).toContain("No file");
     });
 
-    it("returns mock URL when file is uploaded", async () => {
+    it("returns uploaded file URL when file is uploaded", async () => {
       const headers = await authHeader("user-1");
       const formData = new FormData();
       const file = new File(["test content"], "photo.jpg", {
@@ -67,7 +67,7 @@ describe("Upload Routes", () => {
       );
       expect(res.status).toBe(201);
       const json = await res.json();
-      expect(json.url).toContain("mock-storage.yehey.com");
+      expect(json.url).toContain("test-storage.local");
       expect(json.url).toContain("user-1");
       expect(json.url).toEndWith(".jpg");
       expect(json.fileId).toBeDefined();

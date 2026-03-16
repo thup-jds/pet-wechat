@@ -2,7 +2,10 @@ import { View, Text, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import NavBar from "../../components/NavBar";
 import { markGuideCompleted } from "../../utils/storage";
-import { ICON_COLLAR, ICON_CAT, ICON_DOG, ICON_DESKTOP } from "../../assets/icons";
+import { ICON_LINK } from "../../assets/icons";
+import dogImage from "../../assets/images/dog.png";
+import collarImage from "../../assets/images/collar-icon.png";
+import desktopImage from "../../assets/images/desktop-icon.png";
 import "./index.scss";
 
 export default function Guide() {
@@ -34,11 +37,10 @@ export default function Guide() {
           优先配置项圈，同步宠物的真实行为
         </Text>
         <View className="illustration-area">
-          {/* TODO: 替换为项圈+猫狗剪影插画 */}
           <View className="illustration-icons">
-            <Image className="illustration-icon" src={ICON_DOG} mode="aspectFit" />
-            <Image className="illustration-icon" src={ICON_COLLAR} mode="aspectFit" />
-            <Image className="illustration-icon" src={ICON_CAT} mode="aspectFit" />
+            <Image className="illustration-icon" src={dogImage} mode="aspectFit" />
+            <Image className="illustration-link" src={ICON_LINK} mode="aspectFit" />
+            <Image className="illustration-icon" src={collarImage} mode="aspectFit" />
           </View>
         </View>
       </View>
@@ -54,8 +56,11 @@ export default function Guide() {
           配置桌面端设备，开启数字宠物体验
         </Text>
         <View className="illustration-area">
-          {/* TODO: 替换为水晶球插画 */}
-          <Image className="illustration-icon large" src={ICON_DESKTOP} mode="aspectFit" />
+          <View className="illustration-icons">
+            <Image className="illustration-icon" src={dogImage} mode="aspectFit" />
+            <Image className="illustration-link" src={ICON_LINK} mode="aspectFit" />
+            <Image className="illustration-icon" src={desktopImage} mode="aspectFit" />
+          </View>
         </View>
       </View>
 
