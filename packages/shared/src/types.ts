@@ -41,7 +41,7 @@ export interface Pet {
 
 export interface CollarDevice {
   id: string;
-  userId: string;
+  userId: string | null;
   petId: string | null;
   name: string;
   macAddress: string;
@@ -56,7 +56,7 @@ export interface CollarDevice {
 
 export interface DesktopDevice {
   id: string;
-  userId: string;
+  userId: string | null;
   name: string;
   macAddress: string;
   status: DeviceStatus;

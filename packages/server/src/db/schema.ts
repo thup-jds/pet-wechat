@@ -80,7 +80,7 @@ export const pets = pgTable("pets", {
 
 export const collarDevices = pgTable("collar_devices", {
   id: text("id").primaryKey().$defaultFn(createId),
-  userId: text("user_id").notNull(),
+  userId: text("user_id"),
   petId: text("pet_id"),
   name: text("name").notNull(),
   macAddress: text("mac_address").notNull().unique(),
@@ -101,7 +101,7 @@ export const collarDevices = pgTable("collar_devices", {
 
 export const desktopDevices = pgTable("desktop_devices", {
   id: text("id").primaryKey().$defaultFn(createId),
-  userId: text("user_id").notNull(),
+  userId: text("user_id"),
   name: text("name").notNull(),
   macAddress: text("mac_address").notNull().unique(),
   status: deviceStatusEnum("status").notNull().default("offline"),

@@ -61,6 +61,12 @@ export async function verifyToken(token: string): Promise<JwtPayload> {
 export const authMiddleware = createMiddleware<{
   Variables: { userId: string };
 }>(async (c, next) => {
+  // admin 路由使用独立的 admin key 认证，跳过 JWT 校验
+  if (c.req.path.startsWith("/api/admin")) {
+    await next();
+    return;
+  }
+
   const authHeader = c.req.header("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
     throw new HTTPException(401, { message: "Missing token" });

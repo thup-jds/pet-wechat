@@ -1,39 +1,49 @@
-import { View, Text, Input } from "@tarojs/components";
+import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
 import NavBar from "../../components/NavBar";
 import { request } from "../../utils/request";
+import { ICON_DESKTOP } from "../../assets/icons";
+import type { DesktopDevice } from "@pet-wechat/shared";
 import "./index.scss";
 
-export default function DesktopBind() {
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
+type Step = 1 | 2;
 
-  // TODO: 接入真实蓝牙搜索桌面端设备
-  const handleBind = async () => {
-    if (!name.trim()) {
-      Taro.showToast({ title: "请输入设备名称", icon: "none" });
+export default function DesktopBind() {
+  const [step, setStep] = useState<Step>(1);
+  const [devices, setDevices] = useState<DesktopDevice[]>([]);
+  const [selectedId, setSelectedId] = useState("");
+
+  const handleSearch = async () => {
+    Taro.showLoading({ title: "搜索中..." });
+    try {
+      const { desktops } = await request<{ desktops: DesktopDevice[] }>({
+        url: "/api/devices/desktops/unowned",
+      });
+      setDevices(desktops);
+      setStep(2);
+    } catch (e: any) {
+      Taro.showToast({ title: e.message || "搜索失败", icon: "none" });
+    } finally {
+      Taro.hideLoading();
+    }
+  };
+
+  const handleConnect = () => {
+    if (!selectedId) {
+      Taro.showToast({ title: "请选择一个设备", icon: "none" });
       return;
     }
-    setLoading(true);
-    try {
-      await request({
-        url: "/api/devices/desktops",
-        method: "POST",
-        data: {
-          name: name.trim(),
-          macAddress: `desktop_mock_${Date.now()}`,
-        },
-      });
-      Taro.showToast({ title: "绑定成功", icon: "success" });
+    Taro.showLoading({ title: "连接中..." });
+    setTimeout(() => {
+      Taro.hideLoading();
+      Taro.showToast({ title: "连接成功", icon: "success" });
       setTimeout(() => {
-        Taro.navigateTo({ url: "/pages/desktop-pair/index" });
+        Taro.navigateTo({
+          url: `/pages/wifi-config/index?deviceType=desktop&deviceId=${selectedId}`,
+        });
       }, 1000);
-    } catch (e: any) {
-      Taro.showToast({ title: e.message || "绑定失败", icon: "none" });
-    } finally {
-      setLoading(false);
-    }
+    }, 1500);
   };
 
   return (
@@ -43,20 +53,41 @@ export default function DesktopBind() {
         将桌面端设备与小程序关联，随时在桌面看到宠物动态
       </Text>
 
-      <View className="form-item">
-        <Text className="label">设备名称</Text>
-        <Input
-          className="input-field"
-          placeholder="如：书房桌面端"
-          value={name}
-          onInput={(e) => setName(e.detail.value)}
-        />
-      </View>
+      {step === 2 && (
+        <ScrollView className="device-list" scrollY style={{ maxHeight: "400px" }}>
+          {devices.length === 0 ? (
+            <Text className="empty-text">未发现可用设备，请在管理后台创建模拟摆台</Text>
+          ) : (
+            devices.map((d) => (
+              <View
+                key={d.id}
+                className={`device-item card ${selectedId === d.id ? "selected" : ""}`}
+                onClick={() => setSelectedId(d.id)}
+              >
+                <View className="item-name-row">
+                  <Image className="item-desktop-icon" src={ICON_DESKTOP} mode="aspectFit" />
+                  <View className="device-info">
+                    <Text className="item-name">{d.name}</Text>
+                    <Text className="device-mac">{d.macAddress}</Text>
+                  </View>
+                  <Text className="mock-tag">Mock</Text>
+                </View>
+              </View>
+            ))
+          )}
+        </ScrollView>
+      )}
 
       <Text className="mock-badge">⚠ Mock 模式：蓝牙搜索使用模拟数据</Text>
-      <View className="btn-primary mock-btn" onClick={handleBind}>
-        {loading ? "Mock 绑定中..." : "Mock 绑定设备"}
-      </View>
+      {step === 1 ? (
+        <View className="btn-primary mock-btn" onClick={handleSearch}>
+          Mock 搜索设备
+        </View>
+      ) : (
+        <View className="btn-primary mock-btn" onClick={handleConnect}>
+          Mock 连接设备
+        </View>
+      )}
 
       <View className="alt-option card">
         <Text className="alt-title">没有桌面端？</Text>
