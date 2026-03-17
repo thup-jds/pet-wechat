@@ -7,21 +7,32 @@ import "./index.scss";
 /**
  * WiFi 连接结果页
  * 设计稿: jBoj0 (成功), 0U4wA (失败)
- * 成功: 绿勾 + "网络配置成功" + "进入项圈-宠物匹配" 按钮
+ * 成功: 绿勾 + "网络配置成功" + 下一步按钮
  * 失败: 红X + "网络配置失败" + "重新连接" 按钮
  */
 export default function WifiResult() {
   const router = useRouter();
   const success = router.params.success === "true";
+  const deviceType = router.params.deviceType ?? "collar";
   const collarId = router.params.collarId;
+  const desktopId = router.params.desktopId;
 
   const handleAction = () => {
-    if (success && collarId) {
-      Taro.navigateTo({ url: `/pages/pet-info/index?collarId=${collarId}` });
+    if (success) {
+      if (deviceType === "desktop" && desktopId) {
+        Taro.navigateTo({ url: `/pages/desktop-pair/index?desktopId=${desktopId}` });
+      } else if (collarId) {
+        Taro.navigateTo({ url: `/pages/pet-info/index?collarId=${collarId}` });
+      }
     } else {
-      // 失败: 返回 wifi-config 重试
       Taro.navigateBack();
     }
+  };
+
+  const getButtonText = () => {
+    if (!success) return "重新连接";
+    if (deviceType === "desktop") return "选择宠物配对";
+    return "进入项圈-宠物匹配";
   };
 
   return (
@@ -38,9 +49,7 @@ export default function WifiResult() {
           mode="aspectFit"
         />
         <View className="result-btn" onClick={handleAction}>
-          <Text className="result-btn-text">
-            {success ? "进入项圈-宠物匹配" : "重新连接"}
-          </Text>
+          <Text className="result-btn-text">{getButtonText()}</Text>
         </View>
       </View>
       </View>

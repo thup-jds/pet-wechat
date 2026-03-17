@@ -14,6 +14,67 @@ import { generateInviteCode, verifyInviteCode } from "../utils/invite";
 
 const devicesRoute = new Hono();
 
+// ===== 无主设备（模拟蓝牙搜索） =====
+
+devicesRoute.get("/collars/unowned", async (c) => {
+  const result = await db
+    .select()
+    .from(collarDevices)
+    .where(isNull(collarDevices.userId));
+  return c.json({ collars: result });
+});
+
+devicesRoute.get("/desktops/unowned", async (c) => {
+  const result = await db
+    .select()
+    .from(desktopDevices)
+    .where(isNull(desktopDevices.userId));
+  return c.json({ desktops: result });
+});
+
+// ===== 设备认领（模拟蓝牙配对绑定） =====
+
+devicesRoute.post("/collars/:id/claim", async (c) => {
+  const userId = c.get("userId" as never) as string;
+  const id = c.req.param("id");
+  const body = await c.req.json().catch(() => ({}));
+
+  // 原子操作：只认领 userId 为空的设备，防止并发抢占
+  const [collar] = await db
+    .update(collarDevices)
+    .set({
+      userId,
+      name: body.name ?? "我的项圈",
+      status: "online" as const,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(collarDevices.id, id), isNull(collarDevices.userId)))
+    .returning();
+
+  if (!collar) return c.json({ error: "Device not found or already claimed" }, 404);
+  return c.json({ collar });
+});
+
+devicesRoute.post("/desktops/:id/claim", async (c) => {
+  const userId = c.get("userId" as never) as string;
+  const id = c.req.param("id");
+  const body = await c.req.json().catch(() => ({}));
+
+  const [desktop] = await db
+    .update(desktopDevices)
+    .set({
+      userId,
+      name: body.name ?? "我的桌面端",
+      status: "online" as const,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(desktopDevices.id, id), isNull(desktopDevices.userId)))
+    .returning();
+
+  if (!desktop) return c.json({ error: "Device not found or already claimed" }, 404);
+  return c.json({ desktop });
+});
+
 // ===== 项圈设备 =====
 
 devicesRoute.get("/collars", async (c) => {

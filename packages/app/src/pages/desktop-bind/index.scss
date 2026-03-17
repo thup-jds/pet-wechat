@@ -19,6 +19,67 @@
     border: 2px solid #ff0000;
   }
 
+  .device-list {
+    margin-bottom: 16px;
+  }
+
+  .device-item {
+    margin-bottom: 12px;
+    border: 3px solid transparent;
+
+    &.selected {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+
+    .item-name-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .item-desktop-icon {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+    }
+
+    .device-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .item-name {
+      font-size: 26px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .device-mac {
+      font-size: 20px;
+      color: #999;
+    }
+
+    .mock-tag {
+      font-size: 20px;
+      color: #ff0000;
+      font-weight: 600;
+      background: #fff0f0;
+      padding: 4px 12px;
+      border-radius: 8px;
+      border: 1px solid #ffcccc;
+    }
+  }
+
+  .empty-text {
+    font-size: 24px;
+    color: #999;
+    text-align: center;
+    padding: 40px 0;
+  }
+
   .bind-desc {
     display: block;
     text-align: center;

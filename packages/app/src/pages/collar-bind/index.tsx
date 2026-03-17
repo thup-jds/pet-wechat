@@ -1,33 +1,47 @@
-import { View, Text, Image } from "@tarojs/components";
+import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
 import NavBar from "../../components/NavBar";
+import { request } from "../../utils/request";
 import { ICON_PAW, ICON_COLLAR, ICON_CAT, ICON_BLUETOOTH } from "../../assets/icons";
+import type { CollarDevice } from "@pet-wechat/shared";
 import "./index.scss";
 
 type Step = 1 | 2;
 
 export default function CollarBind() {
   const [step, setStep] = useState<Step>(1);
-  // TODO: 替换为真实蓝牙扫描到的设备 ID
-  const deviceId = "YEHEY-A1B2C3";
+  const [devices, setDevices] = useState<CollarDevice[]>([]);
+  const [selectedId, setSelectedId] = useState("");
 
-  // TODO: 接入真实蓝牙 API，当前为 Mock
-  const handleSearch = () => {
+  const handleSearch = async () => {
     Taro.showLoading({ title: "搜索中..." });
-    setTimeout(() => {
-      Taro.hideLoading();
+    try {
+      const { collars } = await request<{ collars: CollarDevice[] }>({
+        url: "/api/devices/collars/unowned",
+      });
+      setDevices(collars);
       setStep(2);
-    }, 2000);
+    } catch (e: any) {
+      Taro.showToast({ title: e.message || "搜索失败", icon: "none" });
+    } finally {
+      Taro.hideLoading();
+    }
   };
 
   const handleConnect = () => {
+    if (!selectedId) {
+      Taro.showToast({ title: "请选择一个设备", icon: "none" });
+      return;
+    }
     Taro.showLoading({ title: "连接中..." });
     setTimeout(() => {
       Taro.hideLoading();
       Taro.showToast({ title: "连接成功", icon: "success" });
       setTimeout(() => {
-        Taro.navigateTo({ url: "/pages/wifi-config/index" });
+        Taro.navigateTo({
+          url: `/pages/wifi-config/index?deviceType=collar&deviceId=${selectedId}`,
+        });
       }, 1000);
     }, 1500);
   };
@@ -36,7 +50,6 @@ export default function CollarBind() {
     <View className="collar-bind-page">
       <NavBar title="配置项圈" />
 
-      {/* TODO: 替换为半透明猫狗背景插画 (image-import-24.png) */}
       <View className="bg-illustration">
         <Image className="bg-illustration-icon" src={ICON_PAW} mode="aspectFit" />
       </View>
@@ -44,7 +57,6 @@ export default function CollarBind() {
       <View className="main-card">
         <Text className="card-title">配置宠物项圈</Text>
 
-        {/* TODO: 替换为项圈+猫狗插画 (image-import-5.png + image-import-17.png) */}
         <View className="collar-illustration">
           <Image className="collar-illustration-icon" src={ICON_COLLAR} mode="aspectFit" />
           <Image className="collar-illustration-cat" src={ICON_CAT} mode="aspectFit" />
@@ -60,7 +72,6 @@ export default function CollarBind() {
             </Text>
           </View>
           <View className="step-illustration-area">
-            {/* TODO: 替换为充电示意插画 (image-import-28.png) */}
             <Image className="step-illustration-img" src={ICON_BLUETOOTH} mode="aspectFit" />
           </View>
         </View>
@@ -75,11 +86,26 @@ export default function CollarBind() {
             </Text>
           </View>
           {step === 2 && (
-            <View className="device-found-card">
-              <Image className="device-icon-img" src={ICON_BLUETOOTH} mode="aspectFit" />
-              <Text className="device-id">{deviceId}</Text>
-              <Text className="device-status">已发现设备</Text>
-            </View>
+            <ScrollView className="device-list" scrollY>
+              {devices.length === 0 ? (
+                <Text className="empty-text">未发现可用设备，请在管理后台创建模拟项圈</Text>
+              ) : (
+                devices.map((d) => (
+                  <View
+                    key={d.id}
+                    className={`device-found-card ${selectedId === d.id ? "selected" : ""}`}
+                    onClick={() => setSelectedId(d.id)}
+                  >
+                    <Image className="device-icon-img" src={ICON_BLUETOOTH} mode="aspectFit" />
+                    <View className="device-info">
+                      <Text className="device-id">{d.name}</Text>
+                      <Text className="device-mac">{d.macAddress}</Text>
+                    </View>
+                    <Text className="mock-tag">Mock</Text>
+                  </View>
+                ))
+              )}
+            </ScrollView>
           )}
         </View>
 
@@ -95,7 +121,6 @@ export default function CollarBind() {
         )}
       </View>
 
-      {/* 步骤指示: 搜索 → 连接 → WiFi → 完成 */}
       <View className="step-indicator">
         <View className={`step-dot ${step >= 1 ? "active" : ""}`}>
           <Text className="step-dot-text">1</Text>

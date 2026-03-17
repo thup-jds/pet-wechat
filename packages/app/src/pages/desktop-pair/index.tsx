@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView } from "@tarojs/components";
-import Taro from "@tarojs/taro";
+import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect } from "react";
 import NavBar from "../../components/NavBar";
 import { request } from "../../utils/request";
@@ -8,10 +8,13 @@ import type { Pet, DesktopDevice } from "@pet-wechat/shared";
 import "./index.scss";
 
 export default function DesktopPair() {
+  const router = useRouter();
+  const preSelectedDesktopId = router.params.desktopId;
+
   const [pets, setPets] = useState<Pet[]>([]);
   const [desktops, setDesktops] = useState<DesktopDevice[]>([]);
   const [selectedPet, setSelectedPet] = useState("");
-  const [selectedDesktop, setSelectedDesktop] = useState("");
+  const [selectedDesktop, setSelectedDesktop] = useState(preSelectedDesktopId ?? "");
 
   useEffect(() => {
     request<{ pets: Pet[] }>({ url: "/api/pets" }).then((r) => setPets(r.pets));

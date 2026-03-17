@@ -2,7 +2,9 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { authMiddleware } from "./middleware/auth";
+import { adminMiddleware } from "./middleware/admin";
 import authRoute from "./routes/auth";
+import adminRoute from "./routes/admin";
 import petsRoute from "./routes/pets";
 import avatarsRoute from "./routes/avatars";
 import devicesRoute from "./routes/devices";
@@ -24,6 +26,10 @@ app.get("/health", (c) => c.json({ status: "ok" }));
 // 公开路由（登录接口 + 邀请预览）
 app.route("/api/auth", authRoute);
 app.route("/api/invite", invitePublicRoute);
+
+// 管理后台路由（Admin Key 认证）
+app.use("/api/admin/*", adminMiddleware);
+app.route("/api/admin", adminRoute);
 
 // 需要鉴权的路由
 app.use("/api/*", authMiddleware);

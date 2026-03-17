@@ -1,16 +1,19 @@
 import { View, Text, Input } from "@tarojs/components";
-import Taro from "@tarojs/taro";
+import Taro, { useRouter } from "@tarojs/taro";
 import { useState } from "react";
 import NavBar from "../../components/NavBar";
 import { request } from "../../utils/request";
 import "./index.scss";
 
 export default function WifiConfig() {
+  const router = useRouter();
+  const deviceType = router.params.deviceType as "collar" | "desktop" | undefined;
+  const deviceId = router.params.deviceId;
+
   const [ssid, setSsid] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // TODO: 接入真实 WiFi 配置流程，当前为 Mock
   const handleConfigure = async () => {
     if (loading) return;
     if (!ssid) {
@@ -19,33 +22,50 @@ export default function WifiConfig() {
     }
     setLoading(true);
 
-    // Mock: 创建项圈设备记录
     try {
-      const { collar } = await request<{ collar: { id: string } }>({
-        url: "/api/devices/collars",
-        method: "POST",
-        data: {
-          name: "YEHEY Collar",
-          macAddress: `mock_${Date.now()}`,
-        },
-      });
-
       Taro.showLoading({ title: "配置中..." });
-      // TODO: 接入真实 WiFi 配置流程，当前模拟延迟后跳转结果页
+
+      let resultUrl: string;
+
+      if (deviceType === "collar" && deviceId) {
+        await request<{ collar: { id: string } }>({
+          url: `/api/devices/collars/${deviceId}/claim`,
+          method: "POST",
+          data: { name: "YEHEY Collar" },
+        });
+        resultUrl = `/pages/wifi-result/index?success=true&deviceType=collar&collarId=${deviceId}`;
+      } else if (deviceType === "desktop" && deviceId) {
+        await request<{ desktop: { id: string } }>({
+          url: `/api/devices/desktops/${deviceId}/claim`,
+          method: "POST",
+          data: { name: "YEHEY Desktop" },
+        });
+        resultUrl = `/pages/wifi-result/index?success=true&deviceType=desktop&desktopId=${deviceId}`;
+      } else {
+        // 兼容旧流程：直接创建设备
+        const { collar } = await request<{ collar: { id: string } }>({
+          url: "/api/devices/collars",
+          method: "POST",
+          data: {
+            name: "YEHEY Collar",
+            macAddress: `mock_${Date.now()}`,
+          },
+        });
+        resultUrl = `/pages/wifi-result/index?success=true&collarId=${collar.id}`;
+      }
+
+      // 模拟配网延迟，loading 状态保持到跳转，防止重复点击
       setTimeout(() => {
         Taro.hideLoading();
-        // Mock: 随机成功/失败，实际应根据设备返回结果
-        const success = true;
-        Taro.navigateTo({
-          url: `/pages/wifi-result/index?success=${success}&collarId=${collar.id}`,
-        });
+        setLoading(false);
+        Taro.navigateTo({ url: resultUrl });
       }, 2000);
     } catch (e: any) {
-      Taro.navigateTo({
-        url: "/pages/wifi-result/index?success=false",
-      });
-    } finally {
+      Taro.hideLoading();
       setLoading(false);
+      Taro.navigateTo({
+        url: `/pages/wifi-result/index?success=false&deviceType=${deviceType ?? "collar"}`,
+      });
     }
   };
 
@@ -68,7 +88,9 @@ export default function WifiConfig() {
 
       <Text className="step-title">Step 3: WiFi 配置</Text>
       <Text className="step-desc">
-        为项圈配置 WiFi，以便实时同步宠物行为数据
+        {deviceType === "desktop"
+          ? "为桌面摆台配置 WiFi，以便实时同步宠物动态"
+          : "为项圈配置 WiFi，以便实时同步宠物行为数据"}
       </Text>
 
       <View className="form-section">
