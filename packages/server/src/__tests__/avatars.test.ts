@@ -146,7 +146,7 @@ describe("Avatar Routes", () => {
         sortOrder: 0,
       };
       mockDb._results.insert = [[action]];
-      mockDb._results.update = [[]]; // mark as done
+      mockDb._results.update = [[{ id: avatar.id }]]; // mark as done
 
       const headers = await authHeader("user-1");
       const res = await app.request(

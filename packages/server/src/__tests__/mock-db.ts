@@ -33,6 +33,7 @@ export interface MockDb {
   insert(table: unknown): ChainValues;
   update(table: unknown): ChainSet;
   delete(table: unknown): ChainDeleteWhere;
+  transaction<T>(callback: (tx: MockDb) => Promise<T>): Promise<T>;
 }
 
 interface ChainFrom {
@@ -173,6 +174,10 @@ export function createMockDb(): MockDb {
           return Promise.resolve();
         },
       } as any;
+    },
+
+    transaction<T>(callback: (tx: MockDb) => Promise<T>) {
+      return callback(db);
     },
   };
 

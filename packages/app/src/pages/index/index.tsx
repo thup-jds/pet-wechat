@@ -1,10 +1,16 @@
-import { View, Text, Image, Swiper, SwiperItem } from "@tarojs/components";
-import Taro, { useDidShow } from "@tarojs/taro";
+import { View, Text, Image, Swiper, SwiperItem, ScrollView } from "@tarojs/components";
+import Taro, { useDidHide, useDidShow } from "@tarojs/taro";
 import { useEffect, useState, useRef } from "react";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
-import { ICON_PAW, ICON_ARROW_LEFT, ICON_ARROW_RIGHT } from "../../assets/icons";
-import type { Pet, CollarDevice, DesktopDevice, WsBehaviorNewMessage } from "@pet-wechat/shared";
+import { ICON_PAW, ICON_ARROW_LEFT, ICON_ARROW_RIGHT, ICON_PHOTO } from "../../assets/icons";
+import type {
+  Pet,
+  CollarDevice,
+  DesktopDevice,
+  WsAvatarDoneMessage,
+  WsBehaviorNewMessage,
+} from "@pet-wechat/shared";
 import petHero from "../../assets/images/pet-hero.png";
 import petAvatarDefault from "../../assets/images/pet-avatar-default.png";
 import btnUser from "../../assets/images/btn-user.png";
@@ -55,6 +61,14 @@ function getPetStatusText(pet?: Pet): string {
   return `${formatRelativeTime(pet.latestBehavior.timestamp)} · ${pet.latestBehavior.actionType}`;
 }
 
+function getPetHeroImage(pet?: Pet): string {
+  return pet?.avatarImageUrl || petHero;
+}
+
+function getPetHeroMode(pet?: Pet): "aspectFill" | "aspectFit" {
+  return pet?.avatarImageUrl ? "aspectFill" : "aspectFit";
+}
+
 function updatePetLatestBehavior(pets: Pet[], message: WsBehaviorNewMessage): Pet[] {
   let changed = false;
 
@@ -84,17 +98,32 @@ export default function Index() {
   const [collars, setCollars] = useState<CollarDevice[]>([]);
   const [desktops, setDesktops] = useState<DesktopDevice[]>([]);
   const [state, setState] = useState<HomeState>("not-logged");
+  const isPageVisible = useRef(false);
+
+  const handleAvatarDone = (message: WsAvatarDoneMessage) => {
+    if (!isPageVisible.current) return;
+    Taro.showToast({
+      title: `${message.data.petName}形象已就绪`,
+      icon: "none",
+    });
+    void loadData();
+  };
 
   useEffect(() => {
-    const unsubscribe = subscribe("behavior:new", (message) => {
+    const unsubscribeBehavior = subscribe("behavior:new", (message) => {
       setOwnPets((prev) => updatePetLatestBehavior(prev, message));
       setAuthorizedPets((prev) => updatePetLatestBehavior(prev, message));
     });
+    const unsubscribeAvatarDone = subscribe("avatar:done", handleAvatarDone);
 
-    return unsubscribe;
+    return () => {
+      unsubscribeBehavior();
+      unsubscribeAvatarDone();
+    };
   }, []);
 
   useDidShow(() => {
+    isPageVisible.current = true;
     if (!isLoggedIn()) {
       disconnectWs();
       setState("not-logged");
@@ -102,6 +131,10 @@ export default function Index() {
     }
     void connectWs();
     void loadData();
+  });
+
+  useDidHide(() => {
+    isPageVisible.current = false;
   });
 
   // WS 连接在 App 级别管理，不在页面 hide 时断开
@@ -148,6 +181,7 @@ export default function Index() {
   const onlineDesktopCount = desktops.filter((desktop) => desktop.status === "online").length;
   const hasMultiplePets = allPets.length > 1;
   const isArrowNav = useRef(false);
+  const ownPetIds = new Set(ownPets.map((pet) => pet.id));
   const speechText =
     state === "no-device"
       ? "主人，帮我连接设备，我想把陪伴带回家。"
@@ -191,6 +225,30 @@ export default function Index() {
     setCurrentPetIndex((prev) => (prev === allPets.length - 1 ? 0 : prev + 1));
   };
 
+  const handleEditPetAvatar = (petId: string) => {
+    Taro.navigateTo({ url: `/pages/pet-avatar/index?petId=${petId}` });
+  };
+
+  const renderHeroShell = (pet?: Pet) => (
+    <View className="hero-shell">
+      <Image
+        className="hero-image"
+        src={getPetHeroImage(pet)}
+        mode={getPetHeroMode(pet)}
+      />
+      {pet && ownPetIds.has(pet.id) ? (
+        <View
+          className="hero-edit-btn"
+          onClick={() => handleEditPetAvatar(pet.id)}
+        >
+          <Image className="hero-edit-icon" src={ICON_PHOTO} mode="aspectFit" />
+        </View>
+      ) : null}
+      <Text className="hero-caption">{pet?.name ?? "宠物"}</Text>
+      <Text className="pet-status-tag">{getPetStatusText(pet)}</Text>
+    </View>
+  );
+
   if (state === "not-logged") {
     return (
       <View className="home-page">
@@ -219,25 +277,27 @@ export default function Index() {
           </View>
         </View>
 
-        <View className="home-main empty-main">
-          <View className="hero-shell empty-hero" onClick={() => Taro.navigateTo({ url: "/pages/pet-info/index" })}>
-            <Image className="hero-image" src={petHero} mode="aspectFit" />
-            <Text className="empty-hero-text">点击添加宠物资料</Text>
+        <ScrollView className="home-scroll" scrollY>
+          <View className="home-main empty-main">
+            <View className="hero-shell empty-hero" onClick={() => Taro.navigateTo({ url: "/pages/pet-info/index" })}>
+              <Image className="hero-image" src={petHero} mode="aspectFit" />
+              <Text className="empty-hero-text">点击添加宠物资料</Text>
+            </View>
           </View>
-        </View>
 
-        <View className="device-cards">
-          <View className="device-card empty" onClick={() => Taro.navigateTo({ url: "/pages/collar-bind/index" })}>
-            <Image className="device-card-icon" src={collarIcon} mode="aspectFit" />
-            <Text className="device-card-title">连接项圈</Text>
-            <Text className="device-card-desc">同步真实活动，完善宠物日常记录。</Text>
+          <View className="device-cards">
+            <View className="device-card empty" onClick={() => Taro.navigateTo({ url: "/pages/collar-bind/index" })}>
+              <Image className="device-card-icon" src={collarIcon} mode="aspectFit" />
+              <Text className="device-card-title">连接项圈</Text>
+              <Text className="device-card-desc">同步真实活动，完善宠物日常记录。</Text>
+            </View>
+            <View className="device-card empty" onClick={() => Taro.navigateTo({ url: "/pages/desktop-bind/index" })}>
+              <Image className="device-card-icon" src={desktopIcon} mode="aspectFit" />
+              <Text className="device-card-title">连接桌面端</Text>
+              <Text className="device-card-desc">让宠物在桌面上陪伴你。</Text>
+            </View>
           </View>
-          <View className="device-card empty" onClick={() => Taro.navigateTo({ url: "/pages/desktop-bind/index" })}>
-            <Image className="device-card-icon" src={desktopIcon} mode="aspectFit" />
-            <Text className="device-card-title">连接桌面端</Text>
-            <Text className="device-card-desc">让宠物在桌面上陪伴你。</Text>
-          </View>
-        </View>
+        </ScrollView>
       </View>
     );
   }
@@ -254,111 +314,105 @@ export default function Index() {
         </View>
       </View>
 
-      <View className="home-main">
-        <View className="left-rail">
-          <View className="activity-panel">
-            <Text className="activity-label">活跃值</Text>
-            <View className="activity-track">
-              <View className="activity-fill" style={{ height: activityProgress, background: activityColor }} />
-            </View>
-            <View className="activity-score" style={{ borderColor: activityColor }}>
-              <Text className="activity-score-text">{Math.round(activityScore)}</Text>
-            </View>
-            <Text className="activity-level" style={{ color: activityColor }}>
-              {getActivityLabel(activityScore)}
-            </Text>
-          </View>
-
-          <View className="notification-card" onClick={() => Taro.switchTab({ url: "/pages/messages/index" })}>
-            <Image className="notification-icon" src={bellIcon} mode="aspectFit" />
-            <View className="notification-dot" />
-          </View>
-        </View>
-
-        <View className="hero-section">
-          <View className="speech-bubble" style={{ backgroundImage: `url(${speechBubbleBg})` }}>
-            <Text className="speech-text">{speechText}</Text>
-          </View>
-
-          <View className="pet-swiper-wrapper">
-            {hasMultiplePets ? (
-              <Swiper className="pet-swiper" current={currentPetIndex} onChange={handleSwiperChange}>
-                {allPets.map((pet) => (
-                  <SwiperItem key={pet.id}>
-                    <View className="hero-shell">
-                      <Image className="hero-image" src={petHero} mode="aspectFit" />
-                      <Text className="hero-caption">{pet.name}</Text>
-                      <Text className="pet-status-tag">{getPetStatusText(pet)}</Text>
-                    </View>
-                  </SwiperItem>
-                ))}
-              </Swiper>
-            ) : (
-              <View className="hero-shell">
-                <Image className="hero-image" src={petHero} mode="aspectFit" />
-                <Text className="hero-caption">{currentPet?.name ?? "宠物"}</Text>
-                <Text className="pet-status-tag">{getPetStatusText(currentPet)}</Text>
+      <ScrollView className="home-scroll" scrollY>
+        <View className="home-main">
+          <View className="left-rail">
+            <View className="activity-panel">
+              <Text className="activity-label">活跃值</Text>
+              <View className="activity-track">
+                <View className="activity-fill" style={{ height: activityProgress, background: activityColor }} />
               </View>
-            )}
-
-            {hasMultiplePets ? (
-              <>
-                <Image
-                  className="pet-nav-arrow pet-nav-arrow-left"
-                  src={ICON_ARROW_LEFT}
-                  mode="aspectFit"
-                  onClick={handlePrevPet}
-                />
-                <Image
-                  className="pet-nav-arrow pet-nav-arrow-right"
-                  src={ICON_ARROW_RIGHT}
-                  mode="aspectFit"
-                  onClick={handleNextPet}
-                />
-              </>
-            ) : null}
-          </View>
-        </View>
-      </View>
-
-      <View className="action-buttons">
-        {actionButtons.map((button) => (
-          <View key={button.key} className="action-button" onClick={() => handleAction(button.key)}>
-            <Image className="action-button-icon" src={button.icon} mode="aspectFit" />
-            <Text className="action-button-label">{button.label}</Text>
-          </View>
-        ))}
-      </View>
-
-      <View className="device-cards">
-        <View className={`device-card ${state === "no-device" ? "empty" : ""}`} onClick={() => Taro.switchTab({ url: "/pages/devices/index" })}>
-          <View className="device-card-head">
-            <Image className="device-card-icon" src={collarIcon} mode="aspectFit" />
-            <View>
-              <Text className="device-card-title">{currentCollar?.name ?? `${currentPet?.name ?? "宠物"}的小圈圈`}</Text>
-              <Text className="device-card-desc">
-                {currentCollar
-                  ? currentCollar.status === "online"
-                    ? `在线 · 电量 ${currentCollar.battery ?? "--"}%`
-                    : "已绑定，等待上线"
-                  : "还没有绑定项圈设备"}
+              <View className="activity-score" style={{ borderColor: activityColor }}>
+                <Text className="activity-score-text">{Math.round(activityScore)}</Text>
+              </View>
+              <Text className="activity-level" style={{ color: activityColor }}>
+                {getActivityLabel(activityScore)}
               </Text>
+            </View>
+
+            <View className="notification-card" onClick={() => Taro.switchTab({ url: "/pages/messages/index" })}>
+              <Image className="notification-icon" src={bellIcon} mode="aspectFit" />
+              <View className="notification-dot" />
+            </View>
+          </View>
+
+          <View className="hero-section">
+            <View className="speech-bubble" style={{ backgroundImage: `url(${speechBubbleBg})` }}>
+              <Text className="speech-text">{speechText}</Text>
+            </View>
+
+            <View className="pet-swiper-wrapper">
+              {hasMultiplePets ? (
+                <Swiper className="pet-swiper" current={currentPetIndex} onChange={handleSwiperChange}>
+                  {allPets.map((pet) => (
+                    <SwiperItem key={pet.id}>
+                      {renderHeroShell(pet)}
+                    </SwiperItem>
+                  ))}
+                </Swiper>
+              ) : (
+                renderHeroShell(currentPet)
+              )}
+
+              {hasMultiplePets ? (
+                <>
+                  <Image
+                    className="pet-nav-arrow pet-nav-arrow-left"
+                    src={ICON_ARROW_LEFT}
+                    mode="aspectFit"
+                    onClick={handlePrevPet}
+                  />
+                  <Image
+                    className="pet-nav-arrow pet-nav-arrow-right"
+                    src={ICON_ARROW_RIGHT}
+                    mode="aspectFit"
+                    onClick={handleNextPet}
+                  />
+                </>
+              ) : null}
             </View>
           </View>
         </View>
 
-        <View className={`device-card ${state === "no-device" ? "empty" : ""}`} onClick={() => Taro.switchTab({ url: "/pages/devices/index" })}>
-          <View className="device-card-head">
-            <Image className="device-card-icon" src={desktopIcon} mode="aspectFit" />
-            <View>
-              <Text className="device-card-title">{`${currentPet?.name ?? "宠物"}的秘密基地`}</Text>
-              <Text className="device-card-desc">
-                {onlineDesktopCount > 0 ? `${onlineDesktopCount} 台桌面设备在线` : "还没有在线的桌面设备"}
-              </Text>
+        <View className="action-buttons">
+          {actionButtons.map((button) => (
+            <View key={button.key} className="action-button" onClick={() => handleAction(button.key)}>
+              <Image className="action-button-icon" src={button.icon} mode="aspectFit" />
+              <Text className="action-button-label">{button.label}</Text>
+            </View>
+          ))}
+        </View>
+
+        <View className="device-cards">
+          <View className={`device-card ${state === "no-device" ? "empty" : ""}`} onClick={() => Taro.switchTab({ url: "/pages/devices/index" })}>
+            <View className="device-card-head">
+              <Image className="device-card-icon" src={collarIcon} mode="aspectFit" />
+              <View>
+                <Text className="device-card-title">{currentCollar?.name ?? `${currentPet?.name ?? "宠物"}的小圈圈`}</Text>
+                <Text className="device-card-desc">
+                  {currentCollar
+                    ? currentCollar.status === "online"
+                      ? `在线 · 电量 ${currentCollar.battery ?? "--"}%`
+                      : "已绑定，等待上线"
+                    : "还没有绑定项圈设备"}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View className={`device-card ${state === "no-device" ? "empty" : ""}`} onClick={() => Taro.switchTab({ url: "/pages/devices/index" })}>
+            <View className="device-card-head">
+              <Image className="device-card-icon" src={desktopIcon} mode="aspectFit" />
+              <View>
+                <Text className="device-card-title">{`${currentPet?.name ?? "宠物"}的秘密基地`}</Text>
+                <Text className="device-card-desc">
+                  {onlineDesktopCount > 0 ? `${onlineDesktopCount} 台桌面设备在线` : "还没有在线的桌面设备"}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }

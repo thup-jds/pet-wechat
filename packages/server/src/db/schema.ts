@@ -145,6 +145,18 @@ export const deviceAuthorizations = pgTable(
   (t) => [unique().on(t.fromUserId, t.toUserId, t.petId)],
 );
 
+export const inviteCodes = pgTable("invite_codes", {
+  id: text("id").primaryKey().$defaultFn(createId),
+  codeHash: text("code_hash").notNull().unique(),
+  fromUserId: text("from_user_id").notNull(),
+  petId: text("pet_id").notNull(),
+  acceptedBy: text("accepted_by"),
+  acceptedAt: timestamp("accepted_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 // ===== 宠物形象 =====
 
 export const petAvatars = pgTable("pet_avatars", {

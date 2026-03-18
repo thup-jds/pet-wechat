@@ -1,10 +1,12 @@
 import { Hono } from "hono";
+import { createHash } from "crypto";
 import { db } from "../db";
 import {
   collarDevices,
   desktopDevices,
   desktopPetBindings,
   deviceAuthorizations,
+  inviteCodes,
   petBehaviors,
   pets,
   users,
@@ -13,6 +15,10 @@ import { eq, and, isNull } from "drizzle-orm";
 import { generateInviteCode, verifyInviteCode } from "../utils/invite";
 
 const devicesRoute = new Hono();
+
+function getInviteCodeHash(code: string): string {
+  return createHash("sha256").update(code).digest("hex");
+}
 
 // ===== 无主设备（模拟蓝牙搜索） =====
 
@@ -284,6 +290,16 @@ devicesRoute.post("/invite", async (c) => {
     createdAt: Date.now(),
   });
 
+  const codeHash = getInviteCodeHash(inviteCode);
+  await db
+    .insert(inviteCodes)
+    .values({
+      codeHash,
+      fromUserId: userId,
+      petId: pet.id,
+    })
+    .onConflictDoNothing({ target: inviteCodes.codeHash });
+
   return c.json({
     inviteCode,
     petId: pet.id,
@@ -311,6 +327,25 @@ devicesRoute.post("/invite/:code/accept", async (c) => {
     .limit(1);
   if (!pet) return c.json({ error: "Pet not found" }, 404);
 
+  const codeHash = getInviteCodeHash(code);
+  const [inviteCodeRecord] = await db
+    .select()
+    .from(inviteCodes)
+    .where(eq(inviteCodes.codeHash, codeHash))
+    .limit(1);
+
+  if (
+    inviteCodeRecord &&
+    (inviteCodeRecord.fromUserId !== payload.fromUserId ||
+      inviteCodeRecord.petId !== payload.petId)
+  ) {
+    return c.json({ error: "Invalid invite code" }, 400);
+  }
+
+  if (inviteCodeRecord?.acceptedBy) {
+    return c.json({ error: "邀请已失效" }, 409);
+  }
+
   const [existingAuthorization] = await db
     .select()
     .from(deviceAuthorizations)
@@ -327,34 +362,66 @@ devicesRoute.post("/invite/:code/accept", async (c) => {
     return c.json({ error: "Already accepted this invite" }, 409);
   }
 
-  const [authorization] = await db
-    .insert(deviceAuthorizations)
-    .values({
-      fromUserId: payload.fromUserId,
-      toUserId: userId,
-      petId: payload.petId,
-      status: "accepted",
-    })
-    .returning();
+  let authorization: typeof deviceAuthorizations.$inferSelect | undefined;
+  let bindings: typeof desktopPetBindings.$inferSelect[] = [];
 
-  const userDesktops = await db
-    .select()
-    .from(desktopDevices)
-    .where(eq(desktopDevices.userId, userId));
-
-  const bindings =
-    userDesktops.length > 0
-      ? await db
-          .insert(desktopPetBindings)
-          .values(
-            userDesktops.map((desktop) => ({
-              desktopDeviceId: desktop.id,
-              petId: payload.petId,
-              bindingType: "authorized" as const,
-            })),
+  try {
+    await db.transaction(async (tx) => {
+      if (inviteCodeRecord) {
+        const [claimedInviteCode] = await tx
+          .update(inviteCodes)
+          .set({
+            acceptedBy: userId,
+            acceptedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(inviteCodes.codeHash, codeHash),
+              isNull(inviteCodes.acceptedBy),
+            ),
           )
-          .returning()
-      : [];
+          .returning({ id: inviteCodes.id });
+
+        if (!claimedInviteCode) {
+          throw new Error("INVITE_CODE_EXPIRED");
+        }
+      }
+
+      [authorization] = await tx
+        .insert(deviceAuthorizations)
+        .values({
+          fromUserId: payload.fromUserId,
+          toUserId: userId,
+          petId: payload.petId,
+          status: "accepted",
+        })
+        .returning();
+
+      const userDesktops = await tx
+        .select()
+        .from(desktopDevices)
+        .where(eq(desktopDevices.userId, userId));
+
+      bindings =
+        userDesktops.length > 0
+          ? await tx
+              .insert(desktopPetBindings)
+              .values(
+                userDesktops.map((desktop) => ({
+                  desktopDeviceId: desktop.id,
+                  petId: payload.petId,
+                  bindingType: "authorized" as const,
+                })),
+              )
+              .returning()
+          : [];
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "INVITE_CODE_EXPIRED") {
+      return c.json({ error: "邀请已失效" }, 409);
+    }
+    throw error;
+  }
 
   return c.json({ authorization, bindings }, 201);
 });
