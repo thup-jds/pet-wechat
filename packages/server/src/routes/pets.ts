@@ -9,9 +9,67 @@ import {
   desktopPetBindings,
   deviceAuthorizations,
 } from "../db/schema";
-import { eq, and, isNull, inArray, gte } from "drizzle-orm";
+import { eq, and, isNull, inArray, gte, desc } from "drizzle-orm";
+import type { PetLatestBehavior } from "shared";
 
 const petsRoute = new Hono();
+
+function normalizeBehaviorTimestamp(timestamp: Date | string): string {
+  return timestamp instanceof Date ? timestamp.toISOString() : timestamp;
+}
+
+async function getLatestBehaviorMap(petIds: string[]) {
+  const latestBehaviorMap = new Map<string, PetLatestBehavior>();
+  if (petIds.length === 0) return latestBehaviorMap;
+
+  // 按时间倒序查询，应用层取每只宠物的第一条（即最新）
+  const behaviors = await db
+    .select({
+      petId: petBehaviors.petId,
+      actionType: petBehaviors.actionType,
+      timestamp: petBehaviors.timestamp,
+    })
+    .from(petBehaviors)
+    .where(inArray(petBehaviors.petId, petIds))
+    .orderBy(desc(petBehaviors.timestamp));
+
+  for (const behavior of behaviors) {
+    if (latestBehaviorMap.has(behavior.petId)) continue;
+
+    latestBehaviorMap.set(behavior.petId, {
+      actionType: behavior.actionType,
+      timestamp: normalizeBehaviorTimestamp(behavior.timestamp),
+    });
+  }
+
+  return latestBehaviorMap;
+}
+
+async function getLatestBehavior(petId: string) {
+  const [behavior] = await db
+    .select({
+      actionType: petBehaviors.actionType,
+      timestamp: petBehaviors.timestamp,
+    })
+    .from(petBehaviors)
+    .where(eq(petBehaviors.petId, petId))
+    .orderBy(desc(petBehaviors.timestamp))
+    .limit(1);
+
+  if (!behavior) return null;
+
+  return {
+    actionType: behavior.actionType,
+    timestamp: normalizeBehaviorTimestamp(behavior.timestamp),
+  } satisfies PetLatestBehavior;
+}
+
+function attachLatestBehavior<T extends typeof pets.$inferSelect>(petList: T[], latestBehaviorMap: Map<string, PetLatestBehavior>) {
+  return petList.map((pet) => ({
+    ...pet,
+    latestBehavior: latestBehaviorMap.get(pet.id) ?? null,
+  }));
+}
 
 // 获取当前用户的所有宠物（含被授权的宠物）
 petsRoute.get("/", async (c) => {
@@ -39,7 +97,15 @@ petsRoute.get("/", async (c) => {
       .where(inArray(pets.id, authorizedPetIds));
   }
 
-  return c.json({ pets: ownPets, authorizedPets });
+  const latestBehaviorMap = await getLatestBehaviorMap([
+    ...ownPets.map((pet) => pet.id),
+    ...authorizedPets.map((pet) => pet.id),
+  ]);
+
+  return c.json({
+    pets: attachLatestBehavior(ownPets, latestBehaviorMap),
+    authorizedPets: attachLatestBehavior(authorizedPets, latestBehaviorMap),
+  });
 });
 
 // 获取单个宠物详情（含动态图像）
@@ -52,6 +118,8 @@ petsRoute.get("/:id", async (c) => {
     .from(pets)
     .where(and(eq(pets.id, petId), eq(pets.userId, userId)));
   if (!pet) return c.json({ error: "Pet not found" }, 404);
+
+  const latestBehavior = await getLatestBehavior(petId);
 
   const avatars = await db
     .select()
@@ -77,7 +145,7 @@ petsRoute.get("/:id", async (c) => {
   // TODO: 活跃值算法待产品定义，当前简单按行为次数映射 0-100
   const activityScore = Math.min(100, recentCount * 10);
 
-  return c.json({ pet: { ...pet, activityScore }, avatars, actions });
+  return c.json({ pet: { ...pet, activityScore, latestBehavior }, avatars, actions });
 });
 
 // 创建宠物

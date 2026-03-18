@@ -33,8 +33,14 @@ export interface Pet {
   birthday: string | null;
   weight: number | null;
   activityScore: number;
+  latestBehavior?: PetLatestBehavior | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PetLatestBehavior {
+  actionType: string;
+  timestamp: string;
 }
 
 // ===== 设备 =====
@@ -113,6 +119,25 @@ export interface PetBehavior {
   actionType: string;
   timestamp: string;
 }
+
+export interface WsBehaviorNewMessage {
+  type: "behavior:new";
+  data: {
+    petId: string;
+    actionType: string;
+    timestamp: string;
+  };
+}
+
+export interface WsPingMessage {
+  type: "ping";
+}
+
+export interface WsPongMessage {
+  type: "pong";
+}
+
+export type WsMessage = WsBehaviorNewMessage | WsPingMessage | WsPongMessage;
 
 // ===== 邀请 =====
 

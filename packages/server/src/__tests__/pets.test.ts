@@ -21,7 +21,7 @@ describe("Pet Routes", () => {
   describe("GET /api/pets", () => {
     it("returns user's pets", async () => {
       const pet = fakePet();
-      mockDb._results.select = [[pet]];
+      mockDb._results.select = [[pet], [], []];
 
       const headers = await authHeader("user-1");
       const res = await app.request(
@@ -31,10 +31,11 @@ describe("Pet Routes", () => {
       const json = await res.json();
       expect(json.pets).toHaveLength(1);
       expect(json.pets[0].name).toBe("Mimi");
+      expect(json.pets[0].latestBehavior).toBeNull();
     });
 
     it("returns empty array when user has no pets", async () => {
-      mockDb._results.select = [[]];
+      mockDb._results.select = [[], []];
 
       const headers = await authHeader("user-1");
       const res = await app.request(
@@ -51,11 +52,13 @@ describe("Pet Routes", () => {
   describe("GET /api/pets/:id", () => {
     it("returns pet details with avatars and actions", async () => {
       const pet = fakePet();
-      // select 1: pet query, select 2: avatars query, select 3+: actions queries
+      // select 1: pet query, select 2: latest behavior, select 3: avatars, select 4+: actions/recent behaviors
       mockDb._results.select = [
         [pet],
+        [{ actionType: "walking", timestamp: new Date("2026-03-18T10:00:00.000Z") }],
         [{ id: "avatar-1", petId: "pet-1", sourceImageUrl: "url", status: "done", createdAt: new Date() }],
         [{ id: "action-1", petAvatarId: "avatar-1", actionType: "idle", imageUrl: "url", sortOrder: 0 }],
+        [{ id: "behavior-1", petId: "pet-1", collarDeviceId: "collar-1", actionType: "walking", timestamp: new Date() }],
       ];
 
       const headers = await authHeader("user-1");
@@ -65,6 +68,7 @@ describe("Pet Routes", () => {
       expect(res.status).toBe(200);
       const json = await res.json();
       expect(json.pet.id).toBe("pet-1");
+      expect(json.pet.latestBehavior.actionType).toBe("walking");
       expect(json.avatars).toHaveLength(1);
       expect(json.actions).toHaveLength(1);
     });

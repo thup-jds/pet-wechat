@@ -2,8 +2,13 @@ import { Hono } from "hono";
 import { db } from "../db";
 import { petBehaviors, pets, collarDevices } from "../db/schema";
 import { eq, and, desc } from "drizzle-orm";
+import { broadcast } from "../ws";
 
 const behaviorsRoute = new Hono();
+
+function normalizeBehaviorTimestamp(timestamp: Date | string): string {
+  return timestamp instanceof Date ? timestamp.toISOString() : timestamp;
+}
 
 // 获取宠物最新行为（主页动态用）
 behaviorsRoute.get("/:petId", async (c) => {
@@ -57,6 +62,15 @@ behaviorsRoute.post("/", async (c) => {
       actionType: body.actionType,
     })
     .returning();
+
+  broadcast(pet.userId, {
+    type: "behavior:new",
+    data: {
+      petId: behavior.petId,
+      actionType: behavior.actionType,
+      timestamp: normalizeBehaviorTimestamp(behavior.timestamp),
+    },
+  });
 
   return c.json({ behavior }, 201);
 });
