@@ -30,7 +30,7 @@ describe("Upload Routes", () => {
       );
       expect(res.status).toBe(400);
       const json = await res.json();
-      expect(json.error).toContain("No file");
+      expect(json.error).toContain("未检测到上传文件");
     });
 
     it("returns 400 when file field is a string", async () => {
@@ -47,7 +47,7 @@ describe("Upload Routes", () => {
       );
       expect(res.status).toBe(400);
       const json = await res.json();
-      expect(json.error).toContain("No file");
+      expect(json.error).toContain("未检测到上传文件");
     });
 
     it("returns uploaded file URL when file is uploaded", async () => {

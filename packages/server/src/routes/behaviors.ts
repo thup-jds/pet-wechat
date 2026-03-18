@@ -47,6 +47,7 @@ behaviorsRoute.post("/", async (c) => {
     .from(collarDevices)
     .where(and(eq(collarDevices.id, body.collarDeviceId), eq(collarDevices.userId, userId)));
   if (!collar) return c.json({ error: "Collar not found" }, 404);
+  if (collar.petId !== body.petId) return c.json({ error: "项圈与宠物不匹配" }, 400);
 
   const [behavior] = await db
     .insert(petBehaviors)

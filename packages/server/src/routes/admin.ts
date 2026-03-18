@@ -22,6 +22,17 @@ function pick<T extends Record<string, unknown>>(obj: T, keys: string[]): Partia
   return result as Partial<T>;
 }
 
+async function validateCollarPetBinding(collarDeviceId: string, petId: string) {
+  const [collar] = await db.select().from(collarDevices).where(eq(collarDevices.id, collarDeviceId));
+  if (!collar) {
+    return { valid: false as const, status: 404, error: "Collar not found" };
+  }
+  if (collar.petId !== petId) {
+    return { valid: false as const, status: 400, error: "项圈与宠物不匹配" };
+  }
+  return { valid: true as const, collar };
+}
+
 const adminRoute = new Hono();
 
 // ===== 用户 =====
@@ -307,6 +318,10 @@ adminRoute.get("/behaviors", async (c) => {
 
 adminRoute.post("/behaviors", async (c) => {
   const body = await c.req.json();
+  const validation = await validateCollarPetBinding(body.collarDeviceId, body.petId);
+  if (!validation.valid) {
+    return c.json({ error: validation.error }, validation.status);
+  }
   const [behavior] = await db
     .insert(petBehaviors)
     .values({
@@ -332,6 +347,10 @@ adminRoute.post("/behaviors/auto", async (c) => {
   const intervalMinutes = body.intervalMinutes ?? 30;
   const actionTypes = ["walking", "running", "sleeping", "eating", "playing", "resting", "jumping"];
   const now = Date.now();
+  const validation = await validateCollarPetBinding(body.collarDeviceId, body.petId);
+  if (!validation.valid) {
+    return c.json({ error: validation.error }, validation.status);
+  }
 
   const values = Array.from({ length: count }, (_, i) => ({
     petId: body.petId,

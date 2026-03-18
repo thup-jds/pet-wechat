@@ -4,6 +4,36 @@ import { PlusOutlined, ThunderboltOutlined } from "@ant-design/icons";
 import { api } from "../api/client";
 import dayjs from "dayjs";
 
+function getFilteredCollars(petId: string | undefined, collars: any[]) {
+  if (!petId) return [];
+  return collars.filter((collar) => collar.petId === petId);
+}
+
+function getCollarOptionLabel(collar: any) {
+  const lastOnlineAt = collar.lastOnlineAt ? dayjs(collar.lastOnlineAt).format("YYYY-MM-DD HH:mm:ss") : "从未上线";
+  const createdAt = dayjs(collar.createdAt).format("YYYY-MM-DD HH:mm:ss");
+  return `${collar.name} (${collar.macAddress}) | 上次在线: ${lastOnlineAt} | 创建: ${createdAt}`;
+}
+
+function syncCollarField(form: any, petId: string | undefined, collars: any[]) {
+  const currentCollarId = form.getFieldValue("collarDeviceId");
+  if (!petId) {
+    if (currentCollarId !== undefined) {
+      form.setFieldValue("collarDeviceId", undefined);
+    }
+    return;
+  }
+  if (collars.length === 1) {
+    if (currentCollarId !== collars[0].id) {
+      form.setFieldValue("collarDeviceId", collars[0].id);
+    }
+    return;
+  }
+  if (!collars.some((collar) => collar.id === currentCollarId)) {
+    form.setFieldValue("collarDeviceId", undefined);
+  }
+}
+
 export default function EventsPage() {
   const [data, setData] = useState<any[]>([]);
   const [pets, setPets] = useState<any[]>([]);
@@ -13,6 +43,8 @@ export default function EventsPage() {
   const [autoOpen, setAutoOpen] = useState(false);
   const [manualForm] = Form.useForm();
   const [autoForm] = Form.useForm();
+  const manualPetId = Form.useWatch("petId", manualForm);
+  const autoPetId = Form.useWatch("petId", autoForm);
 
   const load = () => {
     setLoading(true);
@@ -24,6 +56,14 @@ export default function EventsPage() {
   };
 
   useEffect(load, []);
+
+  useEffect(() => {
+    syncCollarField(manualForm, manualPetId, getFilteredCollars(manualPetId, collars));
+  }, [collars, manualForm, manualPetId]);
+
+  useEffect(() => {
+    syncCollarField(autoForm, autoPetId, getFilteredCollars(autoPetId, collars));
+  }, [autoForm, autoPetId, collars]);
 
   const handleManual = async () => {
     try {
@@ -61,6 +101,19 @@ export default function EventsPage() {
     { value: "jumping", label: "跳跃" },
   ];
 
+  const manualFilteredCollars = getFilteredCollars(manualPetId, collars);
+  const autoFilteredCollars = getFilteredCollars(autoPetId, collars);
+  const manualCollarOptions = manualFilteredCollars.map((collar) => ({
+    value: collar.id,
+    label: getCollarOptionLabel(collar),
+  }));
+  const autoCollarOptions = autoFilteredCollars.map((collar) => ({
+    value: collar.id,
+    label: getCollarOptionLabel(collar),
+  }));
+  const manualNoCollars = Boolean(manualPetId) && manualFilteredCollars.length === 0;
+  const autoNoCollars = Boolean(autoPetId) && autoFilteredCollars.length === 0;
+
   const columns = [
     { title: "ID", dataIndex: "id", key: "id", width: 200, ellipsis: true },
     { title: "宠物", dataIndex: "petName", key: "petName", render: (v: string | null) => v ?? "-" },
@@ -92,7 +145,13 @@ export default function EventsPage() {
       <Table dataSource={data} columns={columns} rowKey="id" loading={loading} size="middle" />
 
       {/* 手动创建弹窗 */}
-      <Modal title="手动创建事件" open={manualOpen} onOk={handleManual} onCancel={() => setManualOpen(false)}>
+      <Modal
+        title="手动创建事件"
+        open={manualOpen}
+        onOk={handleManual}
+        onCancel={() => setManualOpen(false)}
+        okButtonProps={{ disabled: manualNoCollars }}
+      >
         <Form form={manualForm} layout="vertical">
           <Form.Item name="petId" label="宠物" rules={[{ required: true }]}>
             <Select
@@ -101,11 +160,19 @@ export default function EventsPage() {
               options={pets.map((p) => ({ value: p.id, label: `${p.name} (${p.id.slice(0, 8)}...)` }))}
             />
           </Form.Item>
-          <Form.Item name="collarDeviceId" label="项圈" rules={[{ required: true }]}>
+          <Form.Item
+            name="collarDeviceId"
+            label="项圈"
+            rules={[{ required: true }]}
+            validateStatus={manualNoCollars ? "warning" : undefined}
+            help={manualNoCollars ? "该宠物未绑定项圈，请先绑定" : undefined}
+          >
             <Select
               showSearch
               optionFilterProp="label"
-              options={collars.map((c) => ({ value: c.id, label: `${c.name} (${c.macAddress})` }))}
+              disabled={!manualPetId || manualNoCollars}
+              options={manualCollarOptions}
+              notFoundContent={manualPetId ? "该宠物未绑定项圈，请先绑定" : "请先选择宠物"}
             />
           </Form.Item>
           <Form.Item name="actionType" label="行为类型" rules={[{ required: true }]}>
@@ -118,7 +185,13 @@ export default function EventsPage() {
       </Modal>
 
       {/* 批量生成弹窗 */}
-      <Modal title="批量生成随机事件" open={autoOpen} onOk={handleAuto} onCancel={() => setAutoOpen(false)}>
+      <Modal
+        title="批量生成随机事件"
+        open={autoOpen}
+        onOk={handleAuto}
+        onCancel={() => setAutoOpen(false)}
+        okButtonProps={{ disabled: autoNoCollars }}
+      >
         <Form form={autoForm} layout="vertical">
           <Form.Item name="petId" label="宠物" rules={[{ required: true }]}>
             <Select
@@ -127,11 +200,19 @@ export default function EventsPage() {
               options={pets.map((p) => ({ value: p.id, label: `${p.name} (${p.id.slice(0, 8)}...)` }))}
             />
           </Form.Item>
-          <Form.Item name="collarDeviceId" label="项圈" rules={[{ required: true }]}>
+          <Form.Item
+            name="collarDeviceId"
+            label="项圈"
+            rules={[{ required: true }]}
+            validateStatus={autoNoCollars ? "warning" : undefined}
+            help={autoNoCollars ? "该宠物未绑定项圈，请先绑定" : undefined}
+          >
             <Select
               showSearch
               optionFilterProp="label"
-              options={collars.map((c) => ({ value: c.id, label: `${c.name} (${c.macAddress})` }))}
+              disabled={!autoPetId || autoNoCollars}
+              options={autoCollarOptions}
+              notFoundContent={autoPetId ? "该宠物未绑定项圈，请先绑定" : "请先选择宠物"}
             />
           </Form.Item>
           <Form.Item name="count" label="生成数量" initialValue={10}>
