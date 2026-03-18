@@ -64,10 +64,72 @@ async function getLatestBehavior(petId: string) {
   } satisfies PetLatestBehavior;
 }
 
-function attachLatestBehavior<T extends typeof pets.$inferSelect>(petList: T[], latestBehaviorMap: Map<string, PetLatestBehavior>) {
+async function getLatestAvatarImageMap(petIds: string[]) {
+  const latestAvatarImageMap = new Map<string, string>();
+  if (petIds.length === 0) return latestAvatarImageMap;
+
+  // 对每个 petId 取最新一条 done avatar（使用 SQL 子查询避免全量扫描）
+  // Drizzle 不支持 DISTINCT ON，改用应用层去重但限制查询量
+  const doneAvatars = await db
+    .select({
+      id: petAvatars.id,
+      petId: petAvatars.petId,
+    })
+    .from(petAvatars)
+    .where(
+      and(
+        inArray(petAvatars.petId, petIds),
+        eq(petAvatars.status, "done"),
+      )
+    )
+    .orderBy(desc(petAvatars.createdAt))
+    .limit(petIds.length); // 最多只取 petIds.length 条，每个宠物最多 1 条
+
+  const latestAvatarByPetId = new Map<string, string>();
+  for (const avatar of doneAvatars) {
+    if (latestAvatarByPetId.has(avatar.petId)) continue;
+    latestAvatarByPetId.set(avatar.petId, avatar.id);
+  }
+
+  const latestAvatarIds = Array.from(latestAvatarByPetId.values());
+  if (latestAvatarIds.length === 0) return latestAvatarImageMap;
+
+  // 取每个 avatar 的第一张 action 图片（按 sortOrder 最小的）
+  const primaryActions = await db
+    .select({
+      petAvatarId: petAvatarActions.petAvatarId,
+      imageUrl: petAvatarActions.imageUrl,
+      sortOrder: petAvatarActions.sortOrder,
+    })
+    .from(petAvatarActions)
+    .where(inArray(petAvatarActions.petAvatarId, latestAvatarIds))
+    .orderBy(petAvatarActions.sortOrder);
+
+  // 应用层去重：每个 avatarId 只取 sortOrder 最小的
+  const primaryImageByAvatarId = new Map<string, string>();
+  for (const action of primaryActions) {
+    if (primaryImageByAvatarId.has(action.petAvatarId)) continue;
+    primaryImageByAvatarId.set(action.petAvatarId, action.imageUrl);
+  }
+
+  for (const [petId, avatarId] of latestAvatarByPetId) {
+    const imageUrl = primaryImageByAvatarId.get(avatarId);
+    if (!imageUrl) continue;
+    latestAvatarImageMap.set(petId, imageUrl);
+  }
+
+  return latestAvatarImageMap;
+}
+
+function attachPetSummary<T extends typeof pets.$inferSelect>(
+  petList: T[],
+  latestBehaviorMap: Map<string, PetLatestBehavior>,
+  latestAvatarImageMap: Map<string, string>,
+) {
   return petList.map((pet) => ({
     ...pet,
     latestBehavior: latestBehaviorMap.get(pet.id) ?? null,
+    avatarImageUrl: latestAvatarImageMap.get(pet.id) ?? null,
   }));
 }
 
@@ -102,9 +164,18 @@ petsRoute.get("/", async (c) => {
     ...authorizedPets.map((pet) => pet.id),
   ]);
 
+  const latestAvatarImageMap = await getLatestAvatarImageMap([
+    ...ownPets.map((pet) => pet.id),
+    ...authorizedPets.map((pet) => pet.id),
+  ]);
+
   return c.json({
-    pets: attachLatestBehavior(ownPets, latestBehaviorMap),
-    authorizedPets: attachLatestBehavior(authorizedPets, latestBehaviorMap),
+    pets: attachPetSummary(ownPets, latestBehaviorMap, latestAvatarImageMap),
+    authorizedPets: attachPetSummary(
+      authorizedPets,
+      latestBehaviorMap,
+      latestAvatarImageMap,
+    ),
   });
 });
 

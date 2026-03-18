@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { db } from "../db";
-import { petAvatars, petAvatarActions, pets, users } from "../db/schema";
-import { eq, and, gt, sql } from "drizzle-orm";
+import { messages, petAvatars, petAvatarActions, pets, users } from "../db/schema";
+import { eq, and, gt, ne, sql, asc } from "drizzle-orm";
+import { broadcast } from "../ws";
 
 const avatarsRoute = new Hono();
 
@@ -90,7 +91,6 @@ avatarsRoute.get("/:id", async (c) => {
   return c.json({ avatar, actions });
 });
 
-// TODO: 人工完成定制后，通过管理后台调用此接口上传结果
 avatarsRoute.post("/:id/actions", async (c) => {
   const userId = c.get("userId" as never) as string;
   const avatarId = c.req.param("id");
@@ -118,25 +118,73 @@ avatarsRoute.post("/:id/actions", async (c) => {
     .where(and(eq(pets.id, avatar.petId), eq(pets.userId, userId)));
   if (!pet) return c.json({ error: "Unauthorized" }, 403);
 
-  const inserted = await db
-    .insert(petAvatarActions)
-    .values(
-      body.actions.map((action) => ({
-        petAvatarId: avatarId,
-        actionType: action.actionType,
-        imageUrl: action.imageUrl,
-        sortOrder: action.sortOrder,
-      })),
-    )
-    .returning();
+  if (avatar.status === "done") {
+    const existingActions = await db
+      .select()
+      .from(petAvatarActions)
+      .where(eq(petAvatarActions.petAvatarId, avatarId))
+      .orderBy(asc(petAvatarActions.sortOrder));
+    return c.json({ actions: existingActions });
+  }
 
-  // 标记为完成
-  await db
-    .update(petAvatars)
-    .set({ status: "done" })
-    .where(eq(petAvatars.id, avatarId));
+  let resultActions: typeof petAvatarActions.$inferSelect[] = [];
+  let shouldNotify = false;
 
-  return c.json({ actions: inserted });
+  await db.transaction(async (tx) => {
+    const [updatedAvatar] = await tx
+      .update(petAvatars)
+      .set({ status: "done" })
+      .where(
+        and(
+          eq(petAvatars.id, avatarId),
+          ne(petAvatars.status, "done"),
+        ),
+      )
+      .returning({ id: petAvatars.id });
+
+    if (!updatedAvatar) {
+      resultActions = await tx
+        .select()
+        .from(petAvatarActions)
+        .where(eq(petAvatarActions.petAvatarId, avatarId))
+        .orderBy(asc(petAvatarActions.sortOrder));
+      return;
+    }
+
+    resultActions = await tx
+      .insert(petAvatarActions)
+      .values(
+        body.actions.map((action) => ({
+          petAvatarId: avatarId,
+          actionType: action.actionType,
+          imageUrl: action.imageUrl,
+          sortOrder: action.sortOrder,
+        })),
+      )
+      .returning();
+
+    await tx.insert(messages).values({
+      userId: pet.userId,
+      type: "system",
+      title: "形象已就绪",
+      content: `${pet.name} 的新形象已生成，快去主页看看吧。`,
+    });
+
+    shouldNotify = true;
+  });
+
+  if (shouldNotify) {
+    broadcast(pet.userId, {
+      type: "avatar:done",
+      data: {
+        petId: pet.id,
+        avatarId,
+        petName: pet.name,
+      },
+    });
+  }
+
+  return c.json({ actions: resultActions });
 });
 
 export default avatarsRoute;

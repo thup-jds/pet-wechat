@@ -34,6 +34,7 @@ export interface Pet {
   weight: number | null;
   activityScore: number;
   latestBehavior?: PetLatestBehavior | null;
+  avatarImageUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -129,6 +130,15 @@ export interface WsBehaviorNewMessage {
   };
 }
 
+export interface WsAvatarDoneMessage {
+  type: "avatar:done";
+  data: {
+    petId: string;
+    avatarId: string;
+    petName: string;
+  };
+}
+
 export interface WsPingMessage {
   type: "ping";
 }
@@ -137,7 +147,11 @@ export interface WsPongMessage {
   type: "pong";
 }
 
-export type WsMessage = WsBehaviorNewMessage | WsPingMessage | WsPongMessage;
+export type WsMessage =
+  | WsBehaviorNewMessage
+  | WsAvatarDoneMessage
+  | WsPingMessage
+  | WsPongMessage;
 
 // ===== 邀请 =====
 

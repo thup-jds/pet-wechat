@@ -1,4 +1,4 @@
-import { View, Text, Image } from "@tarojs/components";
+import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import { request } from "../../utils/request";
@@ -23,12 +23,20 @@ function formatDate(dateStr: string): string {
     .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
 }
 
+function isDefaultNickname(nickname?: string | null): boolean {
+  const value = nickname?.trim() ?? "";
+  if (!value) return true;
+  if (value === "微信用户" || value === "(微信用户)") return true;
+  return /^用户\d{4}$/.test(value);
+}
+
 export default function Profile() {
   const { top, height } = Taro.getMenuButtonBoundingClientRect();
   const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
   const navHeight = (top - statusBarHeight) * 2 + height;
   const [user, setUser] = useState<User | null>(null);
   const [pets, setPets] = useState<Pet[]>([]);
+  const showNicknameHint = isDefaultNickname(user?.nickname);
 
   useDidShow(() => {
     if (!isLoggedIn()) return;
@@ -95,7 +103,7 @@ export default function Profile() {
             <Text className="nav-title">用户信息</Text>
           </View>
         </View>
-        <View className="not-logged">
+        <View className="profile-content static-content not-logged">
           <Text className="not-logged-text">登录后查看个人信息</Text>
           <View
             className="btn-primary"
@@ -116,118 +124,126 @@ export default function Profile() {
         </View>
       </View>
 
-      {/* 用户头像区域 */}
-      <View className="user-hero">
-        <View className="avatar-wrapper">
-          {user?.avatarUrl ? (
-            <Image className="avatar-img" src={user.avatarUrl} mode="aspectFill" />
-          ) : (
-            <View className="avatar-placeholder">
-              <Text className="avatar-letter">
-                {user?.nickname?.[0] || "U"}
+      <ScrollView className="profile-content" scrollY>
+        {/* 用户头像区域 */}
+        <View className="user-hero">
+          <View className="avatar-wrapper">
+            {user?.avatarUrl ? (
+              <Image className="avatar-img" src={user.avatarUrl} mode="aspectFill" />
+            ) : (
+              <View className="avatar-placeholder">
+                <Text className="avatar-letter">
+                  {user?.nickname?.[0] || "U"}
+                </Text>
+              </View>
+            )}
+          </View>
+          <View
+            className={`nickname-trigger ${showNicknameHint ? "is-default" : ""}`}
+            onClick={handleEditNickname}
+          >
+            <Text className="user-nickname">{user?.nickname || "(微信用户)"}</Text>
+            {showNicknameHint ? (
+              <Text className="nickname-hint">点击修改昵称</Text>
+            ) : null}
+          </View>
+          <Text className="user-id">
+            ID: {user?.id ? user.id.slice(0, 8) : "---"}
+          </Text>
+          <View className="member-badge">
+            <Text className="member-badge-text">开通会员</Text>
+          </View>
+        </View>
+
+        {/* 账户信息 */}
+        <View className="section">
+          <View className="section-header">
+            <Text className="section-title">账户信息</Text>
+            <View className="edit-btn" onClick={handleEditNickname}>
+              <Text className="edit-btn-text">编辑资料</Text>
+            </View>
+          </View>
+          <View className="info-card">
+            <View className="info-row">
+              <Text className="info-label">手机号</Text>
+              <Text className="info-value">
+                {user?.phone || "未绑定"}
               </Text>
             </View>
-          )}
-        </View>
-        <Text className="user-nickname">
-          {user?.nickname || "(微信用户)"}
-        </Text>
-        <Text className="user-id">
-          ID: {user?.id ? user.id.slice(0, 8) : "---"}
-        </Text>
-        <View className="member-badge">
-          <Text className="member-badge-text">开通会员</Text>
-        </View>
-      </View>
-
-      {/* 账户信息 */}
-      <View className="section">
-        <View className="section-header">
-          <Text className="section-title">账户信息</Text>
-          <View className="edit-btn" onClick={handleEditNickname}>
-            <Text className="edit-btn-text">编辑资料</Text>
-          </View>
-        </View>
-        <View className="info-card">
-          <View className="info-row">
-            <Text className="info-label">手机号</Text>
-            <Text className="info-value">
-              {user?.phone || "未绑定"}
-            </Text>
-          </View>
-          <View className="info-row">
-            <Text className="info-label">邮箱</Text>
-            {/* TODO: 邮箱为mock数据，待后端用户表增加email字段后替换 */}
-            <Text className="info-value">YEHEY6780@guagua.com</Text>
-          </View>
-          <View className="info-row last">
-            <Text className="info-label">注册日期</Text>
-            <Text className="info-value">
-              {user?.createdAt ? formatDate(user.createdAt) : "---"}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* 购购服务 - 宠物列表 */}
-      <View className="section">
-        <Text className="section-title">购购服务</Text>
-        <View className="pet-cards">
-          {pets.length === 0 ? (
-            <View className="info-card">
-              <Text className="empty-pets">暂无宠物</Text>
+            <View className="info-row">
+              <Text className="info-label">邮箱</Text>
+              {/* TODO: 邮箱为mock数据，待后端用户表增加email字段后替换 */}
+              <Text className="info-value">YEHEY6780@guagua.com</Text>
             </View>
-          ) : (
-            pets.map((pet) => (
-              <View key={pet.id} className="pet-card">
-                <View className="pet-avatar-box">
-                  <Image className="pet-avatar-icon" src={ICON_PAW} mode="aspectFit" />
-                </View>
-                <View className="pet-info">
-                  <Text className="pet-name">{pet.name}</Text>
-                  <Text className="pet-detail">
-                    {pet.species === "dog" ? "狗" : "猫"}
-                    {pet.breed ? ` · ${pet.breed}` : ""}
-                    {pet.gender === "male" ? " ♂" : pet.gender === "female" ? " ♀" : ""}
-                  </Text>
-                </View>
-              </View>
-            ))
-          )}
-        </View>
-      </View>
-
-      {/* 会员专属权益 */}
-      <View className="section">
-        <Text className="section-title">会员专属权益</Text>
-        <View className="benefits-list">
-          {MEMBER_BENEFITS.map((b, i) => (
-            <View key={i} className="benefit-check-item">
-              <View className={`benefit-checkbox ${b.checked ? "checked" : ""}`}>
-                {b.checked && <Image className="check-mark-img" src={ICON_DONE} mode="aspectFit" />}
-              </View>
-              <Text className={`benefit-check-label ${b.checked ? "checked" : ""}`}>
-                {b.label}
+            <View className="info-row last">
+              <Text className="info-label">注册日期</Text>
+              <Text className="info-value">
+                {user?.createdAt ? formatDate(user.createdAt) : "---"}
               </Text>
             </View>
-          ))}
+          </View>
         </View>
-        <View className="detail-btn">
-          <Text className="detail-btn-text">查看详情</Text>
+
+        {/* 购购服务 - 宠物列表 */}
+        <View className="section">
+          <Text className="section-title">购购服务</Text>
+          <View className="pet-cards">
+            {pets.length === 0 ? (
+              <View className="info-card">
+                <Text className="empty-pets">暂无宠物</Text>
+              </View>
+            ) : (
+              pets.map((pet) => (
+                <View key={pet.id} className="pet-card">
+                  <View className="pet-avatar-box">
+                    <Image className="pet-avatar-icon" src={ICON_PAW} mode="aspectFit" />
+                  </View>
+                  <View className="pet-info">
+                    <Text className="pet-name">{pet.name}</Text>
+                    <Text className="pet-detail">
+                      {pet.species === "dog" ? "狗" : "猫"}
+                      {pet.breed ? ` · ${pet.breed}` : ""}
+                      {pet.gender === "male" ? " ♂" : pet.gender === "female" ? " ♀" : ""}
+                    </Text>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
         </View>
-      </View>
 
-      {/* 退出登录 */}
-      <View className="logout-area">
-        <Text className="logout-text" onClick={handleLogout}>
-          退出登录
-        </Text>
-      </View>
+        {/* 会员专属权益 */}
+        <View className="section">
+          <Text className="section-title">会员专属权益</Text>
+          <View className="benefits-list">
+            {MEMBER_BENEFITS.map((b, i) => (
+              <View key={i} className="benefit-check-item">
+                <View className={`benefit-checkbox ${b.checked ? "checked" : ""}`}>
+                  {b.checked && <Image className="check-mark-img" src={ICON_DONE} mode="aspectFit" />}
+                </View>
+                <Text className={`benefit-check-label ${b.checked ? "checked" : ""}`}>
+                  {b.label}
+                </Text>
+              </View>
+            ))}
+          </View>
+          <View className="detail-btn">
+            <Text className="detail-btn-text">查看详情</Text>
+          </View>
+        </View>
 
-      {/* TODO: 替换为真实装饰猫插画 (image-import-30.png) */}
-      <View className="bottom-cat">
-        <Image className="cat-deco-img" src={ICON_CAT} mode="aspectFit" />
-      </View>
+        {/* 退出登录 */}
+        <View className="logout-area">
+          <Text className="logout-text" onClick={handleLogout}>
+            退出登录
+          </Text>
+        </View>
+
+        {/* TODO: 替换为真实装饰猫插画 (image-import-30.png) */}
+        <View className="bottom-cat">
+          <Image className="cat-deco-img" src={ICON_CAT} mode="aspectFit" />
+        </View>
+      </ScrollView>
     </View>
   );
 }

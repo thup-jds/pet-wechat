@@ -25,10 +25,10 @@ function pick<T extends Record<string, unknown>>(obj: T, keys: string[]): Partia
 async function validateCollarPetBinding(collarDeviceId: string, petId: string) {
   const [collar] = await db.select().from(collarDevices).where(eq(collarDevices.id, collarDeviceId));
   if (!collar) {
-    return { valid: false as const, status: 404, error: "Collar not found" };
+    return { valid: false as const, status: 404 as const, error: "Collar not found" };
   }
   if (collar.petId !== petId) {
-    return { valid: false as const, status: 400, error: "项圈与宠物不匹配" };
+    return { valid: false as const, status: 400 as const, error: "项圈与宠物不匹配" };
   }
   return { valid: true as const, collar };
 }

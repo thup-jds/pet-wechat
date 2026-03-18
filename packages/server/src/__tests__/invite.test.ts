@@ -124,8 +124,8 @@ describe("Invite Routes", () => {
         petId: pet.id,
         bindingType: "authorized",
       });
-      // select 1: pet lookup, select 2: existing auth check, select 3: user desktops
-      mockDb._results.select = [[pet], [], [desktop]];
+      // select 1: pet lookup, select 2: invite code lookup, select 3: existing auth, select 4: user desktops
+      mockDb._results.select = [[pet], [], [], [desktop]];
       mockDb._results.insert = [[auth], [binding]];
 
       const headers2 = await authHeader("user-2");
@@ -185,7 +185,7 @@ describe("Invite Routes", () => {
       // Accept as user-2 but existing authorization found
       mockDb._reset();
       const existingAuth = fakeAuthorization();
-      mockDb._results.select = [[pet], [existingAuth]]; // pet lookup, existing auth found
+      mockDb._results.select = [[pet], [], [existingAuth]]; // pet lookup, invite code lookup, existing auth found
 
       const headers2 = await authHeader("user-2");
       const res = await app.request(

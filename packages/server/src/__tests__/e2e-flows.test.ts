@@ -154,6 +154,7 @@ describe("E2E Flows", () => {
       mockDb._results.select = [
         [pet],
         [],
+        [],
         [desktop],
       ];
       mockDb._results.insert = [

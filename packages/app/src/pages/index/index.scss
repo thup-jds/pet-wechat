@@ -1,16 +1,25 @@
 .home-page {
-  min-height: 100vh;
-  padding: 0 24px 116px;
+  height: 100vh;
+  padding: 0 24px;
   background:
     radial-gradient(ellipse at 20% 0%, rgba(232, 168, 73, 0.06) 0%, transparent 50%),
     radial-gradient(circle at top, rgba(255, 255, 255, 0.95), rgba(250, 248, 245, 0.92) 38%, #F3EDE6 100%);
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow: hidden;
   max-width: 100vw;
+  display: flex;
+  flex-direction: column;
 }
 
 .top-bar {
   padding: 24px 8px 18px;
+}
+
+.home-scroll {
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 116px;
+  box-sizing: border-box;
 }
 
 .pet-profile {
@@ -191,12 +200,34 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .hero-image {
   width: 100%;
   max-width: 560px;
   height: 500px;
+}
+
+.hero-edit-btn {
+  position: absolute;
+  right: 16px;
+  bottom: 96px;
+  width: 72px;
+  height: 72px;
+  border-radius: 36px;
+  background: rgba(255, 255, 255, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 28px rgba(43, 37, 32, 0.12);
+  border: 2px solid rgba(232, 168, 73, 0.24);
+  z-index: 2;
+}
+
+.hero-edit-icon {
+  width: 32px;
+  height: 32px;
 }
 
 .hero-caption {

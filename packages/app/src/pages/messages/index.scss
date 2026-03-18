@@ -1,10 +1,9 @@
 .messages-page {
-  min-height: 100vh;
+  height: 100vh;
   background: #FAF8F5;
-  padding-bottom: 120px;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow: hidden;
 
   .nav-bar {
     background: #fff;
@@ -83,6 +82,7 @@
 
   .message-list {
     flex: 1;
+    min-height: 0;
     padding: 24px 32px;
 
     .empty-state {

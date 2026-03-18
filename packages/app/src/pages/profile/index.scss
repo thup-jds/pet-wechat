@@ -1,8 +1,9 @@
 .profile-page {
-  min-height: 100vh;
+  height: 100vh;
   background: #FAF8F5;
-  padding-bottom: 120px;
-  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   box-sizing: border-box;
   max-width: 100vw;
 
@@ -24,10 +25,24 @@
   }
 }
 
+.profile-content {
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 120px;
+  box-sizing: border-box;
+
+  &.static-content {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 .not-logged {
   display: flex;
   flex-direction: column;
+  flex: 1;
   align-items: center;
+  justify-content: center;
   padding: 120px 64px;
 
   .not-logged-text {
@@ -44,6 +59,30 @@
   align-items: center;
   padding: 48px 32px 36px;
   background: linear-gradient(180deg, #fff 0%, #FAF8F5 100%);
+
+  .nickname-trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 8px;
+
+    &.is-default {
+      .user-nickname {
+        text-decoration: underline;
+        text-decoration-color: #D4922E;
+        text-decoration-thickness: 3px;
+        text-underline-offset: 10px;
+      }
+    }
+
+    .nickname-hint {
+      margin-top: 10px;
+      font-size: 22px;
+      color: #D4922E;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+  }
 
   .avatar-wrapper {
     margin-bottom: 20px;
@@ -78,7 +117,6 @@
     font-size: 36px;
     font-weight: 700;
     color: #2B2520;
-    margin-bottom: 8px;
     letter-spacing: 1px;
   }
 

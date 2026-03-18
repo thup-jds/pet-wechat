@@ -7,6 +7,16 @@ import { ICON_PAW, ICON_CAT, ICON_DOG, ICON_PHOTO } from "../../assets/icons";
 import type { Pet, User } from "@pet-wechat/shared";
 import "./index.scss";
 
+const UPLOAD_CONCURRENCY = 3;
+
+function chunkArray<T>(list: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let index = 0; index < list.length; index += size) {
+    chunks.push(list.slice(index, index + size));
+  }
+  return chunks;
+}
+
 export default function PetAvatar() {
   const router = useRouter();
   const petId = router.params.petId;
@@ -47,24 +57,32 @@ export default function PetAvatar() {
     setLoading(true);
     try {
       const token = getToken();
-      const uploadedUrls: string[] = [];
+      const uploadedUrls = new Array<string>(images.length);
+      let uploadedCount = 0;
+      setLoadingText(`上传中 (0/${images.length})...`);
 
-      for (const [index, imagePath] of images.entries()) {
-        setLoadingText(`上传中 (${index + 1}/${images.length})...`);
-        const uploadRes = await Taro.uploadFile({
-          url: `${BASE_URL}/api/upload`,
-          filePath: imagePath,
-          name: "file",
-          header: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        const uploadData = JSON.parse(uploadRes.data ?? "{}");
-        if (uploadRes.statusCode >= 400) {
-          throw new Error(uploadData.error ?? "上传失败");
-        }
-        if (!uploadData.url) {
-          throw new Error("上传结果缺少 URL");
-        }
-        uploadedUrls.push(uploadData.url);
+      const imageTasks = images.map((imagePath, index) => ({ imagePath, index }));
+      for (const group of chunkArray(imageTasks, UPLOAD_CONCURRENCY)) {
+        await Promise.all(
+          group.map(async ({ imagePath, index }) => {
+            const uploadRes = await Taro.uploadFile({
+              url: `${BASE_URL}/api/upload`,
+              filePath: imagePath,
+              name: "file",
+              header: token ? { Authorization: `Bearer ${token}` } : {},
+            });
+            const uploadData = JSON.parse(uploadRes.data ?? "{}");
+            if (uploadRes.statusCode >= 400) {
+              throw new Error(uploadData.error ?? "上传失败");
+            }
+            if (!uploadData.url) {
+              throw new Error("上传结果缺少 URL");
+            }
+            uploadedUrls[index] = uploadData.url;
+            uploadedCount += 1;
+            setLoadingText(`上传中 (${uploadedCount}/${images.length})...`);
+          }),
+        );
       }
 
       const { avatar } = await request<{ avatar: { id: string } }>({

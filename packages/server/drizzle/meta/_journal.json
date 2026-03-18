@@ -8,6 +8,27 @@
       "when": 1773501448864,
       "tag": "0000_premium_puff_adder",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773502000000,
+      "tag": "0001_unify_invite_system",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773502600000,
+      "tag": "0002_make_device_userId_nullable",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773851041885,
+      "tag": "0003_invite_codes",
+      "breakpoints": true
     }
   ]
 }
