@@ -1,7 +1,8 @@
-import { View, Text, ScrollView, Button } from "@tarojs/components";
+import { View, Text, Image, ScrollView, Button } from "@tarojs/components";
 import Taro, { definePageConfig, useDidShow, useShareAppMessage } from "@tarojs/taro";
 import { useState, useRef } from "react";
 import { request } from "../../utils/request";
+import { ICON_DESKTOP } from "../../assets/icons";
 import type {
   Pet,
   CollarDevice,
@@ -205,7 +206,7 @@ export default function Devices() {
               <View key={desktop.id} className="device-card desktop-card">
                 <View className="desktop-row">
                   <View className="desktop-icon-wrap">
-                    <Text className="desktop-icon-text">🖥</Text>
+                    <Image className="desktop-icon-img" src={ICON_DESKTOP} mode="aspectFit" />
                   </View>
                   <View className="desktop-info">
                     <Text className="desktop-name">{desktop.name}</Text>
@@ -240,10 +241,8 @@ export default function Devices() {
           <Text className="add-device-text">+ 添加新设备</Text>
         </View>
 
-        {/* Decorative cat */}
-        <View className="deco-cat">
-          <Text className="deco-cat-emoji">🐱</Text>
-        </View>
+        {/* Decorative spacer */}
+        <View className="deco-spacer" />
 
         <View className="bottom-spacer" />
       </ScrollView>

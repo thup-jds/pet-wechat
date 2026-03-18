@@ -1,14 +1,15 @@
 // 设计稿: jBoj0 (成功) / 0U4wA (失败)
-// 卡片: 780x452, cornerRadius 30, 背景 #d9d9d9
+// 卡片: 780x452, cornerRadius 30, 背景 #E0D9CF
 
 .wifi-result-page {
   min-height: 100vh;
-  background: #ededed;
+  background: #FAF8F5;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0 32px;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .result-card-wrapper {
@@ -23,18 +24,19 @@
 .result-card {
   width: 100%;
   max-width: 455px;
-  background: #d9d9d9;
-  border-radius: 18px; // 30 * 0.584
+  background: #E0D9CF;
+  border-radius: 18px;
   padding: 28px 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-shadow: 0 4px 20px rgba(43, 37, 32, 0.08);
 }
 
 .result-title {
-  font-family: "Inter", sans-serif;
-  font-size: 28px; // 48 * 0.584
-  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
+  font-size: 28px;
+  color: #2B2520;
   margin-bottom: 20px;
 }
 
@@ -47,17 +49,18 @@
 
 // 设计稿: 400x90 按钮, cornerRadius 20, 白底
 .result-btn {
-  width: 234px; // 400 * 0.584
-  height: 53px; // 90 * 0.584
+  width: 234px;
+  height: 53px;
   background: #fff;
-  border-radius: 12px; // 20 * 0.584
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(43, 37, 32, 0.06);
 }
 
 .result-btn-text {
-  font-family: "Inter", sans-serif;
-  font-size: 19px; // 32 * 0.584
-  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
+  font-size: 19px;
+  color: #2B2520;
 }

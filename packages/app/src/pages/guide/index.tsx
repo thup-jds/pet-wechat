@@ -32,9 +32,9 @@ export default function Guide() {
         className="section-card"
         onClick={handleCollarSetup}
       >
-        <Text className="section-title">我有宠物陪伴</Text>
+        <Text className="section-title">项圈配置</Text>
         <Text className="section-subtitle">
-          优先配置项圈，同步宠物的真实行为
+          连接智能项圈，同步宠物的真实行为
         </Text>
         <View className="illustration-area">
           <View className="illustration-icons">
@@ -51,9 +51,9 @@ export default function Guide() {
         className="section-card"
         onClick={handleDesktopSetup}
       >
-        <Text className="section-title">开启桌面宠物</Text>
+        <Text className="section-title">桌面摆件配置</Text>
         <Text className="section-subtitle">
-          配置桌面端设备，开启数字宠物体验
+          连接桌面设备，开启数字宠物体验
         </Text>
         <View className="illustration-area">
           <View className="illustration-icons">

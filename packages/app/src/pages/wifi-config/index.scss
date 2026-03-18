@@ -1,22 +1,23 @@
 .wifi-config-page {
-  background: #fff;
+  background: #FAF8F5;
+  overflow-x: hidden;
 
   .mock-badge {
     display: block;
-    color: #ff0000;
+    color: #D4553A;
     font-size: 24px;
     font-weight: 600;
     text-align: center;
     margin-bottom: 16px;
     padding: 8px 24px;
-    background: #fff0f0;
-    border: 2px solid #ffcccc;
+    background: #FDF2F0;
+    border: 2px solid #F5D5CF;
     border-radius: 12px;
   }
 
   .mock-btn {
     background: #cc0000 !important;
-    border: 2px solid #ff0000;
+    border: 2px solid #D4553A;
   }
 
   .step-indicator {
@@ -30,13 +31,13 @@
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      background: #eee;
+      background: #E0D9CF;
       display: flex;
       align-items: center;
       justify-content: center;
 
       &.active {
-        background: #333;
+        background: #2B2520;
       }
 
       .step-num {
@@ -48,11 +49,11 @@
     .step-line {
       width: 80px;
       height: 4px;
-      background: #eee;
+      background: #E0D9CF;
       margin: 0 12px;
 
       &.done {
-        background: #333;
+        background: #2B2520;
       }
     }
   }
@@ -63,12 +64,13 @@
     font-weight: bold;
     text-align: center;
     margin-bottom: 12px;
+    color: #2B2520;
   }
 
   .step-desc {
     display: block;
     font-size: 26px;
-    color: #999;
+    color: #B5AFA6;
     text-align: center;
     margin-bottom: 48px;
   }
@@ -80,12 +82,12 @@
       .label {
         display: block;
         font-size: 26px;
-        color: #999;
+        color: #B5AFA6;
         margin-bottom: 12px;
       }
 
       .input-field {
-        background: #f5f5f5;
+        background: #F3EDE6;
         border-radius: 16px;
         height: 88px;
         padding: 0 32px;

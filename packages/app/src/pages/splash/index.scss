@@ -1,12 +1,14 @@
 // 设计稿: SM9fm - Splash 页
-// 背景 #ededed, 猫爪图标 425x425, 进度条 604x12
+// 背景 #FAF8F5, 猫爪图标 425x425, 进度条 604x12
 
 .splash-page {
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ededed;
+  background: #FAF8F5;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 .splash-content {
@@ -30,10 +32,10 @@
 }
 
 .logo-text {
-  font-family: "Inter", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
   font-size: 48px;
   font-weight: 600;
-  color: #333;
+  color: #2B2520;
   letter-spacing: 8px;
 }
 
@@ -41,7 +43,7 @@
   // 设计稿 604x12 → ~352x7
   width: 352px;
   height: 7px;
-  background: #d9d9d9;
+  background: #E0D9CF;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -55,5 +57,5 @@
 
 .loading-text {
   font-size: 24px;
-  color: #999;
+  color: #B5AFA6;
 }

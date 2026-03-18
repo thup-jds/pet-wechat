@@ -127,7 +127,7 @@ export default function PetAvatar() {
         </View>
 
         <Text className="upload-desc">
-          上传宠物照片，专属定制理宠物动态图像
+          上传宠物照片，专属定制你的宠物动态图像
         </Text>
 
         <View className="upload-area" onClick={handleChooseImage}>
@@ -167,7 +167,7 @@ export default function PetAvatar() {
         </View>
 
         <Text className="skip-link" onClick={handleSkip}>
-          我试，稍后再完成
+          跳过，稍后再完成
         </Text>
       </View>
     </View>

@@ -2,9 +2,11 @@
   min-height: 100vh;
   padding: 0 24px 116px;
   background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.95), rgba(237, 237, 237, 0.92) 38%, #ece8df 100%);
+    radial-gradient(ellipse at 20% 0%, rgba(232, 168, 73, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.95), rgba(250, 248, 245, 0.92) 38%, #F3EDE6 100%);
   box-sizing: border-box;
   overflow-x: hidden;
+  max-width: 100vw;
 }
 
 .top-bar {
@@ -23,7 +25,8 @@
   border-radius: 36px;
   flex-shrink: 0;
   background: #fff;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(43, 37, 32, 0.1);
+  border: 3px solid rgba(255, 255, 255, 0.9);
 }
 
 .pet-info {
@@ -35,13 +38,13 @@
 .pet-name {
   font-size: 32px;
   font-weight: 700;
-  color: #2b2b2b;
+  color: #2B2520;
   line-height: 1.2;
 }
 
 .pet-subtitle {
   font-size: 22px;
-  color: #7b746b;
+  color: #8B847A;
   line-height: 1.3;
 }
 
@@ -69,7 +72,7 @@
 
 .activity-label {
   font-size: 20px;
-  color: #7f776c;
+  color: #8B847A;
   letter-spacing: 2px;
   writing-mode: vertical-rl;
 }
@@ -78,7 +81,7 @@
   width: 18px;
   height: 248px;
   border-radius: 999px;
-  background: rgba(77, 71, 58, 0.16);
+  background: rgba(43, 37, 32, 0.08);
   position: relative;
   overflow: hidden;
 }
@@ -95,18 +98,18 @@
   width: 58px;
   height: 58px;
   border-radius: 29px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 3px solid #5aa67a;
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #7BA884;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 20px rgba(43, 37, 32, 0.08);
 }
 
 .activity-score-text {
   font-size: 22px;
   font-weight: 700;
-  color: #2b2b2b;
+  color: #2B2520;
 }
 
 .activity-level {
@@ -123,7 +126,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 20px rgba(43, 37, 32, 0.08);
 }
 
 .notification-icon {
@@ -138,7 +141,8 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #ff5d5d;
+  background: #D4553A;
+  border: 2px solid #fff;
 }
 
 .hero-section {
@@ -166,7 +170,7 @@
 .speech-text {
   font-size: 26px;
   line-height: 1.5;
-  color: #3a342e;
+  color: #4A4540;
   text-align: center;
 }
 
@@ -194,7 +198,7 @@
   margin-top: -8px;
   font-size: 24px;
   font-weight: 600;
-  color: #5e5548;
+  color: #8B847A;
 }
 
 .swipe-indicator {
@@ -214,21 +218,21 @@
 
 .swipe-text {
   font-size: 22px;
-  color: #6e665c;
+  color: #8B847A;
 }
 
 .swipe-progress-track {
   width: 100%;
   height: 8px;
   border-radius: 999px;
-  background: rgba(58, 52, 46, 0.12);
+  background: rgba(43, 37, 32, 0.08);
   overflow: hidden;
 }
 
 .swipe-progress-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #c27e5f 0%, #6b8f71 100%);
+  background: linear-gradient(90deg, #E8A849 0%, #7BA884 100%);
 }
 
 .action-buttons {
@@ -242,13 +246,13 @@
   width: 118px;
   height: 118px;
   border-radius: 59px;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(43, 37, 32, 0.08);
 }
 
 .action-button-icon {
@@ -258,7 +262,7 @@
 
 .action-button-label {
   font-size: 22px;
-  color: #4b453d;
+  color: #4A4540;
 }
 
 .device-cards {
@@ -271,11 +275,13 @@
   background: rgba(255, 255, 255, 0.96);
   border-radius: 28px;
   padding: 24px 22px;
-  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 28px rgba(43, 37, 32, 0.06);
 }
 
 .device-card.empty {
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px dashed #E0D9CF;
+  box-shadow: none;
 }
 
 .device-card-head {
@@ -294,7 +300,7 @@
   display: block;
   font-size: 24px;
   font-weight: 700;
-  color: #2f2b28;
+  color: #2B2520;
   margin-bottom: 6px;
 }
 
@@ -302,7 +308,7 @@
   display: block;
   font-size: 20px;
   line-height: 1.5;
-  color: #7b746b;
+  color: #8B847A;
 }
 
 .empty-state {
@@ -319,29 +325,31 @@
   width: 120px;
   height: 120px;
   margin-bottom: 28px;
+  opacity: 0.6;
 }
 
 .empty-title {
   font-size: 34px;
   font-weight: 700;
-  color: #2d2925;
+  color: #2B2520;
 }
 
 .empty-desc {
   margin: 16px 0 40px;
   font-size: 24px;
   line-height: 1.6;
-  color: #7a7268;
+  color: #8B847A;
 }
 
 .btn-primary {
   min-width: 220px;
   padding: 22px 36px;
   border-radius: 999px;
-  background: #2f2b28;
+  background: linear-gradient(135deg, #2B2520, #3D352E);
   color: #fff;
   font-size: 28px;
   text-align: center;
+  box-shadow: 0 8px 24px rgba(43, 37, 32, 0.2);
 }
 
 .empty-main {
@@ -356,5 +364,5 @@
 .empty-hero-text {
   margin-top: 12px;
   font-size: 24px;
-  color: #7f776c;
+  color: #8B847A;
 }

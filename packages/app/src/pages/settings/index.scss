@@ -1,6 +1,7 @@
 .settings-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: #FAF8F5;
+  overflow-x: hidden;
 
   .nav-bar {
     background: #fff;
@@ -10,6 +11,7 @@
     .nav-title {
       font-size: 34px;
       font-weight: bold;
+      color: #2B2520;
     }
   }
 }
@@ -25,7 +27,7 @@
       display: block;
       font-size: 28px;
       font-weight: 600;
-      color: #333;
+      color: #2B2520;
       margin-bottom: 20px;
     }
 
@@ -43,33 +45,35 @@
           width: 96px;
           height: 96px;
           border-radius: 50%;
-          background: #e8d4f0;
+          background: linear-gradient(145deg, #F3EDE6, #E8DFD4);
           display: flex;
           align-items: center;
           justify-content: center;
           margin-bottom: 8px;
+          box-shadow: 0 4px 12px rgba(43, 37, 32, 0.06);
 
           &.add {
-            background: #f0f0f0;
-            border: 2px dashed #ccc;
+            background: #FDFCFA;
+            border: 2px dashed #E0D9CF;
+            box-shadow: none;
           }
 
           .pet-thumb-initial {
             font-size: 36px;
             font-weight: bold;
-            color: #7b4f9e;
+            color: #A69A8C;
           }
 
           .pet-thumb-plus-img {
             width: 32px;
             height: 32px;
-            opacity: 0.4;
+            opacity: 0.35;
           }
         }
 
         .pet-thumb-name {
           font-size: 22px;
-          color: #666;
+          color: #8B847A;
         }
       }
     }
@@ -81,6 +85,7 @@
     background: #fff;
     border-radius: 24px;
     overflow: hidden;
+    box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
   }
 
   .settings-item {
@@ -98,7 +103,7 @@
       right: 32px;
       bottom: 0;
       height: 1px;
-      background: #f0f0f0;
+      background: #F3EDE6;
     }
 
     &.last::after {
@@ -107,47 +112,50 @@
 
     .item-label {
       font-size: 28px;
-      color: #333;
+      color: #2B2520;
     }
 
     .item-value {
       font-size: 26px;
-      color: #999;
+      color: #B5AFA6;
     }
 
     .item-arrow-img {
       width: 24px;
       height: 24px;
-      opacity: 0.4;
+      opacity: 0.3;
     }
   }
 
   // 采集对照 large button
   .collect-data-btn {
     margin-top: 32px;
-    background: #ff9800;
+    background: linear-gradient(135deg, #E8A849, #D4922E);
     border-radius: 24px;
     height: 96px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 6px 20px rgba(232, 168, 73, 0.25);
 
     .collect-data-btn-text {
       font-size: 32px;
       color: #fff;
       font-weight: bold;
+      letter-spacing: 2px;
     }
   }
 
   // Logout
   .logout-btn {
     text-align: center;
-    color: #e53935;
+    color: #D4553A;
     font-size: 28px;
     padding: 28px;
     margin-top: 24px;
     background: #fff;
     border-radius: 24px;
+    box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
   }
 
   // Decorative cat
@@ -158,9 +166,9 @@
     padding-right: 16px;
 
     .deco-cat-img {
-      width: 120px;
-      height: 120px;
-      opacity: 0.3;
+      width: 100px;
+      height: 100px;
+      opacity: 0.15;
     }
   }
 }

@@ -109,7 +109,9 @@ export default function Profile() {
   return (
     <View className="profile-page">
       <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
-        <Text className="nav-title">用户信息</Text>
+        <View className="nav-bar-content" style={{ height: `${navHeight}px` }}>
+          <Text className="nav-title">我的</Text>
+        </View>
       </View>
 
       {/* 用户头像区域 */}
