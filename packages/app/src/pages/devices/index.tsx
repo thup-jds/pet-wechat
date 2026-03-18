@@ -1,8 +1,9 @@
 import { View, Text, Image, ScrollView, Button } from "@tarojs/components";
 import Taro, { definePageConfig, useDidShow, useShareAppMessage } from "@tarojs/taro";
 import { useState, useRef } from "react";
+import NavBar from "../../components/NavBar";
 import { request } from "../../utils/request";
-import { ICON_DESKTOP } from "../../assets/icons";
+import { ICON_DESKTOP, ICON_SETTINGS } from "../../assets/icons";
 import type {
   Pet,
   CollarDevice,
@@ -13,9 +14,6 @@ import "./index.scss";
 definePageConfig({ enableShareAppMessage: true });
 
 export default function Devices() {
-  const { top, height } = Taro.getMenuButtonBoundingClientRect();
-  const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
-  const navHeight = (top - statusBarHeight) * 2 + height;
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
   const selectedPet = pets.find((p) => p.id === selectedPetId) || null;
@@ -107,11 +105,18 @@ export default function Devices() {
 
   return (
     <View className="devices-page">
-      <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
-        <View className="nav-bar-content" style={{ height: `${navHeight}px` }}>
-          <Text className="nav-title">我的设备</Text>
-        </View>
-      </View>
+      <NavBar
+        title="我的设备"
+        showBack={false}
+        rightContent={(
+          <View
+            className="nav-action"
+            onClick={() => Taro.navigateTo({ url: "/pages/settings/index" })}
+          >
+            <Image className="nav-action-icon" src={ICON_SETTINGS} mode="aspectFit" />
+          </View>
+        )}
+      />
 
       <ScrollView className="device-content" scrollY>
         {/* Pet card switcher */}

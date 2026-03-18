@@ -1,22 +1,23 @@
 .collar-bind-page {
   min-height: 100vh;
-  background: #FAF8F5;
+  background: $color-bg;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 80px;
+  padding-top: $spacing-2xl;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
   overflow-x: hidden;
   max-width: 100vw;
+  @include safe-area-bottom($spacing-xl);
 
   .brand-title {
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
     font-size: 28px;
     font-weight: 600;
-    color: #2B2520;
-    margin-bottom: 24px;
+    color: $color-text-primary;
+    margin-bottom: $spacing-lg;
     z-index: 2;
   }
 
@@ -35,7 +36,7 @@
 
   .main-card {
     width: calc(100% - 32px);
-    background: #fff;
+    background: $color-bg-card;
     border-radius: 50px;
     padding: 48px 40px 40px;
     box-sizing: border-box;
@@ -49,10 +50,10 @@
     .card-title {
       display: block;
       font-size: 37px;
-      font-weight: bold;
-      color: #2B2520;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: $spacing-lg;
     }
 
     .collar-illustration {
@@ -74,29 +75,29 @@
       .step-row {
         display: flex;
         align-items: flex-start;
-        gap: 16px;
-        margin-bottom: 16px;
+        gap: $spacing-md;
+        margin-bottom: $spacing-md;
 
         .step-number {
           width: 40px;
           height: 40px;
           min-width: 40px;
-          border-radius: 50%;
-          background: #2B2520;
+          border-radius: $radius-full;
+          background: $color-primary;
           display: flex;
           align-items: center;
           justify-content: center;
 
           .step-number-text {
             font-size: 22px;
-            color: #fff;
-            font-weight: 600;
+            color: $color-text-inverse;
+            font-weight: $font-weight-semibold;
           }
         }
 
         .step-desc {
-          font-size: 28px;
-          color: #2B2520;
+          font-size: $font-size-base;
+          color: $color-text-primary;
           line-height: 1.5;
           flex: 1;
         }
@@ -105,7 +106,7 @@
       .step-illustration-area {
         width: 100%;
         min-height: 100px;
-        background: #F3EDE6;
+        background: $color-bg-input;
         border-radius: 20px;
         display: flex;
         align-items: center;
@@ -126,7 +127,7 @@
 
       .device-found-card {
         width: 100%;
-        background: #FAF8F5;
+        background: $color-bg;
         border-radius: 20px;
         padding: 20px 24px;
         box-sizing: border-box;
@@ -137,8 +138,8 @@
         border: 3px solid transparent;
 
         &.selected {
-          background: #EEF5EF;
-          border-color: #7BA884;
+          background: rgba(123, 168, 132, 0.12);
+          border-color: $color-success;
         }
 
         .device-icon-img {
@@ -156,101 +157,51 @@
 
         .device-id {
           font-size: 26px;
-          font-weight: 600;
-          color: #2B2520;
+          font-weight: $font-weight-semibold;
+          color: $color-text-primary;
         }
 
         .device-mac {
-          font-size: 20px;
-          color: #B5AFA6;
-        }
-
-        .mock-tag {
-          font-size: 20px;
-          color: #D4553A;
-          font-weight: 600;
-          background: #FDF0ED;
-          padding: 4px 12px;
-          border-radius: 8px;
-          border: 1px solid #F0C4BA;
+          font-size: $font-size-xs;
+          color: $color-text-tertiary;
         }
       }
 
       .empty-text {
-        font-size: 24px;
-        color: #B5AFA6;
+        font-size: $font-size-sm;
+        color: $color-text-tertiary;
         text-align: center;
         padding: 40px 0;
       }
     }
 
-    .mock-badge {
-      color: #D4553A;
-      font-size: 24px;
-      font-weight: 600;
-      text-align: center;
-      margin-top: 16px;
-      padding: 8px 24px;
-      background: #FDF0ED;
-      border: 2px solid #F0C4BA;
-      border-radius: 12px;
+    .main-mock-badge {
+      margin-top: $spacing-md;
+    }
+
+    .device-mock-tag {
+      margin-left: auto;
     }
 
     .btn-primary {
+      @include btn-primary;
+
       width: 100%;
-      height: 88px;
-      background: linear-gradient(135deg, #2B2520, #3D352E);
-      border-radius: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      font-size: 30px;
-      font-weight: 600;
-      margin-top: 24px;
+      margin-top: $spacing-lg;
 
       &.mock-btn {
-        background: #D4553A;
-        border: 2px solid #D4553A;
+        background: $color-error;
+        border: 2px solid $color-error;
+        box-shadow: none;
       }
     }
   }
 
   .step-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    padding: 32px 0 60px;
+    padding: $spacing-xl 0 60px;
     z-index: 2;
-
-    .step-dot {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #C5BFB6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &.active {
-        background: #2B2520;
-      }
-
-      .step-dot-text {
-        font-size: 22px;
-        color: #fff;
-        font-weight: 600;
-      }
-    }
-
-    .step-line {
-      width: 60px;
-      height: 4px;
-      background: #C5BFB6;
-
-      &.done {
-        background: #2B2520;
-      }
-    }
   }
 }

@@ -1,28 +1,12 @@
 .profile-page {
   height: 100vh;
-  background: #FAF8F5;
+  background: $color-bg;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
   max-width: 100vw;
-
-  .nav-bar {
-    background: #fff;
-    padding: 0 32px 24px;
-
-    .nav-bar-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .nav-title {
-      font-size: 34px;
-      font-weight: bold;
-      color: #2B2520;
-    }
-  }
+  @include safe-area-bottom($spacing-xl);
 }
 
 .profile-content {
@@ -47,18 +31,17 @@
 
   .not-logged-text {
     font-size: 28px;
-    color: #8B847A;
+    color: $color-text-secondary;
     margin-bottom: 32px;
   }
 }
 
-/* 用户头像区域 */
 .user-hero {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 48px 32px 36px;
-  background: linear-gradient(180deg, #fff 0%, #FAF8F5 100%);
+  background: linear-gradient(180deg, $color-bg-card 0%, $color-bg 100%);
 
   .nickname-trigger {
     display: flex;
@@ -90,16 +73,16 @@
     .avatar-img {
       width: 160px;
       height: 160px;
-      border-radius: 50%;
-      border: 4px solid #F3EDE6;
+      border-radius: $radius-full;
+      border: 4px solid $color-bg-input;
       box-shadow: 0 8px 28px rgba(43, 37, 32, 0.1);
     }
 
     .avatar-placeholder {
       width: 160px;
       height: 160px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #F3EDE6, #E8DFD4);
+      border-radius: $radius-full;
+      background: linear-gradient(145deg, $color-bg-input, $color-border);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -107,42 +90,42 @@
 
       .avatar-letter {
         font-size: 60px;
-        font-weight: 700;
-        color: #A69A8C;
+        font-weight: $font-weight-bold;
+        color: $color-text-secondary;
       }
     }
   }
 
   .user-nickname {
     font-size: 36px;
-    font-weight: 700;
-    color: #2B2520;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin-bottom: 8px;
     letter-spacing: 1px;
   }
 
   .user-id {
     font-size: 22px;
-    color: #B5AFA6;
+    color: $color-text-tertiary;
     margin-bottom: 20px;
     font-family: "SF Mono", "Menlo", monospace;
   }
 
   .member-badge {
-    background: linear-gradient(135deg, #E8A849, #D4922E);
+    background: linear-gradient(135deg, $color-accent, $color-accent-dark);
     border-radius: 28px;
     padding: 10px 32px;
     box-shadow: 0 4px 16px rgba(232, 168, 73, 0.3);
 
     .member-badge-text {
       font-size: 22px;
-      color: #fff;
-      font-weight: 600;
+      color: $color-text-inverse;
+      font-weight: $font-weight-semibold;
       letter-spacing: 2px;
     }
   }
 }
 
-/* 通用 section */
 .section {
   padding: 28px 32px 0;
 
@@ -154,19 +137,19 @@
 
     .section-title {
       font-size: 28px;
-      font-weight: bold;
-      color: #2B2520;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
       margin-bottom: 0;
     }
 
     .edit-btn {
-      background: #F3EDE6;
+      background: $color-bg-input;
       border-radius: 24px;
       padding: 8px 24px;
 
       .edit-btn-text {
         font-size: 24px;
-        color: #8B847A;
+        color: $color-text-secondary;
       }
     }
   }
@@ -174,15 +157,14 @@
   .section-title {
     display: block;
     font-size: 28px;
-    font-weight: bold;
-    color: #2B2520;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
     margin-bottom: 16px;
   }
 }
 
-/* 账户信息卡片 */
 .info-card {
-  background: #fff;
+  background: $color-bg-card;
   border-radius: 24px;
   padding: 0 28px;
   box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
@@ -192,7 +174,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 26px 0;
-    border-bottom: 1px solid #F3EDE6;
+    border-bottom: 1px solid $color-bg-input;
 
     &.last {
       border-bottom: none;
@@ -200,13 +182,13 @@
 
     .info-label {
       font-size: 26px;
-      color: #8B847A;
+      color: $color-text-secondary;
     }
 
     .info-value {
       font-size: 26px;
-      color: #2B2520;
-      font-weight: 500;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
     }
   }
 
@@ -215,11 +197,10 @@
     text-align: center;
     padding: 32px 0;
     font-size: 26px;
-    color: #C5BFB6;
+    color: $color-text-placeholder;
   }
 }
 
-/* 宠物卡片列表 */
 .pet-cards {
   display: flex;
   flex-direction: column;
@@ -228,7 +209,7 @@
   .pet-card {
     display: flex;
     align-items: center;
-    background: #fff;
+    background: $color-bg-card;
     border-radius: 24px;
     padding: 24px 28px;
     gap: 20px;
@@ -238,7 +219,7 @@
       width: 80px;
       height: 80px;
       border-radius: 20px;
-      background: linear-gradient(145deg, #F3EDE6, #E8DFD4);
+      background: linear-gradient(145deg, $color-bg-input, $color-border);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -256,23 +237,22 @@
       .pet-name {
         display: block;
         font-size: 28px;
-        font-weight: 600;
-        color: #2B2520;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
         margin-bottom: 6px;
       }
 
       .pet-detail {
         display: block;
         font-size: 22px;
-        color: #8B847A;
+        color: $color-text-secondary;
       }
     }
   }
 }
 
-/* 会员权益列表 - checkbox style */
 .benefits-list {
-  background: #fff;
+  background: $color-bg-card;
   border-radius: 24px;
   padding: 20px 28px;
   box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
@@ -282,7 +262,7 @@
     align-items: center;
     gap: 16px;
     padding: 18px 0;
-    border-bottom: 1px solid #F8F5F1;
+    border-bottom: 1px solid $color-bg-section;
 
     &:last-child {
       border-bottom: none;
@@ -292,14 +272,14 @@
       width: 36px;
       height: 36px;
       border-radius: 10px;
-      border: 2px solid #E0D9CF;
+      border: 2px solid $color-border-light;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
 
       &.checked {
-        background: linear-gradient(135deg, #E8A849, #D4922E);
+        background: linear-gradient(135deg, $color-accent, $color-accent-dark);
         border-color: transparent;
         box-shadow: 0 2px 8px rgba(232, 168, 73, 0.3);
       }
@@ -312,20 +292,19 @@
 
     .benefit-check-label {
       font-size: 26px;
-      color: #B5AFA6;
+      color: $color-text-tertiary;
 
       &.checked {
-        color: #2B2520;
-        font-weight: 500;
+        color: $color-text-primary;
+        font-weight: $font-weight-medium;
       }
     }
   }
 }
 
-/* 查看详情按钮 */
 .detail-btn {
   margin-top: 24px;
-  background: linear-gradient(135deg, #2B2520, #3D352E);
+  background: linear-gradient(135deg, $color-primary, $color-primary-light);
   border-radius: 44px;
   height: 84px;
   display: flex;
@@ -335,13 +314,12 @@
 
   .detail-btn-text {
     font-size: 28px;
-    color: #fff;
-    font-weight: 600;
+    color: $color-text-inverse;
+    font-weight: $font-weight-semibold;
     letter-spacing: 1px;
   }
 }
 
-/* 退出登录 */
 .logout-area {
   display: flex;
   justify-content: center;
@@ -349,12 +327,11 @@
 
   .logout-text {
     font-size: 28px;
-    color: #D4553A;
-    font-weight: 500;
+    color: $color-error;
+    font-weight: $font-weight-medium;
   }
 }
 
-/* 底部猫咪装饰 */
 .bottom-cat {
   display: flex;
   justify-content: flex-end;

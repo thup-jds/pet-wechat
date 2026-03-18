@@ -1,0 +1,10 @@
+.mock-badge {
+  @include mock-badge;
+}
+
+.mock-badge-text {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}

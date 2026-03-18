@@ -68,7 +68,7 @@ export default function Settings() {
 
   return (
     <View className="settings-page">
-      <NavBar title="设置" />
+      <NavBar title="设置" showBack />
 
       <View className="settings-content">
         {/* My pets section */}

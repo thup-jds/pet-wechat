@@ -1,18 +1,28 @@
 import { View, Text, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
+import type { ReactNode } from "react";
 import { ICON_ARROW_LEFT } from "../../assets/icons";
+import { useSafeArea } from "../../hooks/useSafeArea";
 import "./index.scss";
 
 interface NavBarProps {
   title: string;
   showBack?: boolean;
   onBack?: () => void;
+  leftContent?: ReactNode;
+  rightContent?: ReactNode;
+  transparent?: boolean;
 }
 
-export default function NavBar({ title, showBack = true, onBack }: NavBarProps) {
-  const { top, height } = Taro.getMenuButtonBoundingClientRect();
-  const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
-  const navHeight = (top - statusBarHeight) * 2 + height;
+export default function NavBar({
+  title,
+  showBack = true,
+  onBack,
+  leftContent,
+  rightContent,
+  transparent = false,
+}: NavBarProps) {
+  const { statusBarHeight, navHeight } = useSafeArea();
 
   const handleBack = () => {
     if (onBack) {
@@ -27,15 +37,25 @@ export default function NavBar({ title, showBack = true, onBack }: NavBarProps) 
     }
   };
 
+  const leftNode = leftContent ? (
+    <View className="nav-side-content">{leftContent}</View>
+  ) : showBack ? (
+    <View className="nav-back" onClick={handleBack}>
+      <Image className="nav-back-icon" src={ICON_ARROW_LEFT} mode="aspectFit" />
+    </View>
+  ) : null;
+
   return (
-    <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
+    <View
+      className={`nav-bar ${transparent ? "nav-bar--transparent" : ""}`}
+      style={{ paddingTop: `${statusBarHeight}px` }}
+    >
       <View className="nav-bar-content" style={{ height: `${navHeight}px` }}>
-        {showBack && (
-          <View className="nav-back" onClick={handleBack}>
-            <Image className="nav-back-icon" src={ICON_ARROW_LEFT} mode="aspectFit" />
-          </View>
-        )}
+        <View className="nav-side nav-side--left">{leftNode}</View>
         <Text className="nav-title">{title}</Text>
+        <View className="nav-side nav-side--right">
+          {rightContent ? <View className="nav-side-content">{rightContent}</View> : null}
+        </View>
       </View>
     </View>
   );

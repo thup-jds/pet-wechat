@@ -2,6 +2,8 @@ import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
 import NavBar from "../../components/NavBar";
+import StepIndicator from "../../components/StepIndicator";
+import MockBadge from "../../components/MockBadge";
 import { request } from "../../utils/request";
 import { ICON_PAW, ICON_COLLAR, ICON_CAT, ICON_BLUETOOTH } from "../../assets/icons";
 import type { CollarDevice } from "@pet-wechat/shared";
@@ -106,7 +108,7 @@ export default function CollarBind() {
                       <Text className="device-id">{d.name}</Text>
                       <Text className="device-mac">{d.macAddress}</Text>
                     </View>
-                    <Text className="mock-tag">Mock</Text>
+                    <MockBadge className="device-mock-tag" text="Mock" />
                   </View>
                 ))
               )}
@@ -114,7 +116,7 @@ export default function CollarBind() {
           )}
         </View>
 
-        <Text className="mock-badge">⚠ Mock 模式：蓝牙搜索使用模拟数据</Text>
+        <MockBadge className="main-mock-badge" text="⚠ Mock 模式：蓝牙搜索使用模拟数据" />
         {step === 1 ? (
           <View className="btn-primary mock-btn" onClick={handleSearch}>
             Mock 搜索设备
@@ -126,19 +128,7 @@ export default function CollarBind() {
         )}
       </View>
 
-      <View className="step-indicator">
-        <View className={`step-dot ${step >= 1 ? "active" : ""}`}>
-          <Text className="step-dot-text">1</Text>
-        </View>
-        <View className={`step-line ${step >= 2 ? "done" : ""}`} />
-        <View className={`step-dot ${step >= 2 ? "active" : ""}`}>
-          <Text className="step-dot-text">2</Text>
-        </View>
-        <View className="step-line" />
-        <View className="step-dot">
-          <Text className="step-dot-text">3</Text>
-        </View>
-      </View>
+      <StepIndicator steps={["准备设备", "搜索蓝牙", "配置网络"]} current={step} />
     </View>
   );
 }

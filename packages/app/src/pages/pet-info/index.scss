@@ -1,24 +1,16 @@
 .pet-info-page {
   min-height: 100vh;
-  background: #FAF8F5;
+  background: $color-bg;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 80px;
+  padding-top: $spacing-2xl;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
   overflow-x: hidden;
   max-width: 100vw;
-
-  .brand-title {
-    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
-    font-size: 28px;
-    font-weight: 600;
-    color: #2B2520;
-    margin-bottom: 24px;
-    z-index: 2;
-  }
+  @include safe-area-bottom($spacing-xl);
 
   /* Pet switcher bar */
   .pet-switcher {
@@ -27,20 +19,20 @@
     justify-content: center;
     gap: 32px;
     width: 100%;
-    padding: 16px 32px;
+    padding: $spacing-md $container-padding;
     box-sizing: border-box;
     z-index: 2;
-    margin-bottom: 16px;
+    margin-bottom: $spacing-md;
 
     .switcher-arrow {
       width: 56px;
       height: 56px;
-      border-radius: 50%;
-      background: #fff;
+      border-radius: $radius-full;
+      background: $color-bg-card;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
+      box-shadow: $shadow-card;
 
       .switcher-arrow-img {
         width: 28px;
@@ -49,9 +41,9 @@
     }
 
     .switcher-pet-name {
-      font-size: 32px;
-      font-weight: bold;
-      color: #2B2520;
+      font-size: $font-size-md;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
       min-width: 120px;
       text-align: center;
     }
@@ -65,7 +57,7 @@
     align-items: center;
     justify-content: center;
     z-index: 1;
-    margin-bottom: 24px;
+    margin-bottom: $spacing-lg;
 
     .bg-illustration-icon {
       width: 180px;
@@ -91,15 +83,15 @@
         height: 100%;
         border-radius: 50%;
         /* TODO: 进度值82%为mock，conic-gradient角度 = 82% * 360 = 295.2deg */
-        background: conic-gradient(#E8A849 295.2deg, rgba(43, 37, 32, 0.08) 295.2deg);
+        background: conic-gradient($color-accent 295.2deg, rgba(43, 37, 32, 0.08) 295.2deg);
         mask: radial-gradient(transparent 55%, #000 56%);
         -webkit-mask: radial-gradient(transparent 55%, #000 56%);
       }
 
       .progress-text {
-        font-size: 32px;
-        font-weight: bold;
-        color: #E8A849;
+        font-size: $font-size-md;
+        font-weight: $font-weight-bold;
+        color: $color-accent;
         z-index: 1;
       }
     }
@@ -107,7 +99,7 @@
 
   .main-card {
     width: calc(100% - 32px);
-    background: #fff;
+    background: $color-bg-card;
     border-radius: 50px;
     padding: 48px 40px 40px;
     box-sizing: border-box;
@@ -121,10 +113,10 @@
     .card-title {
       display: block;
       font-size: 37px;
-      font-weight: bold;
-      color: #2B2520;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: $spacing-xl;
     }
   }
 
@@ -142,12 +134,12 @@
       gap: 8px;
       padding: 20px 32px;
       border-radius: 24px;
-      background: #FAF8F5;
+      background: $color-bg;
       transition: all 0.2s;
 
       &.active {
-        background: #FDF5E9;
-        box-shadow: 0 0 0 3px #E8A849;
+        background: rgba(232, 168, 73, 0.12);
+        box-shadow: 0 0 0 3px $color-accent;
       }
 
       .species-icon-img {
@@ -156,14 +148,14 @@
       }
 
       .species-label {
-        font-size: 24px;
-        color: #2B2520;
+        font-size: $font-size-sm;
+        color: $color-text-primary;
       }
     }
 
     .species-or {
-      font-size: 28px;
-      color: #B5AFA6;
+      font-size: $font-size-base;
+      color: $color-text-tertiary;
       font-style: italic;
     }
   }
@@ -173,66 +165,70 @@
   }
 
   .form-item {
-    margin-bottom: 28px;
-
-    &.underline {
-      border-bottom: 1px solid #F3EDE6;
-      padding-bottom: 12px;
-    }
+    margin-bottom: $spacing-md;
+    padding: $spacing-md $spacing-lg;
+    background: $color-bg-input;
+    border: 2px solid transparent;
+    border-radius: $radius-md;
+    box-sizing: border-box;
 
     .label {
       display: block;
-      font-size: 24px;
-      color: #B5AFA6;
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
       margin-bottom: 8px;
     }
 
     .input-field {
       width: 100%;
-      height: 56px;
+      min-height: 56px;
       font-size: 30px;
-      color: #2B2520;
+      color: $color-text-primary;
       background: transparent;
       border: none;
       padding: 0;
       line-height: 56px;
+
+      &::placeholder {
+        color: $color-text-placeholder;
+      }
     }
 
     .picker-field {
-      height: 56px;
+      min-height: 56px;
       line-height: 56px;
       font-size: 30px;
 
       .placeholder {
-        color: #C5BFB6;
+        color: $color-text-placeholder;
       }
     }
 
     .gender-selector {
       display: flex;
-      gap: 16px;
+      gap: $spacing-md;
       padding-top: 8px;
 
       .gender-btn {
         width: 80px;
         height: 56px;
         border-radius: 28px;
-        background: #FAF8F5;
+        background: $color-bg-card;
         display: flex;
         align-items: center;
         justify-content: center;
 
         &.active {
-          background: #2B2520;
+          background: $color-primary;
 
           .gender-btn-text {
-            color: #fff;
+            color: $color-text-inverse;
           }
         }
 
         .gender-btn-text {
           font-size: 26px;
-          color: #8B847A;
+          color: $color-text-secondary;
         }
       }
     }
@@ -240,28 +236,28 @@
 
   .collar-info {
     width: 100%;
-    background: #F8F5F1;
-    border-radius: 16px;
+    background: $color-bg-section;
+    border-radius: $radius-md;
     padding: 20px 24px;
-    margin-top: 16px;
+    margin-top: $spacing-md;
     margin-bottom: 8px;
 
     .collar-info-label {
       display: block;
       font-size: 22px;
-      color: #B5AFA6;
+      color: $color-text-tertiary;
       margin-bottom: 4px;
     }
 
     .collar-info-id {
       font-size: 26px;
-      color: #2B2520;
-      font-weight: 500;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
     }
   }
 
   .submit-btn {
     width: 100%;
-    margin-top: 32px;
+    margin-top: $spacing-xl;
   }
 }

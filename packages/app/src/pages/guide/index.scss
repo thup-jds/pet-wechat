@@ -1,12 +1,13 @@
 .guide-page {
   min-height: 100vh;
-  background: #FAF8F5;
+  background: $color-bg;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 40px 0 24px;
+  padding: 40px 0 $spacing-lg;
   box-sizing: border-box;
+  @include safe-area-bottom($spacing-lg);
   overflow-y: auto;
   overflow-x: hidden;
   max-width: 100vw;
@@ -16,13 +17,13 @@
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
   font-size: 28px;
   font-weight: 600;
-  color: #2B2520;
+  color: $color-text-primary;
   margin-bottom: 40px;
 }
 
 .section-card {
   width: 100%;
-  background: #fff;
+  background: $color-bg-card;
   border-radius: 600px 600px 0 0;
   padding: 40px 36px 28px;
   box-sizing: border-box;
@@ -36,15 +37,15 @@
 .section-title {
   display: block;
   font-size: 41px;
-  font-weight: bold;
-  color: #2B2520;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
   margin-bottom: 12px;
 }
 
 .section-subtitle {
   display: block;
   font-size: 23px;
-  color: #B5AFA6;
+  color: $color-text-tertiary;
   margin-bottom: 24px;
 }
 
@@ -76,8 +77,8 @@
 
 .middle-text {
   font-size: 37px;
-  font-weight: bold;
-  color: #2B2520;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
   padding: 18px 0;
   text-align: center;
 }
@@ -85,7 +86,7 @@
 .skip-link {
   display: block;
   font-size: 26px;
-  color: #B5AFA6;
+  color: $color-text-tertiary;
   text-align: center;
   padding: 16px 0 0;
   text-decoration: underline;

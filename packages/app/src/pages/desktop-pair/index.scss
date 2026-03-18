@@ -1,41 +1,42 @@
 .desktop-pair-page {
-  background: #FAF8F5;
+  background: $color-bg;
   overflow-x: hidden;
+  @include safe-area-bottom($spacing-xl);
 
   .section-title {
     display: block;
-    font-size: 28px;
-    font-weight: bold;
-    color: #2B2520;
-    margin: 24px 0 16px;
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: $spacing-lg 0 $spacing-md;
   }
 
   .list-section {
     max-height: 300px;
-    margin-bottom: 24px;
+    margin-bottom: $spacing-lg;
 
     .list-item {
       padding: 24px 32px;
-      margin-bottom: 12px;
+      margin-bottom: $spacing-sm;
       border: 2px solid transparent;
-      box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
+      box-shadow: $shadow-card;
 
       &.selected {
-        border-color: #2B2520;
+        border-color: $color-primary;
       }
 
       .item-name {
         font-size: 30px;
-        color: #2B2520;
+        color: $color-text-primary;
       }
     }
 
     .empty-text {
       font-size: 26px;
-      color: #C5BFB6;
+      color: $color-text-placeholder;
       display: block;
       text-align: center;
-      padding: 32px;
+      padding: $spacing-xl;
     }
   }
 }

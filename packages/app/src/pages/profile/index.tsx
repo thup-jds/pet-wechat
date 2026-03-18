@@ -1,6 +1,7 @@
 import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
+import NavBar from "../../components/NavBar";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
 import { disconnectWs } from "../../utils/ws";
@@ -31,9 +32,6 @@ function isDefaultNickname(nickname?: string | null): boolean {
 }
 
 export default function Profile() {
-  const { top, height } = Taro.getMenuButtonBoundingClientRect();
-  const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
-  const navHeight = (top - statusBarHeight) * 2 + height;
   const [user, setUser] = useState<User | null>(null);
   const [pets, setPets] = useState<Pet[]>([]);
   const showNicknameHint = isDefaultNickname(user?.nickname);
@@ -98,12 +96,8 @@ export default function Profile() {
   if (!isLoggedIn()) {
     return (
       <View className="profile-page">
-        <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
-          <View className="nav-bar-content" style={{ height: `${navHeight}px` }}>
-            <Text className="nav-title">用户信息</Text>
-          </View>
-        </View>
-        <View className="profile-content static-content not-logged">
+        <NavBar title="我的" showBack={false} />
+        <View className="not-logged">
           <Text className="not-logged-text">登录后查看个人信息</Text>
           <View
             className="btn-primary"
@@ -118,11 +112,7 @@ export default function Profile() {
 
   return (
     <View className="profile-page">
-      <View className="nav-bar" style={{ paddingTop: `${statusBarHeight}px` }}>
-        <View className="nav-bar-content" style={{ height: `${navHeight}px` }}>
-          <Text className="nav-title">我的</Text>
-        </View>
-      </View>
+      <NavBar title="我的" showBack={false} />
 
       <ScrollView className="profile-content" scrollY>
         {/* 用户头像区域 */}

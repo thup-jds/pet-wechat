@@ -3,13 +3,14 @@
 
 .wifi-result-page {
   min-height: 100vh;
-  background: #FAF8F5;
+  background: $color-bg;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 32px;
+  padding: 0 $container-padding;
   box-sizing: border-box;
   overflow-x: hidden;
+  @include safe-area-bottom($spacing-xl);
 }
 
 .result-card-wrapper {
@@ -24,8 +25,8 @@
 .result-card {
   width: 100%;
   max-width: 455px;
-  background: #E0D9CF;
-  border-radius: 18px;
+  background: $color-border-light;
+  border-radius: $radius-md;
   padding: 28px 32px;
   display: flex;
   flex-direction: column;
@@ -35,8 +36,8 @@
 
 .result-title {
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
-  font-size: 28px;
-  color: #2B2520;
+  font-size: $font-size-base;
+  color: $color-text-primary;
   margin-bottom: 20px;
 }
 
@@ -51,7 +52,7 @@
 .result-btn {
   width: 234px;
   height: 53px;
-  background: #fff;
+  background: $color-bg-card;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -62,5 +63,5 @@
 .result-btn-text {
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
   font-size: 19px;
-  color: #2B2520;
+  color: $color-text-primary;
 }

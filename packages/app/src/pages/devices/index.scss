@@ -1,33 +1,32 @@
 .devices-page {
   min-height: 100vh;
-  background: #FAF8F5;
+  background: $color-bg;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
   max-width: 100vw;
+}
 
-  .nav-bar {
-    background: #fff;
-    padding: 0 32px 24px;
+.nav-action {
+  width: $nav-back-size;
+  height: $nav-back-size;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.72);
+}
 
-    .nav-bar-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .nav-title {
-      font-size: 34px;
-      font-weight: bold;
-      color: #2B2520;
-    }
-  }
+.nav-action-icon {
+  width: 36px;
+  height: 36px;
 }
 
 .device-content {
   flex: 1;
   min-height: 0;
-  padding: 24px 32px;
+  padding: $spacing-lg $container-padding;
+  @include safe-area-bottom($spacing-xl);
 
   .pet-switcher {
     margin-bottom: 28px;
@@ -35,8 +34,8 @@
     .pet-switcher-inner {
       display: flex;
       align-items: center;
-      background: #fff;
-      border-radius: 48px;
+      background: $color-bg-card;
+      border-radius: $radius-xl;
       padding: 14px 28px 14px 14px;
       max-width: 100%;
       box-shadow: 0 4px 16px rgba(43, 37, 32, 0.06);
@@ -45,8 +44,8 @@
     .pet-avatar-placeholder {
       width: 64px;
       height: 64px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #F3EDE6, #E8DFD4);
+      border-radius: $radius-full;
+      background: linear-gradient(145deg, $color-bg-input, $color-border);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -54,15 +53,15 @@
 
       .pet-avatar-text {
         font-size: 28px;
-        font-weight: bold;
-        color: #A69A8C;
+        font-weight: $font-weight-bold;
+        color: $color-text-secondary;
       }
     }
 
     .pet-switcher-name {
-      font-size: 28px;
-      font-weight: 600;
-      color: #2B2520;
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
       max-width: 300px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -70,19 +69,21 @@
     }
 
     .pet-switcher-arrow {
-      font-size: 24px;
-      color: #B5AFA6;
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
       margin-left: 12px;
     }
   }
 
   .share-btn {
+    @include wx-button-reset;
+
     background: none;
     border: none;
     padding: 0;
     margin: 0 0 16px;
     font-size: 28px;
-    color: #2B2520;
+    color: $color-text-primary;
     line-height: 1;
 
     &::after {
@@ -101,19 +102,19 @@
 
     .section-title {
       font-size: 30px;
-      font-weight: bold;
-      color: #2B2520;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
     }
 
     .section-subtitle {
-      font-size: 24px;
-      color: #B5AFA6;
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
       margin-left: 8px;
     }
   }
 
   .empty-card {
-    background: #fff;
+    background: $color-bg-card;
     border-radius: 24px;
     padding: 48px 32px;
     text-align: center;
@@ -121,19 +122,18 @@
 
     .empty-text {
       font-size: 26px;
-      color: #C5BFB6;
+      color: $color-text-placeholder;
     }
   }
 
   .device-card {
-    background: #fff;
+    background: $color-bg-card;
     border-radius: 24px;
     padding: 28px 32px;
     margin-bottom: 16px;
     box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
   }
 
-  // Inline edit: device name row
   .device-name-row {
     margin-bottom: 16px;
   }
@@ -144,8 +144,8 @@
 
     .device-name-text {
       font-size: 30px;
-      font-weight: 600;
-      color: #2B2520;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
     }
 
     .edit-icon-img {
@@ -158,17 +158,16 @@
 
   .device-name-input {
     font-size: 30px;
-    font-weight: 600;
-    color: #2B2520;
-    border-bottom: 2px solid #E8A849;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    border-bottom: 2px solid $color-accent;
     padding: 4px 0;
     width: 100%;
   }
 
-  // Share authorization button on collar cards
   .share-auth-btn {
     margin-top: 16px;
-    background: linear-gradient(135deg, #2B2520, #3D352E);
+    background: linear-gradient(135deg, $color-primary, $color-primary-light);
     border-radius: 16px;
     padding: 14px 0;
     display: flex;
@@ -177,8 +176,8 @@
     gap: 8px;
 
     &.mock-share-btn {
-      background: #cc0000;
-      border: 2px solid #ff0000;
+      background: $color-error;
+      border: 2px solid $color-error;
     }
 
     .share-icon {
@@ -188,12 +187,11 @@
 
     .share-auth-text {
       font-size: 26px;
-      color: #fff;
-      font-weight: 500;
+      color: $color-text-inverse;
+      font-weight: $font-weight-medium;
     }
   }
 
-  // Collar card
   .collar-status-row {
     display: flex;
     justify-content: space-between;
@@ -207,28 +205,28 @@
       .status-dot {
         width: 16px;
         height: 16px;
-        border-radius: 50%;
+        border-radius: $radius-full;
         margin-right: 10px;
-        background: #C5BFB6;
+        background: $color-status-offline;
 
         &.online {
-          background: #7BA884;
+          background: $color-status-online;
           box-shadow: 0 0 8px rgba(123, 168, 132, 0.4);
         }
 
         &.pairing {
-          background: #E8A849;
+          background: $color-status-pairing;
           box-shadow: 0 0 8px rgba(232, 168, 73, 0.4);
         }
 
         &.offline {
-          background: #C5BFB6;
+          background: $color-status-offline;
         }
       }
 
       .status-label {
         font-size: 26px;
-        color: #8B847A;
+        color: $color-text-secondary;
       }
     }
 
@@ -239,7 +237,7 @@
       .battery-icon {
         width: 40px;
         height: 20px;
-        border: 2px solid #B5AFA6;
+        border: 2px solid $color-text-tertiary;
         border-radius: 4px;
         padding: 2px;
         margin-right: 8px;
@@ -253,13 +251,13 @@
           transform: translateY(-50%);
           width: 4px;
           height: 10px;
-          background: #B5AFA6;
+          background: $color-text-tertiary;
           border-radius: 0 2px 2px 0;
         }
 
         .battery-fill {
           height: 100%;
-          background: #7BA884;
+          background: $color-status-online;
           border-radius: 2px;
           min-width: 0;
         }
@@ -267,7 +265,7 @@
 
       .battery-text {
         font-size: 24px;
-        color: #8B847A;
+        color: $color-text-secondary;
       }
     }
   }
@@ -277,20 +275,19 @@
 
     .collar-pet-label {
       font-size: 24px;
-      color: #8B847A;
+      color: $color-text-secondary;
       line-height: 1.6;
     }
   }
 
   .switch-pet-link {
     font-size: 24px;
-    color: #E8A849;
+    color: $color-accent;
     display: block;
     margin-top: 8px;
-    font-weight: 500;
+    font-weight: $font-weight-medium;
   }
 
-  // Desktop card
   .desktop-card {
     .desktop-row {
       display: flex;
@@ -300,7 +297,7 @@
         width: 72px;
         height: 72px;
         border-radius: 18px;
-        background: linear-gradient(145deg, #F3EDE6, #E8DFD4);
+        background: linear-gradient(145deg, $color-bg-input, $color-border);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -317,8 +314,8 @@
 
         .desktop-name {
           font-size: 28px;
-          font-weight: 600;
-          color: #2B2520;
+          font-weight: $font-weight-semibold;
+          color: $color-text-primary;
           margin-bottom: 6px;
         }
 
@@ -333,24 +330,27 @@
         .desktop-status {
           display: block;
           font-size: 24px;
-          color: #B5AFA6;
+          color: $color-text-tertiary;
 
           &.online {
-            color: #7BA884;
+            color: $color-status-online;
           }
 
           &.pairing {
-            color: #E8A849;
+            color: $color-status-pairing;
+          }
+
+          &.offline {
+            color: $color-status-offline;
           }
         }
       }
     }
 
-    // Authorization details on desktop cards
     .desktop-auth-details {
       margin-top: 16px;
       padding-top: 16px;
-      border-top: 1px solid #F3EDE6;
+      border-top: 1px solid $color-bg-input;
 
       .desktop-auth-item {
         margin-bottom: 12px;
@@ -368,13 +368,12 @@
 
       .desktop-auth-label {
         font-size: 24px;
-        color: #B5AFA6;
+        color: $color-text-tertiary;
         display: block;
       }
     }
   }
 
-  // Auth card
   .auth-card {
     .auth-header {
       display: flex;
@@ -384,14 +383,14 @@
 
       .auth-title {
         font-size: 28px;
-        font-weight: 600;
-        color: #2B2520;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
       }
 
       .auth-status-tag {
         font-size: 22px;
-        color: #8B847A;
-        background: #F3EDE6;
+        color: $color-text-secondary;
+        background: $color-bg-input;
         padding: 6px 16px;
         border-radius: 20px;
       }
@@ -400,7 +399,7 @@
     .auth-from-label {
       display: block;
       font-size: 24px;
-      color: #8B847A;
+      color: $color-text-secondary;
       margin-bottom: 8px;
     }
 
@@ -422,57 +421,49 @@
         font-size: 26px;
 
         &.accept {
-          background: linear-gradient(135deg, #2B2520, #3D352E);
-          color: #fff;
+          background: linear-gradient(135deg, $color-primary, $color-primary-light);
+          color: $color-text-inverse;
         }
 
         &.reject {
-          background: #F3EDE6;
-          color: #8B847A;
+          background: $color-bg-input;
+          color: $color-text-secondary;
         }
 
         &.revoke {
-          background: #FDF2F0;
-          color: #D4553A;
+          background: $color-mock-bg;
+          color: $color-error;
         }
       }
     }
   }
 
-  // 添加新设备按钮
   .add-device-btn {
-    background: #fff;
-    border-radius: 48px;
+    background: $color-bg-card;
+    border-radius: $radius-xl;
     padding: 24px 0;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     margin-top: 16px;
-    border: 2px dashed #E0D9CF;
+    border: 2px dashed $color-border-light;
+  }
 
-    .add-icon {
-      width: 32px;
-      height: 32px;
-      opacity: 0.5;
-    }
-
-    .add-device-text {
-      font-size: 28px;
-      color: #8B847A;
-      font-weight: 500;
-    }
+  .add-device-text {
+    font-size: 28px;
+    color: $color-text-secondary;
+    font-weight: $font-weight-medium;
   }
 
   .add-device-note {
     display: block;
     text-align: center;
     font-size: 22px;
-    color: #C5BFB6;
+    color: $color-text-placeholder;
     margin-top: 12px;
   }
 
-  // Decorative spacer
   .deco-spacer {
     height: 48px;
   }

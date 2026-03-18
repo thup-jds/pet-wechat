@@ -4,27 +4,27 @@
 
 .login-page {
   min-height: 100vh;
-  background: #FAF8F5;
+  background: $color-bg;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   overflow-x: hidden;
+  @include safe-area-top($spacing-lg);
 }
 
 .login-top {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 50px;
-  padding-bottom: 20px;
+  padding: 50px $spacing-xl $spacing-lg;
   flex-shrink: 0;
 
   .brand-name {
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
-    font-size: 32px;
-    font-weight: 700;
+    font-size: $font-size-md;
+    font-weight: $font-weight-bold;
     letter-spacing: 6px;
-    color: #2B2520;
+    color: $color-text-primary;
   }
 }
 
@@ -35,7 +35,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 24px 0;
+  margin: $spacing-lg 0;
 }
 
 .illustration-img {
@@ -46,109 +46,106 @@
 .welcome-title {
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "SF Pro Display", sans-serif;
   font-size: 37px;
-  font-weight: 700;
-  color: #2B2520;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
   margin-bottom: 10px;
   letter-spacing: 2px;
+  text-align: center;
 }
 
 .login-card {
   flex: 1;
-  background: #fff;
+  background: $color-bg-card;
   border-radius: 350px 350px 0 0;
   padding: 80px 50px 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: 0 -8px 32px rgba(43, 37, 32, 0.06);
+  @include safe-area-bottom($spacing-xl);
 }
 
 .login-buttons {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: $spacing-lg;
   margin-bottom: 36px;
 }
 
 .btn-phone {
-  width: 100% !important;
-  height: 70px !important;
-  line-height: 70px !important;
-  background: #F3EDE6 !important;
-  color: #2B2520 !important;
-  border: none !important;
-  border-radius: 18px !important;
+  @include wx-button-reset;
+
+  width: 100%;
+  height: 70px;
+  line-height: 70px;
+  background: $color-bg-input;
+  color: $color-text-primary;
+  border: none;
+  border-radius: 18px;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
-  font-size: 24px !important;
-  font-weight: 500;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
 }
 
 .btn-wechat {
-  width: 100% !important;
-  height: 70px !important;
-  line-height: 70px !important;
-  background: #FDFCFA !important;
-  color: #2B2520 !important;
-  border: 2px solid #E8E2DA !important;
-  border-radius: 18px !important;
+  @include wx-button-reset;
+
+  width: 100%;
+  height: 70px;
+  line-height: 70px;
+  background: $color-bg-card;
+  color: $color-text-primary;
+  border: 2px solid $color-border;
+  border-radius: 18px;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
-  font-size: 24px !important;
-  font-weight: 500;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
 }
 
 .agreement-header {
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
-  font-size: 20px;
-  color: #2B2520;
-  margin-bottom: 16px;
-  font-weight: 500;
+  font-size: $font-size-xs;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  font-weight: $font-weight-medium;
 }
 
 .agreement-row {
   display: flex;
   align-items: flex-start;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: $spacing-sm;
   padding: 0 10px;
 
   .checkbox {
     width: 35px;
     height: 35px;
-    border-radius: 8px;
-    margin-right: 12px;
+    border-radius: $radius-sm;
+    margin-right: $spacing-sm;
     flex-shrink: 0;
-    background: #E8E2DA;
+    background: $color-border;
 
     &.checked {
-      background: linear-gradient(135deg, #2B2520, #3D352E);
+      background: linear-gradient(135deg, $color-primary, $color-primary-light);
     }
   }
 
   .agreement-detail {
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
     font-size: 16px;
-    color: #4A4540;
+    color: $color-text-secondary;
     line-height: 1.6;
     flex: 1;
   }
 }
 
-// Mock 标注样式
-.mock-badge {
-  color: #D4553A;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 12px;
-  padding: 6px 16px;
-  background: #FDF2F0;
-  border: 1px solid #F5D5CF;
-  border-radius: 12px;
+.login-mock-badge {
+  margin-bottom: $spacing-sm;
 }
 
 .mock-btn {
-  border: 2px solid #D4553A !important;
+  border: 2px solid $color-error;
   position: relative;
 }
 
@@ -156,17 +153,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 48px;
+  margin-top: $spacing-2xl;
 
   .register-text {
-    font-size: 20px;
-    color: #8B847A;
+    font-size: $font-size-xs;
+    color: $color-text-secondary;
   }
 
   .register-action {
-    font-size: 20px;
-    color: #E8A849;
-    font-weight: 600;
+    font-size: $font-size-xs;
+    color: $color-accent;
+    font-weight: $font-weight-semibold;
     margin-left: 4px;
   }
 }

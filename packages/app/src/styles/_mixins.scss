@@ -1,0 +1,87 @@
+@mixin safe-area-bottom($extra: 0px) {
+  padding-bottom: calc(constant(safe-area-inset-bottom) + #{$extra});
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$extra});
+}
+
+@mixin safe-area-top($extra: 0px) {
+  padding-top: calc(constant(safe-area-inset-top) + #{$extra});
+  padding-top: calc(env(safe-area-inset-top) + #{$extra});
+}
+
+@mixin btn-base {
+  height: $btn-height;
+  line-height: $btn-height;
+  border-radius: $radius-xl;
+  text-align: center;
+  font-size: 30px;
+  font-weight: $font-weight-medium;
+  letter-spacing: 1px;
+  box-sizing: border-box;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+@mixin btn-primary {
+  @include btn-base;
+
+  background: linear-gradient(135deg, $color-primary, $color-primary-light);
+  color: $color-text-inverse;
+  box-shadow: $shadow-button;
+}
+
+@mixin btn-secondary {
+  @include btn-base;
+
+  background: $color-bg-card;
+  color: $color-text-primary;
+  border: 2px solid $color-border;
+}
+
+@mixin card-base {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+}
+
+@mixin text-ellipsis($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $lines;
+  }
+}
+
+@mixin mock-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px $spacing-sm;
+  border-radius: $radius-sm;
+  background: $color-mock-bg;
+  border: 1px solid $color-mock-border;
+  color: $color-mock-text;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: 1.4;
+}
+
+@mixin wx-button-reset {
+  &::after {
+    border: none;
+  }
+
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
+  font-size: inherit;
+}

@@ -1,97 +1,65 @@
 .wifi-config-page {
-  background: #FAF8F5;
+  background: $color-bg;
   overflow-x: hidden;
+  @include safe-area-bottom($spacing-xl);
 
-  .mock-badge {
-    display: block;
-    color: #D4553A;
-    font-size: 24px;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 16px;
-    padding: 8px 24px;
-    background: #FDF2F0;
-    border: 2px solid #F5D5CF;
-    border-radius: 12px;
+  .config-mock-badge {
+    display: inline-flex;
+    margin: 0 auto $spacing-md;
   }
 
   .mock-btn {
-    background: #cc0000 !important;
-    border: 2px solid #D4553A;
+    background: $color-error;
+    border: 2px solid $color-error;
+    box-shadow: none;
   }
 
   .step-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin-bottom: 48px;
     padding-top: 80px;
-
-    .step {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #E0D9CF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &.active {
-        background: #2B2520;
-      }
-
-      .step-num {
-        font-size: 26px;
-        color: #fff;
-      }
-    }
-
-    .step-line {
-      width: 80px;
-      height: 4px;
-      background: #E0D9CF;
-      margin: 0 12px;
-
-      &.done {
-        background: #2B2520;
-      }
-    }
   }
 
   .step-title {
     display: block;
-    font-size: 36px;
-    font-weight: bold;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
     text-align: center;
-    margin-bottom: 12px;
-    color: #2B2520;
+    margin-bottom: $spacing-sm;
+    color: $color-text-primary;
   }
 
   .step-desc {
     display: block;
     font-size: 26px;
-    color: #B5AFA6;
+    color: $color-text-tertiary;
     text-align: center;
     margin-bottom: 48px;
   }
 
   .form-section {
     .form-item {
-      margin-bottom: 32px;
+      margin-bottom: $spacing-xl;
 
       .label {
         display: block;
         font-size: 26px;
-        color: #B5AFA6;
-        margin-bottom: 12px;
+        color: $color-text-tertiary;
+        margin-bottom: $spacing-sm;
       }
 
       .input-field {
-        background: #F3EDE6;
-        border-radius: 16px;
-        height: 88px;
-        padding: 0 32px;
-        font-size: 28px;
+        height: $input-height;
+        padding: 0 $spacing-xl;
+        background: $color-bg-input;
+        border: 2px solid transparent;
+        border-radius: $radius-md;
+        box-sizing: border-box;
+        font-size: $font-size-base;
+        color: $color-text-primary;
+
+        &::placeholder {
+          color: $color-text-placeholder;
+        }
       }
     }
   }

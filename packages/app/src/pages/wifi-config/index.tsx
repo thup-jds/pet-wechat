@@ -2,6 +2,8 @@ import { View, Text, Input } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState } from "react";
 import NavBar from "../../components/NavBar";
+import StepIndicator from "../../components/StepIndicator";
+import MockBadge from "../../components/MockBadge";
 import { request } from "../../utils/request";
 import "./index.scss";
 
@@ -72,19 +74,10 @@ export default function WifiConfig() {
   return (
     <View className="wifi-config-page container">
       <NavBar title="WiFi 配置" />
-      <View className="step-indicator">
-        <View className="step active">
-          <Text className="step-num">1</Text>
-        </View>
-        <View className="step-line done" />
-        <View className="step active">
-          <Text className="step-num">2</Text>
-        </View>
-        <View className="step-line done" />
-        <View className="step active">
-          <Text className="step-num">3</Text>
-        </View>
-      </View>
+      <StepIndicator
+        steps={["准备设备", "连接设备", "配置网络"]}
+        current={3}
+      />
 
       <Text className="step-title">Step 3: WiFi 配置</Text>
       <Text className="step-desc">
@@ -116,7 +109,7 @@ export default function WifiConfig() {
         </View>
       </View>
 
-      <Text className="mock-badge">⚠ Mock 模式：WiFi 配网使用模拟流程</Text>
+      <MockBadge className="config-mock-badge" text="⚠ Mock 模式：WiFi 配网使用模拟流程" />
       <View className="btn-primary mock-btn" onClick={handleConfigure}>
         {loading ? "Mock 配置中..." : "Mock 完成配置"}
       </View>
