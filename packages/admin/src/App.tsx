@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { Layout, Menu, Typography, Modal, Input, Button, Space } from "antd";
+import { Layout, Menu, Typography, Modal, Input, Button, Space, Card, Alert } from "antd";
 import {
   UserOutlined,
   HeartOutlined,
@@ -9,8 +9,9 @@ import {
   ThunderboltOutlined,
   DashboardOutlined,
   SettingOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
-import { getAdminKey, setAdminKey } from "./api/client";
+import { getAdminKey, setAdminKey, verifyAdminKey } from "./api/client";
 import Dashboard from "./pages/Dashboard";
 import UsersPage from "./pages/Users";
 import PetsPage from "./pages/Pets";
@@ -33,14 +34,97 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(() => !!getAdminKey());
   const [keyModalOpen, setKeyModalOpen] = useState(false);
-  const [keyInput, setKeyInput] = useState(getAdminKey());
+  const [loginKeyInput, setLoginKeyInput] = useState("");
+  const [settingsKeyInput, setSettingsKeyInput] = useState(getAdminKey());
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
+
+  useEffect(() => {
+    const handler = (event: StorageEvent) => {
+      if (event.key !== "adminKey") {
+        return;
+      }
+
+      const nextKey = event.newValue || "";
+      setIsAuthed(!!nextKey);
+      setSettingsKeyInput(nextKey);
+
+      if (!nextKey) {
+        setLoginError("");
+        setLoginLoading(false);
+      }
+    };
+
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []);
 
   const handleSaveKey = () => {
-    setAdminKey(keyInput);
+    setAdminKey(settingsKeyInput);
     setKeyModalOpen(false);
     window.location.reload();
   };
+
+  const handleLogin = async () => {
+    setLoginLoading(true);
+    setLoginError("");
+
+    try {
+      const ok = await verifyAdminKey(loginKeyInput);
+
+      if (!ok) {
+        setLoginError("Admin Key 无效，请重新输入");
+        return;
+      }
+
+      setAdminKey(loginKeyInput);
+      setSettingsKeyInput(loginKeyInput);
+      setIsAuthed(true);
+    } catch {
+      setLoginError("登录验证失败，请稍后重试");
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminKey");
+    setIsAuthed(false);
+    setSettingsKeyInput("");
+    setLoginKeyInput("");
+    setLoginError("");
+  };
+
+  if (!isAuthed) {
+    return (
+      <Layout
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+        }}
+      >
+        <Card title="YEHEY 管理后台" style={{ width: "100%", maxWidth: 400 }}>
+          <Space direction="vertical" size={16} style={{ width: "100%" }}>
+            <Input.Password
+              value={loginKeyInput}
+              onChange={(event) => setLoginKeyInput(event.target.value)}
+              onPressEnter={() => void handleLogin()}
+              placeholder="请输入 Admin Key"
+            />
+            {loginError ? <Alert type="error" message={loginError} showIcon /> : null}
+            <Button type="primary" block loading={loginLoading} onClick={() => void handleLogin()}>
+              登录
+            </Button>
+          </Space>
+        </Card>
+      </Layout>
+    );
+  }
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -63,13 +147,21 @@ export default function App() {
           <Typography.Title level={4} style={{ margin: 0 }}>
             YEHEY 宠物"在场" - 管理后台
           </Typography.Title>
-          <Button
-            icon={<SettingOutlined />}
-            size="small"
-            onClick={() => { setKeyInput(getAdminKey()); setKeyModalOpen(true); }}
-          >
-            Admin Key
-          </Button>
+          <Space>
+            <Button
+              icon={<SettingOutlined />}
+              size="small"
+              onClick={() => {
+                setSettingsKeyInput(getAdminKey());
+                setKeyModalOpen(true);
+              }}
+            >
+              Admin Key
+            </Button>
+            <Button icon={<LogoutOutlined />} size="small" onClick={handleLogout}>
+              退出登录
+            </Button>
+          </Space>
         </Header>
         <Content style={{ margin: 24 }}>
           <Routes>
@@ -90,8 +182,8 @@ export default function App() {
         onCancel={() => setKeyModalOpen(false)}
       >
         <Input.Password
-          value={keyInput}
-          onChange={(e) => setKeyInput(e.target.value)}
+          value={settingsKeyInput}
+          onChange={(e) => setSettingsKeyInput(e.target.value)}
           placeholder="输入 Admin Key"
         />
       </Modal>

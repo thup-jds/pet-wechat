@@ -1,10 +1,29 @@
-// TODO: 生产环境需通过界面设置 admin key，当前默认值仅用于开发
 export function getAdminKey() {
-  return localStorage.getItem("adminKey") || "yehey-admin-dev";
+  return localStorage.getItem("adminKey") || "";
 }
 
 export function setAdminKey(key: string) {
   localStorage.setItem("adminKey", key);
+}
+
+export async function verifyAdminKey(key: string): Promise<boolean> {
+  const res = await fetch("/api/admin/stats", {
+    headers: {
+      "Content-Type": "application/json",
+      "X-Admin-Key": key,
+    },
+  });
+
+  if (res.status === 401) {
+    return false;
+  }
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error || res.statusText);
+  }
+
+  return true;
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
@@ -16,6 +35,13 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
       ...options?.headers,
     },
   });
+
+  if (res.status === 401) {
+    localStorage.removeItem("adminKey");
+    window.location.reload();
+    throw new Error("Admin Key 无效");
+  }
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
     throw new Error(err.error || res.statusText);
