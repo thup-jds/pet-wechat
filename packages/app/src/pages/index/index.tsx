@@ -1,9 +1,9 @@
 import { View, Text, Image, Swiper, SwiperItem } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
-import { ICON_PAW } from "../../assets/icons";
+import { ICON_PAW, ICON_ARROW_LEFT, ICON_ARROW_RIGHT } from "../../assets/icons";
 import type { Pet, CollarDevice, DesktopDevice } from "@pet-wechat/shared";
 import petHero from "../../assets/images/pet-hero.png";
 import petAvatarDefault from "../../assets/images/pet-avatar-default.png";
@@ -14,7 +14,6 @@ import speechBubbleBg from "../../assets/images/speech-bubble-bg.png";
 import bellIcon from "../../assets/images/bell-icon.png";
 import collarIcon from "../../assets/images/collar-icon.png";
 import desktopIcon from "../../assets/images/desktop-icon.png";
-import arrowSwipe from "../../assets/images/arrow-swipe.png";
 import "./index.scss";
 
 type HomeState = "not-logged" | "no-pet" | "no-device" | "normal";
@@ -88,7 +87,7 @@ export default function Index() {
   const currentCollar = collars.find((collar) => collar.petId === currentPet?.id);
   const onlineDesktopCount = desktops.filter((desktop) => desktop.status === "online").length;
   const hasMultiplePets = allPets.length > 1;
-  const swipeProgress = allPets.length > 1 ? ((currentPetIndex + 1) / allPets.length) * 100 : 100;
+  const isArrowNav = useRef(false);
   const speechText =
     state === "no-device"
       ? "主人，帮我连接设备，我想把陪伴带回家。"
@@ -110,6 +109,26 @@ export default function Index() {
       return;
     }
     Taro.navigateTo({ url: "/pages/settings/index" });
+  };
+
+  const handleSwiperChange = (e) => {
+    if (isArrowNav.current) {
+      isArrowNav.current = false;
+      return;
+    }
+    setCurrentPetIndex(e.detail.current);
+  };
+
+  const handlePrevPet = () => {
+    if (!hasMultiplePets) return;
+    isArrowNav.current = true;
+    setCurrentPetIndex((prev) => (prev === 0 ? allPets.length - 1 : prev - 1));
+  };
+
+  const handleNextPet = () => {
+    if (!hasMultiplePets) return;
+    isArrowNav.current = true;
+    setCurrentPetIndex((prev) => (prev === allPets.length - 1 ? 0 : prev + 1));
   };
 
   if (state === "not-logged") {
@@ -201,30 +220,41 @@ export default function Index() {
             <Text className="speech-text">{speechText}</Text>
           </View>
 
-          {hasMultiplePets ? (
-            <Swiper className="pet-swiper" current={currentPetIndex} onChange={(e) => setCurrentPetIndex(e.detail.current)}>
-              {allPets.map((pet) => (
-                <SwiperItem key={pet.id}>
-                  <View className="hero-shell">
-                    <Image className="hero-image" src={petHero} mode="aspectFit" />
-                    <Text className="hero-caption">{pet.name}</Text>
-                  </View>
-                </SwiperItem>
-              ))}
-            </Swiper>
-          ) : (
-            <View className="hero-shell">
-              <Image className="hero-image" src={petHero} mode="aspectFit" />
-              <Text className="hero-caption">{currentPet?.name ?? "宠物"}</Text>
-            </View>
-          )}
+          <View className="pet-swiper-wrapper">
+            {hasMultiplePets ? (
+              <Swiper className="pet-swiper" current={currentPetIndex} onChange={handleSwiperChange}>
+                {allPets.map((pet) => (
+                  <SwiperItem key={pet.id}>
+                    <View className="hero-shell">
+                      <Image className="hero-image" src={petHero} mode="aspectFit" />
+                      <Text className="hero-caption">{pet.name}</Text>
+                    </View>
+                  </SwiperItem>
+                ))}
+              </Swiper>
+            ) : (
+              <View className="hero-shell">
+                <Image className="hero-image" src={petHero} mode="aspectFit" />
+                <Text className="hero-caption">{currentPet?.name ?? "宠物"}</Text>
+              </View>
+            )}
 
-          <View className="swipe-indicator">
-            <Image className="swipe-arrow" src={arrowSwipe} mode="aspectFit" />
-            <Text className="swipe-text">左右滑动切换宠物</Text>
-            <View className="swipe-progress-track">
-              <View className="swipe-progress-fill" style={{ width: `${swipeProgress}%` }} />
-            </View>
+            {hasMultiplePets ? (
+              <>
+                <Image
+                  className="pet-nav-arrow pet-nav-arrow-left"
+                  src={ICON_ARROW_LEFT}
+                  mode="aspectFit"
+                  onClick={handlePrevPet}
+                />
+                <Image
+                  className="pet-nav-arrow pet-nav-arrow-right"
+                  src={ICON_ARROW_RIGHT}
+                  mode="aspectFit"
+                  onClick={handleNextPet}
+                />
+              </>
+            ) : null}
           </View>
         </View>
       </View>
