@@ -2,7 +2,7 @@
   "miniprogramRoot": "dist/",
   "projectname": "pet-wechat-app",
   "description": "宠物微信小程序",
-  "appid": "wx8f7c3d89da8b0eb1",
+  "appid": "wx875ff2b6ed44918f",
   "setting": {
     "urlCheck": false,
     "es6": false,
