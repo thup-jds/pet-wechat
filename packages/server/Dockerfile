@@ -12,7 +12,6 @@ FROM oven/bun:1-alpine
 WORKDIR /app
 COPY --from=install /app/node_modules ./node_modules
 COPY --from=install /app/packages/server/node_modules ./packages/server/node_modules
-COPY --from=install /app/packages/shared/node_modules ./packages/shared/node_modules
 COPY packages/shared ./packages/shared
 COPY packages/server ./packages/server
 
