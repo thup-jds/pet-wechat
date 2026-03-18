@@ -1,6 +1,7 @@
 import { View, Text, Image, Swiper, SwiperItem, ScrollView } from "@tarojs/components";
 import Taro, { useDidHide, useDidShow } from "@tarojs/taro";
 import { useEffect, useState, useRef } from "react";
+import { useSafeArea } from "../../hooks/useSafeArea";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
 import { ICON_PAW, ICON_ARROW_LEFT, ICON_ARROW_RIGHT, ICON_PHOTO } from "../../assets/icons";
@@ -91,7 +92,7 @@ function updatePetLatestBehavior(pets: Pet[], message: WsBehaviorNewMessage): Pe
 }
 
 export default function Index() {
-  const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
+  const { statusBarHeight } = useSafeArea();
   const [ownPets, setOwnPets] = useState<Pet[]>([]);
   const [authorizedPets, setAuthorizedPets] = useState<Pet[]>([]);
   const [currentPetIndex, setCurrentPetIndex] = useState(0);

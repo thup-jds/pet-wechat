@@ -1,0 +1,65 @@
+$color-primary: #2b2520;
+$color-primary-light: #3d352e;
+$color-bg: #faf8f5;
+$color-bg-card: #ffffff;
+$color-bg-input: #f3ede6;
+$color-bg-section: #f5f0eb;
+
+$color-text-primary: #2b2520;
+$color-text-secondary: #8b847a;
+$color-text-tertiary: #b5afa6;
+$color-text-placeholder: #c5bfb6;
+$color-text-inverse: #ffffff;
+
+$color-border: #e8e2da;
+$color-border-light: #e0d9cf;
+$color-divider: #f0ebe4;
+
+$color-accent: #e8a849;
+$color-accent-dark: #d4922e;
+$color-success: #7ba884;
+$color-error: #d4553a;
+$color-warning: #f2c94c;
+$color-info: #5b9bd5;
+
+$color-status-online: $color-success;
+$color-status-offline: $color-text-placeholder;
+$color-status-pairing: $color-accent;
+
+$color-mock-bg: #fdf2f0;
+$color-mock-text: $color-error;
+$color-mock-border: #f5d5cf;
+
+$font-size-xs: 20px;
+$font-size-sm: 24px;
+$font-size-base: 28px;
+$font-size-md: 32px;
+$font-size-lg: 36px;
+$font-size-xl: 48px;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$spacing-xs: 8px;
+$spacing-sm: 12px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+$radius-sm: 8px;
+$radius-md: 16px;
+$radius-lg: 28px;
+$radius-xl: 48px;
+$radius-full: 50%;
+
+$shadow-card: 0 4px 20px rgba(43, 37, 32, 0.04);
+$shadow-button: 0 8px 24px rgba(43, 37, 32, 0.2);
+$shadow-float: 0 8px 32px rgba(43, 37, 32, 0.12);
+
+$btn-height: 88px;
+$input-height: 88px;
+$nav-back-size: 64px;
+$container-padding: $spacing-xl;

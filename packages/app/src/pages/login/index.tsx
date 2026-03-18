@@ -1,6 +1,7 @@
 import { View, Text, Button, Image } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState } from "react";
+import MockBadge from "../../components/MockBadge";
 import { request, setToken } from "../../utils/request";
 import { setUserInfo, isFirstLogin } from "../../utils/storage";
 import { ICON_CAT } from "../../assets/icons";
@@ -70,7 +71,7 @@ export default function Login() {
       </View>
 
       <View className="login-card">
-        <Text className="mock-badge">⚠ Mock 模式：登录使用模拟数据</Text>
+        <MockBadge className="login-mock-badge" text="⚠ Mock 模式：登录使用模拟数据" />
         <View className="login-buttons">
           <Button
             className="btn-phone mock-btn"

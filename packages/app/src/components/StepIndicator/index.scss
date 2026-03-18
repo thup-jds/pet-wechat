@@ -1,0 +1,41 @@
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-indicator-item {
+  display: flex;
+  align-items: center;
+}
+
+.step-indicator-dot {
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-full;
+  background: $color-border-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.active {
+    background: $color-primary;
+  }
+}
+
+.step-indicator-dot-text {
+  font-size: 26px;
+  color: $color-text-inverse;
+  font-weight: $font-weight-semibold;
+}
+
+.step-indicator-line {
+  width: 80px;
+  height: 4px;
+  margin: 0 $spacing-sm;
+  background: $color-border-light;
+
+  &.done {
+    background: $color-primary;
+  }
+}

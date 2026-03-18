@@ -1,37 +1,31 @@
 .desktop-bind-page {
-  background: #FAF8F5;
+  background: $color-bg;
   overflow-x: hidden;
+  @include safe-area-bottom($spacing-xl);
 
-  .mock-badge {
-    display: block;
-    color: #D4553A;
-    font-size: 24px;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 16px;
-    padding: 8px 24px;
-    background: #FDF2F0;
-    border: 2px solid #F5D5CF;
-    border-radius: 12px;
+  .desktop-main-badge {
+    display: inline-flex;
+    margin: 0 auto $spacing-md;
   }
 
   .mock-btn {
-    background: #cc0000 !important;
-    border: 2px solid #D4553A;
+    background: $color-error;
+    border: 2px solid $color-error;
+    box-shadow: none;
   }
 
   .device-list {
-    margin-bottom: 16px;
+    margin-bottom: $spacing-md;
   }
 
   .device-item {
-    margin-bottom: 12px;
+    margin-bottom: $spacing-sm;
     border: 3px solid transparent;
-    box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
+    box-shadow: $shadow-card;
 
     &.selected {
-      background: #EEF5EF;
-      border-color: #7BA884;
+      background: rgba(123, 168, 132, 0.12);
+      border-color: $color-success;
     }
 
     .item-name-row {
@@ -55,29 +49,23 @@
 
     .item-name {
       font-size: 26px;
-      font-weight: 600;
-      color: #2B2520;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
     }
 
     .device-mac {
-      font-size: 20px;
-      color: #B5AFA6;
-    }
-
-    .mock-tag {
-      font-size: 20px;
-      color: #D4553A;
-      font-weight: 600;
-      background: #FDF2F0;
-      padding: 4px 12px;
-      border-radius: 8px;
-      border: 1px solid #F5D5CF;
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
     }
   }
 
+  .desktop-device-tag {
+    margin-left: auto;
+  }
+
   .empty-text {
-    font-size: 24px;
-    color: #B5AFA6;
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
     text-align: center;
     padding: 40px 0;
   }
@@ -86,45 +74,26 @@
     display: block;
     text-align: center;
     font-size: 26px;
-    color: #B5AFA6;
+    color: $color-text-tertiary;
     margin-bottom: 48px;
   }
 
-  .form-item {
-    margin-bottom: 32px;
-
-    .label {
-      display: block;
-      font-size: 26px;
-      color: #B5AFA6;
-      margin-bottom: 12px;
-    }
-
-    .input-field {
-      background: #FAF8F5;
-      border-radius: 16px;
-      height: 88px;
-      padding: 0 32px;
-      font-size: 28px;
-    }
-  }
-
   .alt-option {
-    margin-top: 48px;
+    margin-top: $spacing-2xl;
     text-align: center;
 
     .alt-title {
       display: block;
-      font-size: 28px;
-      font-weight: bold;
+      font-size: $font-size-base;
+      font-weight: $font-weight-bold;
       margin-bottom: 8px;
-      color: #2B2520;
+      color: $color-text-primary;
     }
 
     .alt-desc {
       display: block;
-      font-size: 24px;
-      color: #B5AFA6;
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
     }
   }
 }

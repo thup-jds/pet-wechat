@@ -1,25 +1,56 @@
+$nav-side-width: 144px;
+
 .nav-bar {
   width: 100%;
-  background: transparent;
+  background: $color-bg;
   position: relative;
   z-index: 100;
+}
+
+.nav-bar--transparent {
+  background: transparent;
 }
 
 .nav-bar-content {
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  justify-content: space-between;
+  padding: 0 $container-padding;
   position: relative;
 }
 
+.nav-side {
+  width: $nav-side-width;
+  min-width: $nav-side-width;
+  display: flex;
+  align-items: center;
+}
+
+.nav-side--left {
+  justify-content: flex-start;
+}
+
+.nav-side--right {
+  justify-content: flex-end;
+}
+
+.nav-side-content {
+  display: flex;
+  align-items: center;
+}
+
 .nav-back {
-  width: 64px;
-  height: 64px;
+  width: $nav-back-size;
+  height: $nav-back-size;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 32px;
-  background: rgba(255, 255, 255, 0.6);
+  border-radius: $radius-full;
+  background: rgba(255, 255, 255, 0.72);
+
+  &:active {
+    opacity: 0.7;
+  }
 }
 
 .nav-back-icon {
@@ -31,8 +62,11 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 32px;
-  font-weight: 600;
-  color: #2B2520;
+  max-width: calc(100% - #{$container-padding * 2} - #{$nav-side-width * 2});
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
   white-space: nowrap;
+  text-align: center;
+  @include text-ellipsis;
 }

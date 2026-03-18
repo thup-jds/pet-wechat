@@ -2,6 +2,7 @@ import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useState } from "react";
 import NavBar from "../../components/NavBar";
+import MockBadge from "../../components/MockBadge";
 import { request } from "../../utils/request";
 import { ICON_DESKTOP } from "../../assets/icons";
 import type { DesktopDevice } from "@pet-wechat/shared";
@@ -75,7 +76,7 @@ export default function DesktopBind() {
                     <Text className="item-name">{d.name}</Text>
                     <Text className="device-mac">{d.macAddress}</Text>
                   </View>
-                  <Text className="mock-tag">Mock</Text>
+                  <MockBadge className="desktop-device-tag" text="Mock" />
                 </View>
               </View>
             ))
@@ -83,7 +84,7 @@ export default function DesktopBind() {
         </ScrollView>
       )}
 
-      <Text className="mock-badge">⚠ Mock 模式：蓝牙搜索使用模拟数据</Text>
+      <MockBadge className="desktop-main-badge" text="⚠ Mock 模式：蓝牙搜索使用模拟数据" />
       {step === 1 ? (
         <View className="btn-primary mock-btn" onClick={handleSearch}>
           Mock 搜索设备

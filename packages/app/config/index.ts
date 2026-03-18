@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { defineConfig, type UserConfigExport } from '@tarojs/cli'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 import devConfig from './dev'
@@ -19,12 +20,18 @@ export default defineConfig(async (merge, { command, mode }) => {
     outputRoot: 'dist',
     plugins: [
       '@tarojs/plugin-framework-react',
-      ['@tarojs/plugin-sass', { implementation: require('sass') }],
+      '@tarojs/plugin-sass',
     ],
     defineConstants: {},
     copy: {
       patterns: [],
       options: {},
+    },
+    sass: {
+      resource: [
+        path.resolve(__dirname, '..', 'src', 'styles', '_tokens.scss'),
+        path.resolve(__dirname, '..', 'src', 'styles', '_mixins.scss'),
+      ],
     },
     framework: 'react',
     compiler: 'webpack5',
