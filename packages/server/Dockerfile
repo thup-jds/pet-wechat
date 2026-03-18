@@ -1,20 +1,18 @@
-FROM node:20-alpine AS base
-RUN corepack enable && corepack prepare pnpm@10.28.1 --activate
-WORKDIR /app
-
-FROM base AS install
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
-COPY packages/shared/package.json ./packages/shared/
-COPY packages/server/package.json ./packages/server/
-RUN pnpm install --frozen-lockfile
-
 FROM oven/bun:1-alpine
+
 WORKDIR /app
-COPY --from=install /app/node_modules ./node_modules
-COPY --from=install /app/packages/server/node_modules ./packages/server/node_modules
-COPY packages/shared ./packages/shared
-COPY packages/server ./packages/server
+
+# 复制 shared 包（作为本地依赖）
+COPY packages/shared packages/shared
+
+# 复制 server 包
+COPY packages/server packages/server
 
 WORKDIR /app/packages/server
+
+# 把 workspace 引用改为相对路径后安装
+RUN sed -i 's/"shared": "workspace:\*"/"shared": "file:..\/shared"/' package.json && bun install
+
 EXPOSE 9527
+
 CMD ["bun", "src/index.ts"]
