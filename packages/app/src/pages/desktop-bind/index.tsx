@@ -21,7 +21,12 @@ export default function DesktopBind() {
         url: "/api/devices/desktops/unowned",
       });
       setDevices(desktops);
-      setStep(2);
+      setSelectedId("");
+      if (desktops.length > 0) {
+        setStep(2);
+      } else {
+        Taro.showToast({ title: "未发现可用设备，请先在后台创建", icon: "none" });
+      }
     } catch (e: any) {
       Taro.showToast({ title: e.message || "搜索失败", icon: "none" });
     } finally {
