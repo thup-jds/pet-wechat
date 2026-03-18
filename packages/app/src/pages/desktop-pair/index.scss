@@ -1,10 +1,12 @@
 .desktop-pair-page {
-  background: #fff;
+  background: #FAF8F5;
+  overflow-x: hidden;
 
   .section-title {
     display: block;
     font-size: 28px;
     font-weight: bold;
+    color: #2B2520;
     margin: 24px 0 16px;
   }
 
@@ -16,19 +18,21 @@
       padding: 24px 32px;
       margin-bottom: 12px;
       border: 2px solid transparent;
+      box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
 
       &.selected {
-        border-color: #333;
+        border-color: #2B2520;
       }
 
       .item-name {
         font-size: 30px;
+        color: #2B2520;
       }
     }
 
     .empty-text {
       font-size: 26px;
-      color: #ccc;
+      color: #C5BFB6;
       display: block;
       text-align: center;
       padding: 32px;

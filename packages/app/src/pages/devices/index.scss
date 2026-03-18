@@ -1,8 +1,10 @@
 .devices-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: #FAF8F5;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  max-width: 100vw;
 
   .nav-bar {
     background: #fff;
@@ -17,6 +19,7 @@
     .nav-title {
       font-size: 34px;
       font-weight: bold;
+      color: #2B2520;
     }
   }
 }
@@ -27,22 +30,23 @@
   padding: 24px 32px;
 
   .pet-switcher {
-    margin-bottom: 32px;
+    margin-bottom: 28px;
 
     .pet-switcher-inner {
       display: flex;
       align-items: center;
       background: #fff;
       border-radius: 48px;
-      padding: 16px 32px 16px 16px;
-      width: fit-content;
+      padding: 14px 28px 14px 14px;
+      max-width: 100%;
+      box-shadow: 0 4px 16px rgba(43, 37, 32, 0.06);
     }
 
     .pet-avatar-placeholder {
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      background: #e8d4f0;
+      background: linear-gradient(145deg, #F3EDE6, #E8DFD4);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -51,19 +55,23 @@
       .pet-avatar-text {
         font-size: 28px;
         font-weight: bold;
-        color: #7b4f9e;
+        color: #A69A8C;
       }
     }
 
     .pet-switcher-name {
       font-size: 28px;
       font-weight: 600;
-      color: #333;
+      color: #2B2520;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .pet-switcher-arrow {
       font-size: 24px;
-      color: #999;
+      color: #B5AFA6;
       margin-left: 12px;
     }
   }
@@ -74,7 +82,7 @@
     padding: 0;
     margin: 0 0 16px;
     font-size: 28px;
-    color: #333;
+    color: #2B2520;
     line-height: 1;
 
     &::after {
@@ -94,12 +102,12 @@
     .section-title {
       font-size: 30px;
       font-weight: bold;
-      color: #333;
+      color: #2B2520;
     }
 
     .section-subtitle {
       font-size: 24px;
-      color: #999;
+      color: #B5AFA6;
       margin-left: 8px;
     }
   }
@@ -109,10 +117,11 @@
     border-radius: 24px;
     padding: 48px 32px;
     text-align: center;
+    box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
 
     .empty-text {
       font-size: 26px;
-      color: #ccc;
+      color: #C5BFB6;
     }
   }
 
@@ -121,6 +130,7 @@
     border-radius: 24px;
     padding: 28px 32px;
     margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(43, 37, 32, 0.04);
   }
 
   // Inline edit: device name row
@@ -135,22 +145,22 @@
     .device-name-text {
       font-size: 30px;
       font-weight: 600;
-      color: #333;
+      color: #2B2520;
     }
 
     .edit-icon-img {
       width: 28px;
       height: 28px;
       margin-left: 12px;
-      opacity: 0.5;
+      opacity: 0.4;
     }
   }
 
   .device-name-input {
     font-size: 30px;
     font-weight: 600;
-    color: #333;
-    border-bottom: 2px solid #7b4f9e;
+    color: #2B2520;
+    border-bottom: 2px solid #E8A849;
     padding: 4px 0;
     width: 100%;
   }
@@ -158,7 +168,7 @@
   // Share authorization button on collar cards
   .share-auth-btn {
     margin-top: 16px;
-    background: #333;
+    background: linear-gradient(135deg, #2B2520, #3D352E);
     border-radius: 16px;
     padding: 14px 0;
     display: flex;
@@ -199,24 +209,26 @@
         height: 16px;
         border-radius: 50%;
         margin-right: 10px;
-        background: #ccc;
+        background: #C5BFB6;
 
         &.online {
-          background: #86f066;
+          background: #7BA884;
+          box-shadow: 0 0 8px rgba(123, 168, 132, 0.4);
         }
 
         &.pairing {
-          background: #ffc107;
+          background: #E8A849;
+          box-shadow: 0 0 8px rgba(232, 168, 73, 0.4);
         }
 
         &.offline {
-          background: #ccc;
+          background: #C5BFB6;
         }
       }
 
       .status-label {
         font-size: 26px;
-        color: #666;
+        color: #8B847A;
       }
     }
 
@@ -227,7 +239,7 @@
       .battery-icon {
         width: 40px;
         height: 20px;
-        border: 2px solid #999;
+        border: 2px solid #B5AFA6;
         border-radius: 4px;
         padding: 2px;
         margin-right: 8px;
@@ -241,13 +253,13 @@
           transform: translateY(-50%);
           width: 4px;
           height: 10px;
-          background: #999;
+          background: #B5AFA6;
           border-radius: 0 2px 2px 0;
         }
 
         .battery-fill {
           height: 100%;
-          background: #86f066;
+          background: #7BA884;
           border-radius: 2px;
           min-width: 0;
         }
@@ -255,7 +267,7 @@
 
       .battery-text {
         font-size: 24px;
-        color: #666;
+        color: #8B847A;
       }
     }
   }
@@ -265,16 +277,17 @@
 
     .collar-pet-label {
       font-size: 24px;
-      color: #999;
+      color: #8B847A;
       line-height: 1.6;
     }
   }
 
   .switch-pet-link {
     font-size: 24px;
-    color: #7b4f9e;
+    color: #E8A849;
     display: block;
     margin-top: 8px;
+    font-weight: 500;
   }
 
   // Desktop card
@@ -286,8 +299,8 @@
       .desktop-icon-wrap {
         width: 72px;
         height: 72px;
-        border-radius: 16px;
-        background: #f0f0f0;
+        border-radius: 18px;
+        background: linear-gradient(145deg, #F3EDE6, #E8DFD4);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -305,7 +318,7 @@
         .desktop-name {
           font-size: 28px;
           font-weight: 600;
-          color: #333;
+          color: #2B2520;
           margin-bottom: 6px;
         }
 
@@ -320,14 +333,14 @@
         .desktop-status {
           display: block;
           font-size: 24px;
-          color: #999;
+          color: #B5AFA6;
 
           &.online {
-            color: #2e7d32;
+            color: #7BA884;
           }
 
           &.pairing {
-            color: #ef6c00;
+            color: #E8A849;
           }
         }
       }
@@ -337,7 +350,7 @@
     .desktop-auth-details {
       margin-top: 16px;
       padding-top: 16px;
-      border-top: 1px solid #f0f0f0;
+      border-top: 1px solid #F3EDE6;
 
       .desktop-auth-item {
         margin-bottom: 12px;
@@ -355,7 +368,7 @@
 
       .desktop-auth-label {
         font-size: 24px;
-        color: #999;
+        color: #B5AFA6;
         display: block;
       }
     }
@@ -372,13 +385,13 @@
       .auth-title {
         font-size: 28px;
         font-weight: 600;
-        color: #333;
+        color: #2B2520;
       }
 
       .auth-status-tag {
         font-size: 22px;
-        color: #999;
-        background: #f5f5f5;
+        color: #8B847A;
+        background: #F3EDE6;
         padding: 6px 16px;
         border-radius: 20px;
       }
@@ -387,7 +400,7 @@
     .auth-from-label {
       display: block;
       font-size: 24px;
-      color: #999;
+      color: #8B847A;
       margin-bottom: 8px;
     }
 
@@ -409,24 +422,24 @@
         font-size: 26px;
 
         &.accept {
-          background: #333;
+          background: linear-gradient(135deg, #2B2520, #3D352E);
           color: #fff;
         }
 
         &.reject {
-          background: #f0f0f0;
-          color: #666;
+          background: #F3EDE6;
+          color: #8B847A;
         }
 
         &.revoke {
-          background: #f0f0f0;
-          color: #e53935;
+          background: #FDF2F0;
+          color: #D4553A;
         }
       }
     }
   }
 
-  // 设计稿: 添加新设备按钮 (加号图标 + 文字)
+  // 添加新设备按钮
   .add-device-btn {
     background: #fff;
     border-radius: 48px;
@@ -436,17 +449,17 @@
     justify-content: center;
     gap: 8px;
     margin-top: 16px;
-    border: 2px dashed #ddd;
+    border: 2px dashed #E0D9CF;
 
     .add-icon {
       width: 32px;
       height: 32px;
-      opacity: 0.6;
+      opacity: 0.5;
     }
 
     .add-device-text {
       font-size: 28px;
-      color: #666;
+      color: #8B847A;
       font-weight: 500;
     }
   }
@@ -455,20 +468,13 @@
     display: block;
     text-align: center;
     font-size: 22px;
-    color: #bbb;
+    color: #C5BFB6;
     margin-top: 12px;
   }
 
-  // Decorative cat
-  .deco-cat {
-    text-align: center;
-    margin-top: 48px;
-
-    .deco-cat-img {
-      width: 120px;
-      height: 120px;
-      opacity: 0.3;
-    }
+  // Decorative spacer
+  .deco-spacer {
+    height: 48px;
   }
 
   .bottom-spacer {

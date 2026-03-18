@@ -94,7 +94,7 @@ export default function AvatarProgress() {
               <View
                 className="ring-progress"
                 style={{
-                  background: `conic-gradient(#333 ${progress * 3.6}deg, #eee ${progress * 3.6}deg)`,
+                  background: `conic-gradient(#2B2520 ${progress * 3.6}deg, #F3EDE6 ${progress * 3.6}deg)`,
                   width: `${ringSize}px`,
                   height: `${ringSize}px`,
                   borderRadius: "50%",
