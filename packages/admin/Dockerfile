@@ -11,7 +11,6 @@ RUN pnpm install --frozen-lockfile
 FROM base AS build
 COPY --from=install /app/node_modules ./node_modules
 COPY --from=install /app/packages/admin/node_modules ./packages/admin/node_modules
-COPY --from=install /app/packages/shared/node_modules ./packages/shared/node_modules
 COPY packages/shared ./packages/shared
 COPY packages/admin ./packages/admin
 WORKDIR /app/packages/admin
