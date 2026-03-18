@@ -98,5 +98,24 @@ describe("Behavior Routes", () => {
       );
       expect(res.status).toBe(404);
     });
+
+    it("returns 400 when collar does not match pet", async () => {
+      mockDb._results.select = [[fakePet()], [fakeCollar({ petId: "pet-2" })]];
+
+      const headers = await authHeader("user-1");
+      const res = await app.request(
+        jsonReq("POST", "/api/behaviors", {
+          headers,
+          body: {
+            petId: "pet-1",
+            collarDeviceId: "collar-1",
+            actionType: "walking",
+          },
+        })
+      );
+      expect(res.status).toBe(400);
+      const json = await res.json();
+      expect(json.error).toBe("项圈与宠物不匹配");
+    });
   });
 });

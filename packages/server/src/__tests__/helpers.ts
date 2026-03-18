@@ -109,7 +109,7 @@ export function fakeCollar(overrides: Record<string, unknown> = {}) {
   return {
     id: "collar-1",
     userId: "user-1",
-    petId: null,
+    petId: "pet-1",
     name: "My Collar",
     macAddress: "AA:BB:CC:DD:EE:FF",
     status: "offline",
