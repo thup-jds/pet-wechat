@@ -2,6 +2,7 @@ import { View, Text, Image } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import { clearToken, request } from "../../utils/request";
+import { disconnectWs } from "../../utils/ws";
 import NavBar from "../../components/NavBar";
 import { ICON_CAT, ICON_PLUS, ICON_ARROW_RIGHT } from "../../assets/icons";
 import type { Pet } from "@pet-wechat/shared";
@@ -24,6 +25,7 @@ export default function Settings() {
   };
 
   const handleLogout = () => {
+    disconnectWs();
     clearToken();
     Taro.removeStorageSync("userInfo");
     Taro.showToast({ title: "已退出登录", icon: "success" });

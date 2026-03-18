@@ -3,6 +3,7 @@ import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
+import { disconnectWs } from "../../utils/ws";
 import { ICON_PAW, ICON_DONE, ICON_CAT } from "../../assets/icons";
 import type { User, Pet } from "@pet-wechat/shared";
 import "./index.scss";
@@ -78,6 +79,7 @@ export default function Profile() {
       content: "确定要退出登录吗？",
       success: (res) => {
         if (res.confirm) {
+          disconnectWs();
           Taro.clearStorageSync();
           Taro.reLaunch({ url: "/pages/login/index" });
         }

@@ -1,10 +1,10 @@
 import { View, Text, Image, Swiper, SwiperItem } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
 import { ICON_PAW, ICON_ARROW_LEFT, ICON_ARROW_RIGHT } from "../../assets/icons";
-import type { Pet, CollarDevice, DesktopDevice } from "@pet-wechat/shared";
+import type { Pet, CollarDevice, DesktopDevice, WsBehaviorNewMessage } from "@pet-wechat/shared";
 import petHero from "../../assets/images/pet-hero.png";
 import petAvatarDefault from "../../assets/images/pet-avatar-default.png";
 import btnUser from "../../assets/images/btn-user.png";
@@ -14,6 +14,7 @@ import speechBubbleBg from "../../assets/images/speech-bubble-bg.png";
 import bellIcon from "../../assets/images/bell-icon.png";
 import collarIcon from "../../assets/images/collar-icon.png";
 import desktopIcon from "../../assets/images/desktop-icon.png";
+import { connectWs, disconnectWs, subscribe } from "../../utils/ws";
 import "./index.scss";
 
 type HomeState = "not-logged" | "no-pet" | "no-device" | "normal";
@@ -30,6 +31,51 @@ function getActivityLabel(score: number): string {
   return "高";
 }
 
+function formatRelativeTime(timestamp: string): string {
+  const time = new Date(timestamp).getTime();
+  if (Number.isNaN(time)) return "暂无活动记录";
+
+  const diffMs = Math.max(0, Date.now() - time);
+  const diffMinutes = Math.floor(diffMs / (60 * 1000));
+
+  if (diffMinutes < 1) return "刚刚";
+  if (diffMinutes < 60) return `${diffMinutes}分钟前`;
+
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}小时前`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `${diffDays}天前`;
+
+  return `${Math.floor(diffDays / 7)}周前`;
+}
+
+function getPetStatusText(pet?: Pet): string {
+  if (!pet?.latestBehavior) return "暂无活动记录";
+  return `${formatRelativeTime(pet.latestBehavior.timestamp)} · ${pet.latestBehavior.actionType}`;
+}
+
+function updatePetLatestBehavior(pets: Pet[], message: WsBehaviorNewMessage): Pet[] {
+  let changed = false;
+
+  const nextPets = pets.map((pet) => {
+    if (pet.id !== message.data.petId) {
+      return pet;
+    }
+
+    changed = true;
+    return {
+      ...pet,
+      latestBehavior: {
+        actionType: message.data.actionType,
+        timestamp: message.data.timestamp,
+      },
+    };
+  });
+
+  return changed ? nextPets : pets;
+}
+
 export default function Index() {
   const statusBarHeight = Taro.getSystemInfoSync().statusBarHeight ?? 20;
   const [ownPets, setOwnPets] = useState<Pet[]>([]);
@@ -39,13 +85,27 @@ export default function Index() {
   const [desktops, setDesktops] = useState<DesktopDevice[]>([]);
   const [state, setState] = useState<HomeState>("not-logged");
 
+  useEffect(() => {
+    const unsubscribe = subscribe("behavior:new", (message) => {
+      setOwnPets((prev) => updatePetLatestBehavior(prev, message));
+      setAuthorizedPets((prev) => updatePetLatestBehavior(prev, message));
+    });
+
+    return unsubscribe;
+  }, []);
+
   useDidShow(() => {
     if (!isLoggedIn()) {
+      disconnectWs();
       setState("not-logged");
       return;
     }
+    void connectWs();
     void loadData();
   });
+
+  // WS 连接在 App 级别管理，不在页面 hide 时断开
+  // 因为切换 tab 也会触发 hide，频繁断开重连不合理
 
   const loadData = async () => {
     try {
@@ -228,6 +288,7 @@ export default function Index() {
                     <View className="hero-shell">
                       <Image className="hero-image" src={petHero} mode="aspectFit" />
                       <Text className="hero-caption">{pet.name}</Text>
+                      <Text className="pet-status-tag">{getPetStatusText(pet)}</Text>
                     </View>
                   </SwiperItem>
                 ))}
@@ -236,6 +297,7 @@ export default function Index() {
               <View className="hero-shell">
                 <Image className="hero-image" src={petHero} mode="aspectFit" />
                 <Text className="hero-caption">{currentPet?.name ?? "宠物"}</Text>
+                <Text className="pet-status-tag">{getPetStatusText(currentPet)}</Text>
               </View>
             )}
 
