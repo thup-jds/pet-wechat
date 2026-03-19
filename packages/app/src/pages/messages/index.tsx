@@ -2,6 +2,7 @@ import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import NavBar from "../../components/NavBar";
+import MockToggle from "../../components/MockToggle";
 import { request } from "../../utils/request";
 import {
   ICON_CHECK_GREEN,
@@ -207,6 +208,7 @@ export default function Messages() {
           <Image className="cat-deco-img" src={ICON_CAT} mode="aspectFit" />
         </View>
       </ScrollView>
+      <MockToggle />
     </View>
   );
 }
