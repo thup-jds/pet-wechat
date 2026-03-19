@@ -4,7 +4,18 @@ import { useState } from "react";
 import { clearToken, request } from "../../utils/request";
 import { disconnectWs } from "../../utils/ws";
 import NavBar from "../../components/NavBar";
-import { ICON_CAT, ICON_PLUS, ICON_ARROW_RIGHT } from "../../assets/icons";
+import {
+  ICON_CAT,
+  ICON_PLUS,
+  ICON_ARROW_RIGHT,
+  ICON_NOTIFICATION,
+  ICON_SHIELD,
+  ICON_PALETTE,
+  ICON_GLOBE,
+  ICON_INFO,
+  ICON_HELP,
+  ICON_DOCUMENT,
+} from "../../assets/icons";
 import type { Pet } from "@pet-wechat/shared";
 import "./index.scss";
 
@@ -54,16 +65,16 @@ export default function Settings() {
   };
 
   const menuItems = [
-    { label: "通知设置" },
-    { label: "隐私设置" },
-    { label: "主题设置" },
-    { label: "语言选择" },
+    { label: "通知设置", icon: ICON_NOTIFICATION },
+    { label: "隐私设置", icon: ICON_SHIELD },
+    { label: "主题设置", icon: ICON_PALETTE },
+    { label: "语言选择", icon: ICON_GLOBE },
   ];
 
   const infoItems = [
-    { label: "关于我们" },
-    { label: "帮助与反馈" },
-    { label: "隐私政策" },
+    { label: "关于我们", icon: ICON_INFO },
+    { label: "帮助与反馈", icon: ICON_HELP },
+    { label: "隐私政策", icon: ICON_DOCUMENT },
   ];
 
   return (
@@ -109,6 +120,7 @@ export default function Settings() {
               className={`settings-item ${index === 0 ? "first" : ""} ${index === menuItems.length - 1 ? "last" : ""}`}
               onClick={showComingSoon}
             >
+              <Image className="item-icon-img" src={item.icon} mode="aspectFit" />
               <Text className="item-label">{item.label}</Text>
               <Image className="item-arrow-img" src={ICON_ARROW_RIGHT} mode="aspectFit" />
             </View>
@@ -123,6 +135,7 @@ export default function Settings() {
               className={`settings-item ${index === 0 ? "first" : ""} ${index === infoItems.length - 1 ? "last" : ""}`}
               onClick={showComingSoon}
             >
+              <Image className="item-icon-img" src={item.icon} mode="aspectFit" />
               <Text className="item-label">{item.label}</Text>
               <Image className="item-arrow-img" src={ICON_ARROW_RIGHT} mode="aspectFit" />
             </View>
