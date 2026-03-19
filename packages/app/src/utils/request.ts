@@ -1,4 +1,6 @@
 import Taro from "@tarojs/taro";
+import { handleMockRequest } from "../mock/handler";
+import { isMockMode } from "../mock/mode";
 
 export const BASE_URL = "https://pet-wechat.yangl.com.cn";
 
@@ -14,15 +16,36 @@ export function clearToken() {
   Taro.removeStorageSync("token");
 }
 
-interface RequestOptions {
+export interface RequestOptions {
   url: string;
   method?: "GET" | "POST" | "PUT" | "DELETE";
   data?: any;
   needAuth?: boolean;
 }
 
+export interface UploadFileOptions {
+  url: string;
+  filePath: string;
+  name: string;
+  formData?: Record<string, any>;
+  needAuth?: boolean;
+}
+
+function resolveUrl(url: string): string {
+  if (/^https?:\/\//.test(url)) {
+    return url;
+  }
+
+  return `${BASE_URL}${url}`;
+}
+
 export async function request<T = any>(options: RequestOptions): Promise<T> {
   const { url, method = "GET", data, needAuth = true } = options;
+
+  if (isMockMode()) {
+    return handleMockRequest<T>({ url, method, data });
+  }
+
   const header: Record<string, string> = {
     "Content-Type": "application/json",
   };
@@ -37,7 +60,7 @@ export async function request<T = any>(options: RequestOptions): Promise<T> {
   let res: Taro.request.SuccessCallbackResult;
   try {
     res = await Taro.request({
-      url: `${BASE_URL}${url}`,
+      url: resolveUrl(url),
       method,
       data,
       header,
@@ -58,4 +81,57 @@ export async function request<T = any>(options: RequestOptions): Promise<T> {
   }
 
   return res.data as T;
+}
+
+export async function uploadFile<T = any>(options: UploadFileOptions): Promise<T> {
+  const { url, filePath, name, formData, needAuth = true } = options;
+
+  if (isMockMode()) {
+    return handleMockRequest<T>({
+      url,
+      method: "POST",
+      data: {
+        filePath,
+        name,
+        formData,
+      },
+    });
+  }
+
+  const header: Record<string, string> = {};
+
+  if (needAuth) {
+    const token = getToken();
+    if (token) {
+      header["Authorization"] = `Bearer ${token}`;
+    }
+  }
+
+  let res: Taro.uploadFile.SuccessCallbackResult;
+  try {
+    res = await Taro.uploadFile({
+      url: resolveUrl(url),
+      filePath,
+      name,
+      formData,
+      header,
+    });
+  } catch (err: any) {
+    throw new Error(`网络异常: ${err.errMsg ?? "无法连接服务器"}`);
+  }
+
+  const parsedData = JSON.parse(res.data ?? "{}");
+
+  if (res.statusCode === 401) {
+    clearToken();
+    Taro.redirectTo({ url: "/pages/login/index" });
+    throw new Error("登录已过期，请重新登录");
+  }
+
+  if (res.statusCode >= 400) {
+    const msg = parsedData?.error ?? `服务器错误 (${res.statusCode})`;
+    throw new Error(msg);
+  }
+
+  return parsedData as T;
 }

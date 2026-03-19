@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSafeArea } from "../../hooks/useSafeArea";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
+import MockToggle from "../../components/MockToggle";
 import { ICON_PAW, ICON_ARROW_LEFT, ICON_ARROW_RIGHT, ICON_PHOTO } from "../../assets/icons";
 import type {
   Pet,
@@ -261,6 +262,7 @@ export default function Index() {
             去登录
           </View>
         </View>
+        <MockToggle />
       </View>
     );
   }
@@ -299,6 +301,7 @@ export default function Index() {
             </View>
           </View>
         </ScrollView>
+        <MockToggle />
       </View>
     );
   }
@@ -414,6 +417,7 @@ export default function Index() {
           </View>
         </View>
       </ScrollView>
+      <MockToggle />
     </View>
   );
 }

@@ -1,5 +1,6 @@
 import Taro from "@tarojs/taro";
 import type { WsMessage } from "@pet-wechat/shared";
+import { isMockMode } from "../mock/mode";
 import { BASE_URL, getToken } from "./request";
 
 type WsMessageType = WsMessage["type"];
@@ -117,6 +118,11 @@ function bindSocket(task: Taro.SocketTask) {
 }
 
 export async function connectWs() {
+  if (isMockMode()) {
+    disconnectWs();
+    return;
+  }
+
   const token = getToken();
   if (!token || isConnecting || isConnected) return;
 

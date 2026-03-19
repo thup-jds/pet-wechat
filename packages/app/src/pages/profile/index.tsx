@@ -2,6 +2,7 @@ import { View, Text, Image, ScrollView } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
 import NavBar from "../../components/NavBar";
+import MockToggle from "../../components/MockToggle";
 import { request } from "../../utils/request";
 import { isLoggedIn } from "../../utils/storage";
 import { disconnectWs } from "../../utils/ws";
@@ -106,6 +107,7 @@ export default function Profile() {
             去登录
           </View>
         </View>
+        <MockToggle />
       </View>
     );
   }
@@ -234,6 +236,7 @@ export default function Profile() {
           <Image className="cat-deco-img" src={ICON_CAT} mode="aspectFit" />
         </View>
       </ScrollView>
+      <MockToggle />
     </View>
   );
 }

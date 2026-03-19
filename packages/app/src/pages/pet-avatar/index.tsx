@@ -1,7 +1,7 @@
 import { View, Text, Image } from "@tarojs/components";
 import Taro, { useRouter } from "@tarojs/taro";
 import { useState, useEffect } from "react";
-import { request, getToken, BASE_URL } from "../../utils/request";
+import { request, uploadFile } from "../../utils/request";
 import NavBar from "../../components/NavBar";
 import { ICON_PAW, ICON_CAT, ICON_DOG, ICON_PHOTO } from "../../assets/icons";
 import type { Pet, User } from "@pet-wechat/shared";
@@ -56,7 +56,6 @@ export default function PetAvatar() {
     if (images.length === 0 || !petId) return;
     setLoading(true);
     try {
-      const token = getToken();
       const uploadedUrls = new Array<string>(images.length);
       let uploadedCount = 0;
       setLoadingText(`上传中 (0/${images.length})...`);
@@ -65,16 +64,11 @@ export default function PetAvatar() {
       for (const group of chunkArray(imageTasks, UPLOAD_CONCURRENCY)) {
         await Promise.all(
           group.map(async ({ imagePath, index }) => {
-            const uploadRes = await Taro.uploadFile({
-              url: `${BASE_URL}/api/upload`,
+            const uploadData = await uploadFile<{ url: string }>({
+              url: "/api/upload",
               filePath: imagePath,
               name: "file",
-              header: token ? { Authorization: `Bearer ${token}` } : {},
             });
-            const uploadData = JSON.parse(uploadRes.data ?? "{}");
-            if (uploadRes.statusCode >= 400) {
-              throw new Error(uploadData.error ?? "上传失败");
-            }
             if (!uploadData.url) {
               throw new Error("上传结果缺少 URL");
             }

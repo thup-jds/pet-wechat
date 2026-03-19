@@ -2,6 +2,7 @@ import { View, Text, Image, ScrollView, Button } from "@tarojs/components";
 import Taro, { definePageConfig, useDidShow, useShareAppMessage } from "@tarojs/taro";
 import { useState, useRef } from "react";
 import NavBar from "../../components/NavBar";
+import MockToggle from "../../components/MockToggle";
 import { request } from "../../utils/request";
 import { ICON_DESKTOP, ICON_SETTINGS } from "../../assets/icons";
 import type {
@@ -251,6 +252,7 @@ export default function Devices() {
 
         <View className="bottom-spacer" />
       </ScrollView>
+      <MockToggle />
     </View>
   );
 }
