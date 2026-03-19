@@ -37,18 +37,26 @@ export default defineAppConfig({
       {
         pagePath: "pages/index/index",
         text: "主页",
+        iconPath: "assets/tabbar/home.png",
+        selectedIconPath: "assets/tabbar/home-active.png",
       },
       {
         pagePath: "pages/devices/index",
         text: "设备",
+        iconPath: "assets/tabbar/devices.png",
+        selectedIconPath: "assets/tabbar/devices-active.png",
       },
       {
         pagePath: "pages/messages/index",
         text: "消息",
+        iconPath: "assets/tabbar/messages.png",
+        selectedIconPath: "assets/tabbar/messages-active.png",
       },
       {
         pagePath: "pages/profile/index",
         text: "我的",
+        iconPath: "assets/tabbar/profile.png",
+        selectedIconPath: "assets/tabbar/profile-active.png",
       },
     ],
   },

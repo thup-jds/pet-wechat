@@ -250,3 +250,72 @@ export const ICON_PHOTO = svg(
 export const ICON_DONE = svg(
   `<polyline points="20,50 40,70 80,30" fill="none" stroke="#86f066" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`
 );
+
+// 通知图标（设置页用）
+export const ICON_NOTIFICATION = svg(
+  `<g fill="none" stroke="#666" stroke-width="3" stroke-linecap="round">
+    <path d="M 50 18 L 50 24"/>
+    <path d="M 30 58 Q 26 42 30 32 Q 36 22 50 22 Q 64 22 70 32 Q 74 42 70 58 L 30 58 Z" fill="#f0f0f0"/>
+    <rect x="26" y="58" width="48" height="6" rx="3"/>
+    <path d="M 42 66 Q 46 74 50 74 Q 54 74 58 66"/>
+  </g>`
+);
+
+// 隐私/盾牌图标（设置页用）
+export const ICON_SHIELD = svg(
+  `<g fill="none" stroke="#666" stroke-width="3">
+    <path d="M 50 15 L 20 30 L 20 55 Q 20 75 50 90 Q 80 75 80 55 L 80 30 Z" fill="#f0f0f0"/>
+    <polyline points="37,52 47,62 65,42" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>`
+);
+
+// 主题/调色板图标（设置页用）
+export const ICON_PALETTE = svg(
+  `<g fill="none" stroke="#666" stroke-width="3">
+    <path d="M 50 15 Q 15 15 15 50 Q 15 85 50 85 Q 65 85 72 78 Q 78 72 70 68 Q 60 63 65 55 Q 70 47 80 50 Q 90 53 90 42 Q 88 15 50 15 Z" fill="#f0f0f0"/>
+    <circle cx="35" cy="40" r="5" fill="#ff6b6b"/>
+    <circle cx="50" cy="32" r="5" fill="#ffd93d"/>
+    <circle cx="35" cy="60" r="5" fill="#6bcb77"/>
+    <circle cx="55" cy="65" r="5" fill="#4d96ff"/>
+  </g>`
+);
+
+// 语言/地球图标（设置页用）
+export const ICON_GLOBE = svg(
+  `<g fill="none" stroke="#666" stroke-width="3">
+    <circle cx="50" cy="50" r="32"/>
+    <ellipse cx="50" cy="50" rx="16" ry="32"/>
+    <line x1="18" y1="50" x2="82" y2="50"/>
+    <path d="M 22 35 Q 50 30 78 35"/>
+    <path d="M 22 65 Q 50 70 78 65"/>
+  </g>`
+);
+
+// 信息/关于图标（设置页用）
+export const ICON_INFO = svg(
+  `<g fill="none" stroke="#666" stroke-width="3">
+    <circle cx="50" cy="50" r="32"/>
+    <circle cx="50" cy="35" r="3" fill="#666"/>
+    <line x1="50" y1="45" x2="50" y2="70" stroke-width="4" stroke-linecap="round"/>
+  </g>`
+);
+
+// 帮助/问号图标（设置页用）
+export const ICON_HELP = svg(
+  `<g fill="none" stroke="#666" stroke-width="3">
+    <circle cx="50" cy="50" r="32"/>
+    <path d="M 38 38 Q 38 25 50 25 Q 62 25 62 38 Q 62 48 50 50 L 50 58" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="50" cy="68" r="3" fill="#666"/>
+  </g>`
+);
+
+// 文档/政策图标（设置页用）
+export const ICON_DOCUMENT = svg(
+  `<g fill="none" stroke="#666" stroke-width="3">
+    <path d="M 25 15 L 65 15 L 75 25 L 75 85 L 25 85 Z" fill="#f0f0f0"/>
+    <path d="M 65 15 L 65 25 L 75 25"/>
+    <line x1="35" y1="40" x2="65" y2="40"/>
+    <line x1="35" y1="52" x2="65" y2="52"/>
+    <line x1="35" y1="64" x2="55" y2="64"/>
+  </g>`
+);
