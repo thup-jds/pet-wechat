@@ -6,15 +6,28 @@ import { signToken } from "../middleware/auth";
 
 const auth = new Hono();
 
-// TODO: 接入真实微信 code2session 接口，当前为 MVP 简化版
 // 微信小程序登录：前端传 code，后端换 openid
 auth.post("/wechat", async (c) => {
   const { code } = await c.req.json<{ code: string }>();
   if (!code) return c.json({ error: "code is required" }, 400);
 
-  // TODO: 调用微信 API https://api.weixin.qq.com/sns/jscode2session 获取 openid
-  // MVP 阶段使用固定 mock openid，确保同一用户重复登录不会创建新账户
-  const openid = "mock_openid_default_user";
+  const appid = process.env.WX_APPID ?? "";
+  const secret = process.env.WX_SECRET ?? "";
+
+  let openid: string;
+  if (appid && secret) {
+    const wxRes = await fetch(
+      `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${code}&grant_type=authorization_code`
+    );
+    const wxData = (await wxRes.json()) as { openid?: string; errcode?: number; errmsg?: string };
+    if (!wxData.openid) {
+      return c.json({ error: wxData.errmsg ?? "微信登录失败" }, 400);
+    }
+    openid = wxData.openid;
+  } else {
+    // 未配置微信密钥时使用 mock（本地开发）
+    openid = `mock_openid_${code}`;
+  }
 
   // 使用 upsert 避免并发首次登录的竞态条件
   const [user] = await db
